@@ -1,0 +1,18 @@
+#summary How to get started with the project and setup your pc
+#labels Phase-Deploy
+
+You need the following softwares and elements to get started on the project :
+
+== Database ==
+The database of choice is [http://www.mysql.com/ MySql] (version 5 or later).
+
+You may want to use some database management tool to work with it. We suggest [http://www.minq.se/products/dbvis/ DBVisualizer] , or [http://dev.mysql.com/downloads/gui-tools/5.0.html MySql GUI Tools] .
+
+== Extraction Engine ==
+The engine which performs data extraction, initial analysis and database storage is written in [http://www.ruby-lang.org/en/ ruby]. 
+In addition to ruby, you may require some additional libraries, therefore you should also install the [http://rubygems.org/ rubygems] packaging system. 
+
+The list of required libraries will be sorted out one day or another. For the moment refer to current prototype requirements , starting from PrototypeOne . 
+
+== Analysis Engine ==
+The language of choice is [http://www.r-project.org/ R] .
