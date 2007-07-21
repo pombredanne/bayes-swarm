@@ -1,0 +1,23 @@
+#summary Learn more about the guys behind working at the project
+#labels Featured,About
+
+These are the guys which are currently working at the project.
+
+= Bonazzi Alessandro = 
+insert info here
+
+= Brunori Paolo =
+insert info here
+
+= Govoni Riccardo =
+Born in 1979, with a university background in physics and a general interest in scientific matters, I am a technology-addict with an outstanding passion for computer science and programming. Currently working as system analyst in the IPTV field, my focus is about datamining behaviours and patterns from IPTV portals data.
+
+I joined the *bayes-swarm* project as _technology expert_ to help in writing code and extraction algorithms.
+
+Learn more about me at my [http://www.linkedin.com/in/battlehorse linkedin.com public profile] or contact me at this mail address: battlehorse at gmail dot com.
+
+= Lampronti Giulio =
+insert info here
+
+= Zandi Matteo = 
+insert info here
