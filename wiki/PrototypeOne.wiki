@@ -1,5 +1,5 @@
 #labels Phase-Prototype
-#usage instructions and informations for Prototype 1
+Usage instructions and informations for Prototype 1
 
 = Introduction =
 
