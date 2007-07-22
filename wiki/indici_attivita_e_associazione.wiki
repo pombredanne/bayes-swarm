@@ -14,7 +14,7 @@ L'importanza di una parola viene definita in base alla collocazione della parola
 
 
 La seconda misura associata alle variabili e' l'indice di associazione. Questo indice e' definito in base al numero di volte che due parole vengono usate nel testo ad una distanza inferiore ad una soglia arbitraria ( per esempio 5 ). Questa misura puo' essere pesata in base a una funzione inversa delle distanza relativa.
-Se n e' il numero di variabili del sistema, la dimensione della matrice di associazione e' [n x n]. Tuttavia e' possibile trattare il problema se definiamo la matrice di associazione come sparsa e ignoriamo tutte le associazioni non significative, ossia minori di una certa soglia.
+Se n e' il numero di variabili del sistema, la dimensione della matrice di associazione e' n x n. Tuttavia e' possibile trattare il problema se definiamo la matrice di associazione come sparsa e ignoriamo tutte le associazioni non significative, ossia minori di una certa soglia.
 
 
 L'indice di attivita' e di associazione sono funzioni del tempo e delle fonti di informazione. Per cui il programma di analisi dovra' archiviare un vettore di indici di attivita' e una matrice di associazione ad intervalli regolari nel tempo e per ogni fonte di informazione selezionata.
