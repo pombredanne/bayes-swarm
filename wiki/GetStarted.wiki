@@ -23,9 +23,8 @@ The list of required libraries will be sorted out one day or another. For the mo
 {{{
 sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems
 sudo gem update --system
-sudo gem install --remote ferret
+sudo gem install --remote ferret --include-dependencies
 }}}
 
 = Analysis Engine =
 The language of choice is [http://www.r-project.org/ R], wich provides, among other nice things like time series and cluster analysis, [http://cran.r-project.org/src/contrib/Descriptions/RMySQL.html RMySQL] an interface to MySql databates.
-
