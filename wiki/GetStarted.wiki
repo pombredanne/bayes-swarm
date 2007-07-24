@@ -20,11 +20,16 @@ In addition to ruby, you may require some additional libraries, therefore you sh
 The list of required libraries will be sorted out one day or another. For the moment refer to current prototype requirements , starting from PrototypeOne . 
 
 == Ubuntu ==
+ruby and its gems
 {{{
 sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems tidy
 sudo gem update --system
 sudo gem install --remote ferret --include-dependencies
 sudo gem install --remote tidy --include-dependencies
+}}}
+mysql ruby
+{{{
+sudo apt-get install libmysql-ruby1.8
 }}}
 
 = Analysis Engine =
