@@ -1,4 +1,4 @@
-#!/usr/local/bin/ruby
+#!/usr/bin/ruby
 
 if ARGV.nil? || ARGV.size == 0
   puts "Usage: swarm.rb resource_to_be_parse [--no-tidy]"
@@ -13,7 +13,7 @@ require 'swarm_support'
 
 # Components setup
 extractor = HttpExtractor.new
-# extractor = FileExtractor.new
+#extractor = FileExtractor.new
 cleaner = HtmlTidy.new
 stemmer = FerretStemmer.new
 
@@ -29,22 +29,28 @@ end
 stems = stemmer.stem(clean_content)
 # puts "STEMS: #{stems.inspect}"
 
-pop_stems = popular_stems(stems,1000)
-puts "No stems found" if pop_stems.empty?
+counted_stems = count_stems(stems)
+puts "No stems found" if counted_stems.empty?
+
+interesting_stems = ["china", "india", "iraq", "terrorism", "islam", "bomb", "al-Qaida", "bush", "you-tube"]
+matched_stems = match_interesting_stems(counted_stems, interesting_stems)
+
 i = 0
-unless pop_stems.empty?
+unless matched_stems.empty?
   puts "Results:"
-  pop_stems.each do |stemcount|
-    puts "#{i}: #{stemcount.stem} (#{stemcount.count} occurrence(s) )"
+  matched_stems.each do |stem|
+    puts "#{i}: #{stem.stem} (#{stem.count} occurrence(s) )"
     i += 1
   end
- 
+
   # puts "Talks about ? "
   # found = false
-  # pop_stems.each do |stemcount|
-  #   found |= stemcount.stem =~ /terror/ 
+  # counted_stems.each do |stemcount|
+  #   found |= stemcount.stem =~ /terror/
   # end
   # puts "YES!" if found
   # puts "NO!" unless found
-  
+
 end
+
+insert_into_db(matched_stems)
