@@ -21,7 +21,7 @@ The list of required libraries will be sorted out one day or another. For the mo
 
 == Ubuntu ==
 {{{
-sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems
+sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems tidy
 sudo gem update --system
 sudo gem install --remote ferret --include-dependencies
 sudo gem install --remote tidy --include-dependencies
