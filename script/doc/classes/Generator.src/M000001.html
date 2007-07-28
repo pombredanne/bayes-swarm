@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>generate (Generator)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File generate.rb, line 154</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">generate</span>(<span class="ruby-identifier">options</span> = {}, <span class="ruby-identifier">force_embed</span> = <span class="ruby-keyword kw">nil</span>)
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-comment cmt"># load options from command line</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-constant">ARGV</span>.<span class="ruby-identifier">find</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span> <span class="ruby-identifier">f</span> <span class="ruby-operator">==</span> <span class="ruby-value str">&quot;--generator&quot;</span> }
+        <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">parse_options</span>(<span class="ruby-identifier">split_params</span>(<span class="ruby-constant">ARGV</span>,<span class="ruby-value str">&quot;--generator&quot;</span>,<span class="ruby-keyword kw">true</span>)) 
+      <span class="ruby-keyword kw">else</span>
+        <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">parse_options</span>(<span class="ruby-constant">ARGV</span>) 
+      <span class="ruby-keyword kw">end</span>
+      <span class="ruby-identifier">embedded</span> = <span class="ruby-keyword kw">false</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-comment cmt"># adjust only defaults</span>
+      <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">set_options_defaults</span>(<span class="ruby-identifier">options</span>) 
+      <span class="ruby-identifier">embedded</span> = <span class="ruby-keyword kw">true</span>
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-identifier">embedded</span> = <span class="ruby-identifier">force_embed</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">force_embed</span>.<span class="ruby-identifier">nil?</span>
+    
+    <span class="ruby-comment cmt"># Abort on parse error</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">nil?</span>
+    
+    <span class="ruby-comment cmt"># Generate raw values</span>
+    <span class="ruby-identifier">y_values</span> = <span class="ruby-identifier">generate_raw</span>()
+   
+    <span class="ruby-comment cmt"># Normalize or shift if needed</span>
+    <span class="ruby-identifier">apply_ranges!</span>(<span class="ruby-identifier">y_values</span>)
+
+    <span class="ruby-comment cmt"># Prints the results</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">embedded</span>
+      (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:number</span>]).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;#{x}, #{y_values[x-1]}&quot;</span> }
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">res</span> = <span class="ruby-constant">Array</span>.<span class="ruby-identifier">new</span>
+      (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:number</span>]).<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">res</span> <span class="ruby-operator">&lt;&lt;</span> [ <span class="ruby-identifier">x</span> , <span class="ruby-identifier">y_values</span>[<span class="ruby-identifier">x</span><span class="ruby-operator">-</span><span class="ruby-value">1</span>] ] }
+      <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">res</span>
+    <span class="ruby-keyword kw">end</span>
+
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
