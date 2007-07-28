@@ -1,4 +1,4 @@
-#!/usr/bin/ruby
+#!/usr/bin/env ruby
 
 if ARGV.nil? || ARGV.size == 0
   puts "Usage: swarm.rb resource_to_be_parse [--no-tidy]"
