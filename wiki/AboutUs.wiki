@@ -7,7 +7,7 @@ These are the guys which are currently working at the project.
 insert info here
 
 = Brunori Paolo =
-insert info here
+Born in Florence in 1979, graduated in political science and currently PhD cadidate in Economics. My nterest is data abalysis in social sciences. I joined the bayes-swarm project as a part of a larger project (bayesfor.eu), the attempt is to look at empirical problems from different point of views, sharing knowedge with people coming from a very different background. 
 
 = Govoni Riccardo =
 Born in 1979, with a university background in physics and a general interest in scientific matters, I am a technology-addict with an outstanding passion for computer science and programming. Currently working as system analyst in the IPTV field, my focus is about datamining behaviours and patterns from IPTV portals data.
