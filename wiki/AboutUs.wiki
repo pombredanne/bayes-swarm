@@ -4,10 +4,10 @@
 These are the guys which are currently working at the project.
 
 = Bonazzi Alessandro = 
+
 Born in 1979, I'm a graduate student in Geophysics at the University of Bologna. My research interests concern data assimilation and statistical modelling.
 
-I joined the Bayes-Swarm project to study applications of statistical modelling to data automatically extracted from the web.
-
+I joined the Bayes-Swarm project to study applications of statistical modelling to problems that are new to my experience and to benifit from the collaboration with the Bayes-Swarm group.
 
 = Brunori Paolo =
 Born in Florence in 1979, graduated in political science and currently PhD cadidate in Economics. My nterest is data abalysis in social sciences. I joined the bayes-swarm project as a part of a larger project (bayesfor.eu), the attempt is to look at empirical problems from different point of views, sharing knowedge with people coming from a very different background. 
