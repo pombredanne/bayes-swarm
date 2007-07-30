@@ -1,0 +1,20 @@
+$def with (words)
+list of stems found on <a href="http://news.google.com/">google news</a>
+<table border=1>
+    <tr>
+        <td>id</td>
+        <td>page_id</td>
+        <td>scantime</td>
+        <td>count</td>
+        <td>titlecount</td>
+        <td>weight</td>
+    </tr>
+$for word in words:
+    <tr>
+        <td>$word.id</td>
+        <td>$word.page_id</td>
+        <td>$word.scantime</td>
+        <td>$word.count</td>
+        <td>$word.titlecount</td>
+        <td>$word.weight</td>
+    </tr>
