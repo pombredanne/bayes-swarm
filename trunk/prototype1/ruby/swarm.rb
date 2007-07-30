@@ -29,16 +29,18 @@ end
 stems = stemmer.stem(clean_content)
 # puts "STEMS: #{stems.inspect}"
 
-counted_stems = count_stems(stems)
+#interesting_stems = ["china", "india", "iraq", "terror", "muslim", "islam", "bomb", "al-Qaida",
+#  "bush", "you-tube", "italy"]
+interesting_stems = get_interesting_stems()
+puts #{interesting_stems.inspect}
+
+counted_stems = count_stems(stems, interesting_stems)
 puts "No stems found" if counted_stems.empty?
 
-interesting_stems = ["china", "india", "iraq", "terrorism", "islam", "bomb", "al-Qaida", "bush", "you-tube"]
-matched_stems = match_interesting_stems(counted_stems, interesting_stems)
-
 i = 0
-unless matched_stems.empty?
+unless counted_stems.empty?
   puts "Results:"
-  matched_stems.each do |stem|
+  counted_stems.each do |stem|
     puts "#{i}: #{stem.stem} (#{stem.count} occurrence(s) )"
     i += 1
   end
@@ -53,4 +55,4 @@ unless matched_stems.empty?
 
 end
 
-insert_into_db(matched_stems)
+insert_stems_into_db(counted_stems, 1)

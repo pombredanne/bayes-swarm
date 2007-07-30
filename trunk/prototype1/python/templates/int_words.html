@@ -1,0 +1,12 @@
+$def with (words)
+list of interesting words
+<table border=1>
+    <tr>
+        <td>id</td>
+        <td>name</td>
+    </tr>
+$for word in words:
+    <tr>
+        <td>$word.id</td>
+        <td>$word.name</td>
+    </tr>
