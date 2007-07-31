@@ -1,0 +1,10 @@
+$def with (items)
+<table border=1>
+$for item in items:
+    $for key in item.keys():
+        <td>$key</td>
+    </tr>    
+    <tr>
+    $for key in item.keys():
+        <td>$item[key]</td>
+    </tr>
