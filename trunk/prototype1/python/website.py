@@ -48,7 +48,6 @@ class addword:
     def GET(self):
         print render.addword()
 
-class addword2:
     def POST(self):
         i = web.input()
         n = web.insert('int_words', name=i.title)
