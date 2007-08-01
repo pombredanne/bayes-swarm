@@ -1,10 +1,16 @@
 $def with (items)
+$ header = True
 <table border=1>
 $for item in items:
-    $for key in item.keys():
-        <td>$key</td>
-    </tr>    
+    $if header == True:
+        <tr>
+        $for key in item.keys():
+            <td>$key</td>
+        </tr>
+        $ header = False
+    
     <tr>
     $for key in item.keys():
         <td>$item[key]</td>
     </tr>
+</table>
