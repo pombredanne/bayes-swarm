@@ -2,6 +2,7 @@
 
 import web
 render = web.template.render('templates/')
+web.internalerror = web.debugerror
 
 urls = (
   '/', 'index',
@@ -10,16 +11,18 @@ urls = (
   '/sources', 'sources',
   '/int_words', 'int_words',
   '/addword', 'addword',
-  '/addword2', 'addword2'
 )
 
 class index:
     def GET(self):
+        web.header("Content-Type","text/html; charset=utf-8") 
+#        print "<html><head><title>wiki pages</title></head><body>"
         print "<h1>bayes-swarm test</h1>"
-        print "<a href='/words'>words</a><br>"
-        print "<a href='/pages'>pages</a><br>"
-        print "<a href='/sources'>sources</a><br>"
-        print "<a href='/int_words'>list interesting words</a> (<a href='/addword'>add word</a>)<br>"
+        print "<a href='words'>words</a><br>"
+        print "<a href='pages'>pages</a><br>"
+        print "<a href='sources'>sources</a><br>"
+        print "<a href='int_words'>list interesting words</a> (<a href='addword'>add word</a>)<br>"
+#        print "</body></html>"
 
 class words:
     def GET(self):
@@ -55,4 +58,5 @@ class addword:
 
 if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='testuser', pw='test', db='bayesfortest')
+    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
     web.run(urls, globals())
