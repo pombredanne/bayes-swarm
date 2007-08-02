@@ -25,4 +25,6 @@ Learn more about me at my [http://www.linkedin.com/in/battlehorse linkedin.com p
 I was born in Florence in 1979, graduated in Geological Sciences and currently PhD student in Mineralogy. My interests are science and music (and politics and foreign languages if I only had time). I joined the bayes-swarm project because I believe you can learn much more from people with a different background and because I'm tired of Geology. And because Brunori Paolo forced me.
 
 = Zandi Matteo = 
-insert info here
+Twenty-something (born '79), graduated in statistics, currently working in the retail investments sector, my interests vary from open source software to financial mathematics. I joined bayes-for as statistician in order to take part on modelling the wide range of subjects the group is focused on.
+
+Feel free to contact me via email [mailto:matteo.zandi@gmail.com] or to [http://www.linkedin.com/pub/3/174/215 linkedin me].
