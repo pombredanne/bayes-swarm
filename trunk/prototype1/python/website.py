@@ -11,7 +11,7 @@ urls = (
   '/sources', 'sources',
   '/int_words', 'int_words',
   '/addword', 'addword',
-  '/most_3_words', 'most_3_words',
+  '/most_5_words', 'most_5_words',
   '/own_query', 'own_query'
 )
 
@@ -27,7 +27,7 @@ class index:
         print "<a href='int_words'>list interesting words</a> (<a href='addword'>add word</a>)<br>"
 
         print "<h2>queries</h2>"
-        print "<a href='most_3_words'>most 3 popular words with date and page</a><br>"        
+        print "<a href='most_5_words'>most 5 popular words with date and page</a><br>"        
         print "<a href='own_query'>my own query</a><br>"
         
         print "<h2>graphs</h2>"
@@ -66,14 +66,16 @@ class addword:
         web.insert('int_words', name=i.title)
         web.seeother('./')
 
-class most_3_words:
+class most_5_words:
     def GET(self):
-        most_3_words_query = '''SELECT a.id, b.name, c.url, date(scantime) as date, count 
-                                FROM words a, int_words b, pages c 
-                                WHERE a.id=b.id and a.page_id=c.id 
-                                GROUP BY a.id, b.name 
-                                ORDER BY count desc LIMIT 3;'''
-        res = web.query(most_3_words_query)                                 
+        most_5_words_query = '''SELECT a.id, b.name, a.count, a.scantime, c.url
+                                FROM   words a, int_words b, pages c
+                                WHERE  a.id=b.id 
+                                  AND a.page_id=c.id
+                                  AND (a.id, a.count) in (SELECT id, MAX(count) FROM words GROUP BY id)
+                                ORDER BY a.count DESC
+                                LIMIT 5;'''
+        res = web.query(most_5_words_query)
         print render.selectall(res)
 
 class own_query:
@@ -87,5 +89,5 @@ class own_query:
 
 if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='testuser', pw='test', db='bayesfortest')
-    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    #web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
     web.run(urls, globals())
