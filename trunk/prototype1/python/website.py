@@ -1,8 +1,15 @@
 #!/usr/bin/python
 
+import matplotlib
+#matplotlib.use('GD')
+matplotlib.use('Agg')
+from pylab import date2num
+#http://www.dalkescientific.com/writings/diary/archive/2005/04/23/matplotlib_without_gui.html
+
 import web
 render = web.template.render('templates/')
-web.internalerror = web.debugerror
+
+from web import form
 
 urls = (
   '/', 'index',
@@ -12,7 +19,8 @@ urls = (
   '/int_words', 'int_words',
   '/addword', 'addword',
   '/most_5_words', 'most_5_words',
-  '/own_query', 'own_query'
+  '/own_query', 'own_query',
+  '/plot_time_series', 'plot_time_series'
 )
 
 class index:
@@ -31,7 +39,7 @@ class index:
         print "<a href='own_query'>my own query</a><br>"
         
         print "<h2>graphs</h2>"
-        print "TODO"
+        print "<a href='plot_time_series'>time series plot</a><br>"
 #        print "</body></html>"
 
 class words:
@@ -87,7 +95,72 @@ class own_query:
         res = web.query(i.postarea)
         print render.selectall(res)
 
+myform = form.Form(form.Dropdown('french',
+                   ['mustard', 'fries', 'wine', 'fromage'],
+                   form.notnull,
+                   **{'multiple': None, 'size': 3}))
+        
+class plot_time_series:        
+    def __init__(self):
+        # find stems to included in the dropdown list
+        results = web.query('''SELECT DISTINCT a.id, b.name as stem
+                           FROM words a, int_words b
+                           WHERE a.id=b.id;''')
+
+        selectable_stems = []
+        for result in results:
+            selectable_stems.append( (str(result.id), result.stem) )
+
+        self.myform = form.Form(
+          form.Dropdown('stems',
+                     selectable_stems,
+                     form.Validator('select at least one stem', lambda x:len(x)>0),
+                     **{'multiple': None, 'size': 10}))
+
+    def GET(self):
+        form = self.myform()
+        print render.plot_time_series(form)
+        
+    def POST(self):
+        form = self.myform()
+        if not form.validates(web.input(stems=[])):
+            print render.plot_time_series(form)
+        else:            
+            # selected_ids is a list of ids
+            selected_string_ids = form['stems'].value
+            selected_ids = []
+            for id in selected_string_ids: selected_ids.append(int(id))
+            print "Selected ids: %s <br>" %(selected_ids)
+
+            # get values for selected stems
+            list_ids = (selected_ids and reduce(lambda x,y: str(x) + ", " + str(y), selected_ids)) or ""
+            query_stems_count = '''SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
+                                   FROM words a, int_words c
+                                   WHERE a.id = c.id AND a.id IN (%s)
+                                   GROUP BY a.id, c.name, date(a.scantime);''' % (list_ids)
+            results = web.query(query_stems_count)
+            results_list = list(results)
+            
+            dates = []
+            values = []
+            for id in selected_ids:
+                current_id_stuff = filter(lambda x: x.id == id, results_list)
+                dates_id = []
+                values_id = []
+                for i, stuff in enumerate(current_id_stuff):
+                    # FIXME: convert dates from datetime.dates(2007,07,31) to 37000
+                    dates_id.append(date2num(stuff['data']))
+                    values_id.append(stuff['num'])
+                plot(dates_id, values_id, label = str(id))
+            
+            legend()
+            savefig("./static/test_plot")
+            web.header("Content-Type","text/html; charset=utf-8")
+            print '<img src="./static/test_plot.png">'
+                            
+            
 if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='testuser', pw='test', db='bayesfortest')
     #web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    web.internalerror = web.debugerror
     web.run(urls, globals())
