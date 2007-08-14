@@ -1,11 +1,7 @@
 #!/usr/bin/python
-import sys, os
-import matplotlib
-#matplotlib.use('GD')
-matplotlib.use('Agg')
-from pylab import date2num, plot
-from pylab import *
-#http://www.dalkescientific.com/writings/diary/archive/2005/04/23/matplotlib_without_gui.html
+
+from pylab import date2num
+from websiteplots import plottimeseries
 
 import web
 render = web.template.render('templates/')
@@ -142,34 +138,21 @@ class plot_time_series:
             results = web.query(query_stems_count)
             results_list = list(results)
             
-            dates = []
-            values = []
+            dates_and_values = []
             for id in selected_ids:
                 current_id_stuff = filter(lambda x: x.id == id, results_list)
                 dates_id = []
                 values_id = []
                 for i, stuff in enumerate(current_id_stuff):
-                    # FIXME: convert dates nums to strings
+                    # dates are converted to numbers
                     dates_id.append(date2num(stuff['data']))
                     values_id.append(stuff['num'])
-                # FIXME: usa libreria basso livello non pylab
-                plot(dates_id, values_id, label = str(id))
-            
-            # FIXME: print legend
-            #legend()
-            #savefig("./static/test_plot")
-            web.header("Content-Type","image/png")
+                dates_and_values.append( ( str(stuff['id']) + " - " + stuff['name'], dates_id, values_id) )
 
-            # save the plot as a png and output directly to webserver
-            # FIXME: usare libreria apposta per nome random
-            tempfilename= "/tmp/a.png"
-            savefig( tempfilename, format='png' )
-            web.header("Content-Length", str(os.path.getsize(tempfilename)))
-            imagefile=file(tempfilename,'rb')
-            imagefile.seek(0)
-            print imagefile.read()
-            imagefile.close()            
-            os.remove(tempfilename) #clean up by removing this temp file                            
+            # FIXME: header should be part of plottimeseries function
+            web.header("Content-Type","image/png")            
+            image_buffer = plottimeseries(dates_and_values)
+            print image_buffer
             
 if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='testuser', pw='test', db='bayesfortest')
