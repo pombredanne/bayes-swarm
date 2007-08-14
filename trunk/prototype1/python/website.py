@@ -1,9 +1,10 @@
 #!/usr/bin/python
-
+import sys, os
 import matplotlib
 #matplotlib.use('GD')
 matplotlib.use('Agg')
-from pylab import date2num
+from pylab import date2num, plot
+from pylab import *
 #http://www.dalkescientific.com/writings/diary/archive/2005/04/23/matplotlib_without_gui.html
 
 import web
@@ -130,7 +131,7 @@ class plot_time_series:
             selected_string_ids = form['stems'].value
             selected_ids = []
             for id in selected_string_ids: selected_ids.append(int(id))
-            print "Selected ids: %s <br>" %(selected_ids)
+            #print "Selected ids: %s <br>" %(selected_ids)
 
             # get values for selected stems
             list_ids = (selected_ids and reduce(lambda x,y: str(x) + ", " + str(y), selected_ids)) or ""
@@ -148,16 +149,27 @@ class plot_time_series:
                 dates_id = []
                 values_id = []
                 for i, stuff in enumerate(current_id_stuff):
-                    # FIXME: convert dates from datetime.dates(2007,07,31) to 37000
+                    # FIXME: convert dates nums to strings
                     dates_id.append(date2num(stuff['data']))
                     values_id.append(stuff['num'])
+                # FIXME: usa libreria basso livello non pylab
                 plot(dates_id, values_id, label = str(id))
             
-            legend()
-            savefig("./static/test_plot")
-            web.header("Content-Type","text/html; charset=utf-8")
-            print '<img src="./static/test_plot.png">'
-                            
+            # FIXME: print legend
+            #legend()
+            #savefig("./static/test_plot")
+            web.header("Content-Type","image/png")
+
+            # save the plot as a png and output directly to webserver
+            # FIXME: usare libreria apposta per nome random
+            tempfilename= "/tmp/a.png"
+            savefig( tempfilename, format='png' )
+            web.header("Content-Length", str(os.path.getsize(tempfilename)))
+            imagefile=file(tempfilename,'rb')
+            imagefile.seek(0)
+            print imagefile.read()
+            imagefile.close()            
+            os.remove(tempfilename) #clean up by removing this temp file                            
             
 if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='testuser', pw='test', db='bayesfortest')
