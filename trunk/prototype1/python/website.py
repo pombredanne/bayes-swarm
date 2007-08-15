@@ -3,6 +3,7 @@
 from pylab import date2num
 from websiteplots import plottimeseries
 
+# you need webpy 0.21 or later (included since Ubuntu 7.10 Gutsy)
 import web
 render = web.template.render('templates/')
 
@@ -22,7 +23,7 @@ urls = (
 
 class index:
     def GET(self):
-        web.header("Content-Type","text/html; charset=utf-8") 
+        web.header("Content-Type","text/html; charset=utf-8")
 #        print "<html><head><title>wiki pages</title></head><body>"
         print "<h1>bayes-swarm test</h1>"
         print "<h2>tables</h2>"
@@ -32,9 +33,9 @@ class index:
         print "<a href='int_words'>list interesting words</a> (<a href='addword'>add word</a>)<br>"
 
         print "<h2>queries</h2>"
-        print "<a href='most_5_words'>most 5 popular words with date and page</a><br>"        
+        print "<a href='most_5_words'>most 5 popular words with date and page</a><br>"
         print "<a href='own_query'>my own query</a><br>"
-        
+
         print "<h2>graphs</h2>"
         print "<a href='plot_time_series'>time series plot</a><br>"
 #        print "</body></html>"
@@ -42,9 +43,9 @@ class index:
 class words:
     def GET(self):
         join_words_intwords = """SELECT a.id, b.name, page_id, scantime, count, titlecount, weight
-                                 FROM words a, int_words b 
+                                 FROM words a, int_words b
                                  WHERE a.id=b.id"""
-        stems = web.query(join_words_intwords) 
+        stems = web.query(join_words_intwords)
         print render.words(stems, cache=False)
 
 class pages:
@@ -56,7 +57,7 @@ class sources:
     def GET(self):
         sources = web.select('sources')
         print render.selectall(sources)
-            
+
 class int_words:
     def GET(self):
         stems = web.select('int_words')
@@ -75,7 +76,7 @@ class most_5_words:
     def GET(self):
         most_5_words_query = '''SELECT a.id, b.name, a.count, a.scantime, c.url
                                 FROM   words a, int_words b, pages c
-                                WHERE  a.id=b.id 
+                                WHERE  a.id=b.id
                                   AND a.page_id=c.id
                                   AND (a.id, a.count) in (SELECT id, MAX(count) FROM words GROUP BY id)
                                 ORDER BY a.count DESC
@@ -96,8 +97,8 @@ myform = form.Form(form.Dropdown('french',
                    ['mustard', 'fries', 'wine', 'fromage'],
                    form.notnull,
                    **{'multiple': None, 'size': 3}))
-        
-class plot_time_series:        
+
+class plot_time_series:
     def __init__(self):
         # find stems to included in the dropdown list
         results = web.query('''SELECT DISTINCT a.id, b.name as stem
@@ -106,8 +107,10 @@ class plot_time_series:
 
         selectable_stems = []
         for result in results:
-            selectable_stems.append( (str(result.id), result.stem) )
+            selectable_stems.append( ( result.id, result.stem) )
 
+        # requires webpy 0.21, since that version form.Dropdown accepts
+        # tuples as arguments
         self.myform = form.Form(
           form.Dropdown('stems',
                      selectable_stems,
@@ -117,17 +120,16 @@ class plot_time_series:
     def GET(self):
         form = self.myform()
         print render.plot_time_series(form)
-        
+
     def POST(self):
         form = self.myform()
         if not form.validates(web.input(stems=[])):
             print render.plot_time_series(form)
-        else:            
+        else:
             # selected_ids is a list of ids
             selected_string_ids = form['stems'].value
             selected_ids = []
             for id in selected_string_ids: selected_ids.append(int(id))
-            #print "Selected ids: %s <br>" %(selected_ids)
 
             # get values for selected stems
             list_ids = (selected_ids and reduce(lambda x,y: str(x) + ", " + str(y), selected_ids)) or ""
@@ -137,7 +139,7 @@ class plot_time_series:
                                    GROUP BY a.id, c.name, date(a.scantime);''' % (list_ids)
             results = web.query(query_stems_count)
             results_list = list(results)
-            
+
             dates_and_values = []
             for id in selected_ids:
                 current_id_stuff = filter(lambda x: x.id == id, results_list)
@@ -150,12 +152,15 @@ class plot_time_series:
                 dates_and_values.append( ( str(stuff['id']) + " - " + stuff['name'], dates_id, values_id) )
 
             # FIXME: header should be part of plottimeseries function
-            web.header("Content-Type","image/png")            
+            web.header("Content-Type","image/png")
             image_buffer = plottimeseries(dates_and_values)
             print image_buffer
-            
+
 if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='testuser', pw='test', db='bayesfortest')
+
+    # to be used if website.py runs as cgi with apache
     #web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+
     web.internalerror = web.debugerror
     web.run(urls, globals())
