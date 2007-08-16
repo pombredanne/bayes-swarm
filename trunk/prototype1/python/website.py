@@ -1,4 +1,7 @@
 #!/usr/bin/python
+import os
+# needed by matplotlib
+os.environ[ 'HOME' ] = '/tmp'
 
 from pylab import date2num
 from websiteplots import plottimeseries
@@ -24,7 +27,7 @@ urls = (
 class index:
     def GET(self):
         web.header("Content-Type","text/html; charset=utf-8")
-#        print "<html><head><title>wiki pages</title></head><body>"
+        print "<html><head><title>wiki pages</title></head><body>"
         print "<h1>bayes-swarm test</h1>"
         print "<h2>tables</h2>"
         print "<a href='words'>words</a><br>"
@@ -38,7 +41,10 @@ class index:
 
         print "<h2>graphs</h2>"
         print "<a href='plot_time_series'>time series plot</a><br>"
-#        print "</body></html>"
+        print '<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script><script type="text/javascript">_uacct = "UA-2429415-1";urchinTracker();</script>'
+        print "</body></html>"
+
+        web.internalerror = web.debugerror        
 
 class words:
     def GET(self):
@@ -157,10 +163,9 @@ class plot_time_series:
             print image_buffer
 
 if __name__ == "__main__":
-    web.config.db_parameters = dict(dbn='mysql', user='testuser', pw='test', db='bayesfortest')
+    web.config.db_parameters = dict(dbn='mysql', user='webuser', pw='test', db='bayesfortest')
 
-    # to be used if website.py runs as cgi with apache
-    #web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    # uncomment if website.py runs as cgi with apache
+    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
 
-    web.internalerror = web.debugerror
     web.run(urls, globals())
