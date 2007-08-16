@@ -93,6 +93,8 @@ end
 
 def insert_stems_into_db(stems, page_id)
   #GRANT ALL ON bayesfortest.* TO 'testuser'@'localhost' IDENTIFIED BY 'test';
+  #GRANT SELECT, INSERT ON bayesfortest.* TO 'webuser'@'localhost' IDENTIFIED BY 'test';
+
   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
 
   #insert into sources (name) values ("news.google.com");
