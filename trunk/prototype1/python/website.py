@@ -26,25 +26,7 @@ urls = (
 
 class index:
     def GET(self):
-        web.header("Content-Type","text/html; charset=utf-8")
-        print "<html><head><title>wiki pages</title></head><body>"
-        print "<h1>bayes-swarm test</h1>"
-        print "<h2>tables</h2>"
-        print "<a href='words'>words</a><br>"
-        print "<a href='pages'>pages</a><br>"
-        print "<a href='sources'>sources</a><br>"
-        print "<a href='int_words'>list interesting words</a> (<a href='addword'>add word</a>)<br>"
-
-        print "<h2>queries</h2>"
-        print "<a href='most_5_words'>most 5 popular words with date and page</a><br>"
-        print "<a href='own_query'>my own query</a><br>"
-
-        print "<h2>graphs</h2>"
-        print "<a href='plot_time_series'>time series plot</a><br>"
-        print '<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script><script type="text/javascript">_uacct = "UA-2429415-1";urchinTracker();</script>'
-        print "</body></html>"
-
-        web.internalerror = web.debugerror        
+        print render.index()
 
 class words:
     def GET(self):
@@ -122,6 +104,7 @@ class plot_time_series:
                      selectable_stems,
                      form.Validator('select at least one stem', lambda x:len(x)>0),
                      **{'multiple': None, 'size': 10}))
+        web.internalerror = web.debugerror
 
     def GET(self):
         form = self.myform()
