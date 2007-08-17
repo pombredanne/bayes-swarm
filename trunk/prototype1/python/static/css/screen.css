@@ -1,0 +1,33 @@
+body{
+    font: normal 12px Tahoma, sans-serif, Verdana, Geneva, Arial, Helvetica;
+}
+
+td.tdmenu{
+    width: 20%;
+    vertical-align: top;
+    font: normal 12px Tahoma, sans-serif, Verdana, Geneva, Arial, Helvetica;
+    border-top: Solid 0px #959595;
+    border-bottom: dashed 0px #959595;
+    border-left: Solid 0px #959595;
+    border-right: dashed 1px #959595;
+    padding: 5px;
+}
+
+td.tdbody{
+    vertical-align: top;
+    font: normal 12 px Tahoma, sans-serif, Verdana, Geneva, Arial, Helvetica;
+    border-top: dashed 0px #959595;
+    border-bottom: dashed 0px #959595;
+    border-left: Solid 0px #959595;
+    border-right: dashed 0px #959595;
+    padding: 5px;
+    text-align: justify;
+/*    color: #959595; */
+}
+
+table.list td{
+    vertical-align: top;
+    font: normal 10px Tahoma, sans-serif, Verdana, Geneva, Arial, Helvetica;
+    border: dashed 0px #959595;
+    padding: 1px;
+}
