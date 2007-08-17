@@ -8,6 +8,8 @@ from websiteplots import plottimeseries
 
 # you need webpy 0.21 or later (included since Ubuntu 7.10 Gutsy)
 import web
+# comment on production enviroment
+# web.webapi.internalerror = web.debugerror
 render = web.template.render('templates/')
 
 from web import form
@@ -26,7 +28,7 @@ urls = (
 
 class index:
     def GET(self):
-        print render.index()
+        print render.base( render.index() )
 
 class words:
     def GET(self):
@@ -34,26 +36,26 @@ class words:
                                  FROM words a, int_words b
                                  WHERE a.id=b.id"""
         stems = web.query(join_words_intwords)
-        print render.words(stems, cache=False)
+        print render.base( render.words(stems) )
 
 class pages:
     def GET(self):
         pages = web.select('pages')
-        print render.selectall(pages)
+        print render.base( render.selectall(pages) )
 
 class sources:
     def GET(self):
         sources = web.select('sources')
-        print render.selectall(sources)
+        print render.base( render.selectall(sources) )
 
 class int_words:
     def GET(self):
         stems = web.select('int_words')
-        print render.int_words(stems, cache=False)
+        print render.base( render.int_words(stems) )
 
 class addword:
     def GET(self):
-        print render.addword()
+        print render.base( render.addword() )
 
     def POST(self):
         i = web.input()
@@ -70,16 +72,16 @@ class most_5_words:
                                 ORDER BY a.count DESC
                                 LIMIT 5;'''
         res = web.query(most_5_words_query)
-        print render.selectall(res)
+        print render.base( render.selectall(res) )
 
 class own_query:
     def GET(self):
-        print render.own_query()
+        print render.base( render.own_query() )
 
     def POST(self):
         i = web.input()
         res = web.query(i.postarea)
-        print render.selectall(res)
+        print render.base( render.selectall(res) )
 
 myform = form.Form(form.Dropdown('french',
                    ['mustard', 'fries', 'wine', 'fromage'],
@@ -104,16 +106,15 @@ class plot_time_series:
                      selectable_stems,
                      form.Validator('select at least one stem', lambda x:len(x)>0),
                      **{'multiple': None, 'size': 10}))
-        web.internalerror = web.debugerror
 
     def GET(self):
         form = self.myform()
-        print render.plot_time_series(form)
+        print render.base( render.plot_time_series(form) )
 
     def POST(self):
         form = self.myform()
         if not form.validates(web.input(stems=[])):
-            print render.plot_time_series(form)
+            print render.base( render.plot_time_series(form) )
         else:
             # selected_ids is a list of ids
             selected_string_ids = form['stems'].value
