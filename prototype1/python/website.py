@@ -28,7 +28,7 @@ urls = (
 
 class index:
     def GET(self):
-        print render.base( render.index() )
+        print render.base("")
 
 class words:
     def GET(self):
@@ -41,12 +41,12 @@ class words:
 class pages:
     def GET(self):
         pages = web.select('pages')
-        print render.base( render.selectall(pages) )
+        print render.base( '<h2>list of pages</h2>' + render.selectall(pages) )
 
 class sources:
     def GET(self):
         sources = web.select('sources')
-        print render.base( render.selectall(sources) )
+        print render.base( '<h2>list of sources</h2>' + render.selectall(sources) )
 
 class int_words:
     def GET(self):
@@ -60,6 +60,7 @@ class addword:
     def POST(self):
         i = web.input()
         web.insert('int_words', name=i.title)
+        # FIXME: print a curtesy message like "$word has been succesfully added"
         web.seeother('./')
 
 class most_5_words:
@@ -72,7 +73,7 @@ class most_5_words:
                                 ORDER BY a.count DESC
                                 LIMIT 5;'''
         res = web.query(most_5_words_query)
-        print render.base( render.selectall(res) )
+        print render.base( '<h2>most 5 popular words with page and date</h2>' + render.selectall(res) )
 
 class own_query:
     def GET(self):
@@ -81,12 +82,7 @@ class own_query:
     def POST(self):
         i = web.input()
         res = web.query(i.postarea)
-        print render.base( render.selectall(res) )
-
-myform = form.Form(form.Dropdown('french',
-                   ['mustard', 'fries', 'wine', 'fromage'],
-                   form.notnull,
-                   **{'multiple': None, 'size': 3}))
+        print render.base( '<h2>own query</h2>' + i.postarea + '<br><i>returned</i>' + render.selectall(res) )
 
 class plot_time_series:
     def __init__(self):
@@ -150,6 +146,6 @@ if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='webuser', pw='test', db='bayesfortest')
 
     # uncomment if website.py runs as cgi with apache
-    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    #web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
 
     web.run(urls, globals())

@@ -1,6 +1,6 @@
 $def with (items)
 $ header = True
-<table border=1>
+<table class="list">
 $for item in items:
     $if header == True:
         <tr>
@@ -8,7 +8,6 @@ $for item in items:
             <td>$key</td>
         </tr>
         $ header = False
-    
     <tr>
     $for key in item.keys():
         <td>$item[key]</td>
