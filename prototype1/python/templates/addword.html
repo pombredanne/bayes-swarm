@@ -1,8 +1,15 @@
-    <p>add a word to the list of interesting ones</p>
-
-    <form method="post" action="addword">
+$def with (form)
+    $if not form['hidden'].attrs['submitted']:
+        <h2>Add a word to the list of interesting ones</h2>
+        $if not form.valid:
+            <p class="error">Try again</p>
+        <form name="main" method="post">
+        $:form.render()
+        <input type="submit" value="submit" />
+        </form>
+    $else:
+        <h2>Word added</h2>
         <p>
-            <input type="text" name="title" />
-            <input type="submit" value="Add" />
+        $form['word'].value has been succesfully added
         </p>
-    </form>
+        <p>Click <a href="addword">here</a> if you want to add another one</p>

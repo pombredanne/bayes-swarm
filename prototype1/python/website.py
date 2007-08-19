@@ -54,14 +54,24 @@ class int_words:
         print render.base( render.int_words(stems) )
 
 class addword:
+    def __init__(self):
+        # FIXME: check that word is not present yet before insert
+        self.myform = form.Form(
+            form.Textbox('word', form.notnull),
+            form.Hidden('hidden', **{'submitted': False}))
+
     def GET(self):
-        print render.base( render.addword() )
+        print render.base( render.addword(self.myform()) )
 
     def POST(self):
-        i = web.input()
-        web.insert('int_words', name=i.title)
-        # FIXME: print a curtesy message like "$word has been succesfully added"
-        web.seeother('./')
+        form = self.myform()
+        if not form.validates():
+            print render.base( render.addword(form) )
+        else:
+            form['hidden'].attrs['submitted'] = True
+            word = form['word'].value
+            web.insert('int_words', name=word)
+            print render.base( render.addword(form) )
 
 class most_5_words:
     def GET(self):
@@ -146,6 +156,6 @@ if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='webuser', pw='test', db='bayesfortest')
 
     # uncomment if website.py runs as cgi with apache
-    #web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
+    web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
 
     web.run(urls, globals())
