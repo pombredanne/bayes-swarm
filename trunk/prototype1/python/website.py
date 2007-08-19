@@ -55,9 +55,14 @@ class int_words:
 
 class addword:
     def __init__(self):
-        # FIXME: check that word is not present yet before insert
+        current_words_query = '''SELECT name FROM int_words'''
         self.myform = form.Form(
-            form.Textbox('word', form.notnull),
+            form.Textbox('word',
+                form.notnull,
+                form.Validator("Can't be blank", lambda x:x.strip() is not ""),
+                form.Validator("Already in table",
+                    lambda x: len(web.query("SELECT name FROM int_words WHERE name='%s'" % x)) == 0)
+                ),
             form.Hidden('hidden', **{'submitted': False}))
 
     def GET(self):
