@@ -133,39 +133,42 @@ class plot_time_series:
             selected_ids = []
             for id in selected_string_ids: selected_ids.append(int(id))
 
-            # get values for selected stems
-            list_ids = (selected_ids and reduce(lambda x,y: str(x) + ", " + str(y), selected_ids)) or ""
-            query_stems_count = '''SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
-                                   FROM words a, int_words c
-                                   WHERE a.id = c.id AND a.id IN (%s)
-                                   GROUP BY a.id, c.name, date(a.scantime);''' % (list_ids)
-            results = web.query(query_stems_count)
-            results_list = list(results)
-
-            dates_and_values = []
-            for id in selected_ids:
-                current_id_stuff = filter(lambda x: x.id == id, results_list)
-                dates_id = []
-                values_id = []
-                for i, stuff in enumerate(current_id_stuff):
-                    # dates are converted to numbers
-                    dates_id.append(date2num(stuff['data']))
-                    values_id.append(stuff['num'])
-                dates_and_values.append( ( "%d - %s" % (stuff['id'], stuff['name']), dates_id, values_id) )
-
             # we use cookies to pass data
-            web.setcookie('data', dates_and_values)
+            web.setcookie('selected_ids', selected_ids)
             html = '<h2> Time series plot</h2><img src="call_plottimeseries">'
             print render.base ( html )
 
 class call_plottimeseries:
     def GET(self):
         session = web.cookies()
-        web.header("Content-Type","image/png")
+
         # for some reason sql returns Decimal(10.0000)
         Decimal = float
         # eval is needed since cookies return strings
-        image_buffer = plottimeseries(eval(session['data']))
+        selected_ids = eval(session['selected_ids'])
+
+        # get values for selected stems
+        list_ids = (selected_ids and reduce(lambda x,y: str(x) + ", " + str(y), selected_ids)) or ""
+        query_stems_count = '''SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
+                               FROM words a, int_words c
+                               WHERE a.id = c.id AND a.id IN (%s)
+                               GROUP BY a.id, c.name, date(a.scantime);''' % (list_ids)
+        results = web.query(query_stems_count)
+        results_list = list(results)
+
+        dates_and_values = []
+        for id in selected_ids:
+            current_id_stuff = filter(lambda x: x.id == id, results_list)
+            dates_id = []
+            values_id = []
+            for i, stuff in enumerate(current_id_stuff):
+                # dates are converted to numbers
+                dates_id.append(date2num(stuff['data']))
+                values_id.append(stuff['num'])
+            dates_and_values.append( ( "%d - %s" % (stuff['id'], stuff['name']), dates_id, values_id) )
+
+        image_buffer = plottimeseries(dates_and_values)
+        web.header("Content-Type","image/png")
         print image_buffer
 
 if __name__ == "__main__":
