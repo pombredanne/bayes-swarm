@@ -23,7 +23,8 @@ urls = (
   '/addword', 'addword',
   '/most_5_words', 'most_5_words',
   '/own_query', 'own_query',
-  '/plot_time_series', 'plot_time_series'
+  '/plot_time_series', 'plot_time_series',
+  '/call_plottimeseries', 'call_plottimeseries'
 )
 
 class index:
@@ -150,12 +151,22 @@ class plot_time_series:
                     # dates are converted to numbers
                     dates_id.append(date2num(stuff['data']))
                     values_id.append(stuff['num'])
-                dates_and_values.append( ( str(stuff['id']) + " - " + stuff['name'], dates_id, values_id) )
+                dates_and_values.append( ( "%d - %s" % (stuff['id'], stuff['name']), dates_id, values_id) )
 
-            # FIXME: header should be part of plottimeseries function
-            web.header("Content-Type","image/png")
-            image_buffer = plottimeseries(dates_and_values)
-            print image_buffer
+            # we use cookies to pass data
+            web.setcookie('data', dates_and_values)
+            html = '<h2> Time series plot</h2><img src="call_plottimeseries">'
+            print render.base ( html )
+
+class call_plottimeseries:
+    def GET(self):
+        session = web.cookies()
+        web.header("Content-Type","image/png")
+        # for some reason sql returns Decimal(10.0000)
+        Decimal = float
+        # eval is needed since cookies return strings
+        image_buffer = plottimeseries(eval(session['data']))
+        print image_buffer
 
 if __name__ == "__main__":
     web.config.db_parameters = dict(dbn='mysql', user='webuser', pw='test', db='bayesfortest')
