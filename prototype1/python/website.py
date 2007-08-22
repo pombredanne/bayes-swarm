@@ -24,7 +24,7 @@ urls = (
   '/most_5_words', 'most_5_words',
   '/own_query', 'own_query',
   '/plot_time_series', 'plot_time_series',
-  '/call_plottimeseries', 'call_plottimeseries'
+  '/call_plottimeseries/(.*)', 'call_plottimeseries'
 )
 
 class index:
@@ -102,7 +102,7 @@ class own_query:
 
 class plot_time_series:
     def __init__(self):
-        # find stems to included in the dropdown list
+        # find stems to be included in the dropdown list
         results = web.query('''SELECT DISTINCT a.id, b.name as stem
                            FROM words a, int_words b
                            WHERE a.id=b.id;''')
@@ -111,13 +111,25 @@ class plot_time_series:
         for result in results:
             selectable_stems.append( ( result.id, result.stem) )
 
+        # find pages to be included in the dropdown list
+        results = web.query('''SELECT id, url
+                           FROM pages''')
+
+        selectable_pages = []
+        for result in results:
+            selectable_pages.append( ( result.id, result.url) )
+
         # requires webpy 0.21, since that version form.Dropdown accepts
         # tuples as arguments
         self.myform = form.Form(
           form.Dropdown('stems',
-                     selectable_stems,
-                     form.Validator('select at least one stem', lambda x:len(x)>0),
-                     **{'multiple': None, 'size': 10}))
+            selectable_stems,
+            form.Validator('select at least one stem', lambda x:len(x)>0),
+            **{'multiple': None, 'size': 10}),
+          form.Dropdown('pages',
+            selectable_pages,
+            form.Validator('select at least one page', lambda x:len(x)>0),
+            **{'multiple': None, 'size': 10}))
 
     def GET(self):
         form = self.myform()
@@ -128,37 +140,45 @@ class plot_time_series:
         if not form.validates(web.input(stems=[])):
             print render.base( render.plot_time_series(form) )
         else:
-            # selected_ids is a list of ids
-            selected_string_ids = form['stems'].value
+            # selected_ids is a list of ids, while form returns strings
+            selected_ids_strings = form['stems'].value
             selected_ids = []
-            for id in selected_string_ids: selected_ids.append(int(id))
+            for id in selected_ids_strings: selected_ids.append(int(id))
 
-            # we use cookies to pass data
-            web.setcookie('selected_ids', selected_ids)
-            html = '<h2> Time series plot</h2><img src="call_plottimeseries">'
+            selected_pages_strings = form['pages'].value
+            selected_pages = []
+            for id in selected_pages_strings: selected_pages.append(int(id))
+
+            # pass data like a cgi: "/ids=[]&pages=[]"
+            html = '<h2> Time series plot</h2><img src="call_plottimeseries/%s">' % (
+              "ids=%s&pages=%s" % ( str(selected_ids), str(selected_pages) ) )
             print render.base ( html )
 
 class call_plottimeseries:
-    def GET(self):
-        session = web.cookies()
-
+    def GET(self, params):
         # for some reason sql returns Decimal(10.0000)
         Decimal = float
-        # cookies return strings like "[1,2,3]", let's convert them to lists
-        selected_ids_cookies = session['selected_ids']
-        selected_ids = list([int(x) for x in selected_ids_cookies[1:-1].split(",")])
+        # convert something like "ids=[]&pages=[]" to a dict of params
+        params_list = params.split("&")
+        params_dict = {}
+        for param in params_list:
+            arg, value = param.split("=")
+            params_dict[arg] = list([int(x) for x in value[1:-1].split(",")])
 
         # get values for selected stems
-        list_ids = (selected_ids and reduce(lambda x,y: str(x) + ", " + str(y), selected_ids)) or ""
+        ids_list = (params_dict['ids'] and reduce(lambda x,y: str(x) + ", " + str(y), params_dict['ids'])) or ""
+        pages_list = (params_dict['pages'] and reduce(lambda x,y: str(x) + ", " + str(y), params_dict['pages'])) or ""
         query_stems_count = '''SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
-                               FROM words a, int_words c
-                               WHERE a.id = c.id AND a.id IN (%s)
-                               GROUP BY a.id, c.name, date(a.scantime);''' % (list_ids)
+                               FROM words a, int_words c, pages b
+                               WHERE a.id = c.id
+                                 AND a.page_id = b.id
+                                 AND a.id IN (%s) AND a.page_id IN (%s)
+                               GROUP BY a.id, c.name, date(a.scantime);''' % (ids_list, pages_list)
         results = web.query(query_stems_count)
         results_list = list(results)
 
         dates_and_values = []
-        for id in selected_ids:
+        for id in params_dict['ids']:
             current_id_stuff = filter(lambda x: x.id == id, results_list)
             dates_id = []
             values_id = []
