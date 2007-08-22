@@ -23,13 +23,13 @@ def plottimeseries(data):
               'xtick.labelsize': 6,
               'ytick.labelsize': 6,
               'legend.fontsize': 6,
-              'figure.figsize': (6,4)}
+              'figure.figsize': (4,3)}
     matplotlib.rcParams.update(params)
 
     fig = Figure()
     # add an axes at left, bottom, width, height; by making the bottom
     # at 0.3, we save some extra room for tick labels
-    ax = fig.add_axes([0.2, 0.3, 0.7, 0.6]) #ie set sides of chart box
+    ax = fig.add_axes([0.1, 0.1, 0.85, 0.8]) #ie set sides of chart box
 
     #now we make the plots
     for var in data:

@@ -144,8 +144,9 @@ class call_plottimeseries:
 
         # for some reason sql returns Decimal(10.0000)
         Decimal = float
-        # eval is needed since cookies return strings
-        selected_ids = eval(session['selected_ids'])
+        # cookies return strings like "[1,2,3]", let's convert them to lists
+        selected_ids_cookies = session['selected_ids']
+        selected_ids = list([int(x) for x in selected_ids_cookies[1:-1].split(",")])
 
         # get values for selected stems
         list_ids = (selected_ids and reduce(lambda x,y: str(x) + ", " + str(y), selected_ids)) or ""
