@@ -1,10 +1,11 @@
 #!/usr/bin/python
+
 import os
 # needed by matplotlib
 os.environ[ 'HOME' ] = '/tmp'
 
 from pylab import date2num
-from websiteplots import plottimeseries
+from websiteplots import plottimeseries, plotmultiscatter
 
 # you need webpy 0.21 or later (included since Ubuntu 7.10 Gutsy)
 import web
@@ -23,8 +24,9 @@ urls = (
   '/addword', 'addword',
   '/most_5_words', 'most_5_words',
   '/own_query', 'own_query',
-  '/plot_time_series', 'plot_time_series',
-  '/call_plottimeseries/(.*)', 'call_plottimeseries'
+  '/plots=(.*)', 'plots',
+  '/call_plottimeseries=(.*)', 'call_plottimeseries',
+  '/call_plotmultiscatter=(.*)', 'call_plotmultiscatter'
 )
 
 class index:
@@ -100,7 +102,7 @@ class own_query:
         res = web.query(i.postarea)
         print render.base( '<h2>own query</h2>' + i.postarea + '<br><i>returned</i>' + render.selectall(res) )
 
-class plot_time_series:
+class plots:
     def __init__(self):
         # find stems to be included in the dropdown list
         results = web.query('''SELECT DISTINCT a.id, b.name as stem
@@ -131,14 +133,20 @@ class plot_time_series:
             form.Validator('select at least one page', lambda x:len(x)>0),
             **{'multiple': None, 'size': 10}))
 
-    def GET(self):
-        form = self.myform()
-        print render.base( render.plot_time_series(form) )
+        self.plots = {'plottimeseries': "Time series plot",
+          'plotmultiscatter': "Multi scatter plot"}
 
-    def POST(self):
+    def GET(self, plot):
+        if plot in self.plots.keys():
+            form = self.myform()
+            print render.base( render.plots(form) )
+        else:
+            print render.base( "<h2>Wrong plot name</h2><p>You have selected a wrong plot</p>" )
+
+    def POST(self, plot):
         form = self.myform()
         if not form.validates(web.input(stems=[])):
-            print render.base( render.plot_time_series(form) )
+            print render.base( render.plots(form) )
         else:
             # selected_ids is a list of ids, while form returns strings
             selected_ids_strings = form['stems'].value
@@ -150,7 +158,8 @@ class plot_time_series:
             for id in selected_pages_strings: selected_pages.append(int(id))
 
             # pass data like a cgi: "/ids=[]&pages=[]"
-            html = '<h2> Time series plot</h2><img src="call_plottimeseries/%s">' % (
+            html = '<h2>%s</h2><img src="call_%s=%s">' % (
+              self.plots[plot], plot,
               "ids=%s&pages=%s" % ( str(selected_ids), str(selected_pages) ) )
             print render.base ( html )
 
@@ -192,8 +201,46 @@ class call_plottimeseries:
         web.header("Content-Type","image/png")
         print image_buffer
 
+class call_plotmultiscatter:
+    def GET(self, params):
+        # for some reason sql returns Decimal(10.0000)
+        Decimal = float
+        # convert something like "ids=[]&pages=[]" to a dict of params
+        params_list = params.split("&")
+        params_dict = {}
+        for param in params_list:
+            arg, value = param.split("=")
+            params_dict[arg] = list([int(x) for x in value[1:-1].split(",")])
+
+        # get values for selected stems
+        ids_list = (params_dict['ids'] and reduce(lambda x,y: str(x) + ", " + str(y), params_dict['ids'])) or ""
+        pages_list = (params_dict['pages'] and reduce(lambda x,y: str(x) + ", " + str(y), params_dict['pages'])) or ""
+        query_stems_count = '''SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
+                               FROM words a, int_words c, pages b
+                               WHERE a.id = c.id
+                                 AND a.page_id = b.id
+                                 AND a.id IN (%s) AND a.page_id IN (%s)
+                               GROUP BY a.id, c.name, date(a.scantime);''' % (ids_list, pages_list)
+        results = web.query(query_stems_count)
+        results_list = list(results)
+
+        dates_and_values = []
+        for id in params_dict['ids']:
+            current_id_stuff = filter(lambda x: x.id == id, results_list)
+            dates_id = []
+            values_id = []
+            for i, stuff in enumerate(current_id_stuff):
+                # dates are converted to numbers
+                dates_id.append(date2num(stuff['data']))
+                values_id.append(stuff['num'])
+            dates_and_values.append( ( "%d - %s" % (stuff['id'], stuff['name']), dates_id, values_id) )
+
+        image_buffer = plotmultiscatter(dates_and_values)
+        web.header("Content-Type","image/png")
+        print image_buffer
+
 if __name__ == "__main__":
-    web.config.db_parameters = dict(dbn='mysql', user='webuser', pw='test', db='bayesfortest')
+    web.config.db_parameters = dict(dbn='mysql', user='webuser', host='192.168.1.99', pw='test', db='bayesfortest')
 
     # uncomment if website.py runs as cgi with apache
     web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)

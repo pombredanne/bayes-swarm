@@ -25,6 +25,12 @@ td.tdbody{
 /*    color: #959595; */
 }
 
+div.footer{
+    text-align: center;
+    font: normal 10 px Tahoma, sans-serif, Verdana, Geneva, Arial, Helvetica;
+    color: #666666;
+}
+
 table.list td{
     vertical-align: top;
     font: normal 10px Tahoma, sans-serif, Verdana, Geneva, Arial, Helvetica;
