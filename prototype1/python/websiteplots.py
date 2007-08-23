@@ -6,6 +6,8 @@ import tempfile
 import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
+from matplotlib.dates import DateFormatter
+from pylab import xticks, num2date
 
 def plottimeseries(data):
     """ make a chart
@@ -45,6 +47,18 @@ def plottimeseries(data):
     #ax.set_xticklabels([1, 2]) #set these the same as x input into plot
     #ax.set_yticklabels([1, 2])
     #labels = ax.set_xticklabels(('2006-01-01', '2006-01-15', '2006-02-01', '2006-03-01'))
+
+    # return locs, labels where locs is an array of tick locations and
+    # labels is an array of tick labels.
+    locs = ax.get_xticks()
+    labels_date = []
+    for loc in locs:
+        labels_date.append(num2date(loc))
+    ax.set_xticklabels(labels_date)
+
+    yearsFmt = DateFormatter('%Y-%m-%d')
+    ax.xaxis.set_major_formatter(yearsFmt)
+
     canvas = FigureCanvasAgg(fig)
 
     #now let's handle the temp file stuff and print the output
