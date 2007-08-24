@@ -7,7 +7,7 @@ import matplotlib
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 from matplotlib.figure import Figure
 from matplotlib.dates import DateFormatter
-from pylab import xticks, num2date, subplot, plot
+from pylab import xticks, num2date, subplot, plot, hist
 
 def plottimeseries(data):
     """ make a chart
@@ -83,7 +83,7 @@ def plotmultiscatter(data):
     """
 
     params = {'backend': 'Agg',
-              'axes.titlesize': 8,
+              'axes.titlesize': 6,
               'axes.labelsize': 6,
               'axes.linewidth': 0.5,
               'text.fontsize': 6,
@@ -99,34 +99,65 @@ def plotmultiscatter(data):
     #ax = fig.add_axes([0.1, 0.1, 0.85, 0.8])
 
     n_vars = len(data)
+
     plot_num = 0
+    # plot_nums is a n*n matrix containing the subplot number for further use
+    plot_nums = []
+    for i in range(n_vars): plot_nums.append([0]*n_vars)
+    for i in range(n_vars):
+        for j in range(n_vars):
+            plot_num += 1
+            plot_nums[i][j] = plot_num
+
     for i, x_var in enumerate(data):
         (x_label, x_dates, x_values) = x_var
         for j, y_var in enumerate(data):
-            #if i!=j:
-            (y_label, y_dates, y_values) = y_var
-            plot_num += 1
-            scat = fig.add_subplot(n_vars, n_vars, plot_num)
+            if i<=j:
+                (y_label, y_dates, y_values) = y_var
 
-            # match only points wich belong to the same date
-            x_values_dict = {}
-            for i, date in enumerate(x_dates):
-                x_values_dict[date] = x_values[i]
+            if i<j:
+                # upper-right scatters
+                # match only points wich belong to the same date
+                x_values_dict = {}
+                for i_date, date in enumerate(x_dates):
+                    x_values_dict[date] = x_values[i_date]
 
-            y_values_dict = {}
-            for i, date in enumerate(y_dates):
-                y_values_dict[date] = y_values[i]
+                y_values_dict = {}
+                for i_date, date in enumerate(y_dates):
+                    y_values_dict[date] = y_values[i_date]
 
-            x_values_intersect, y_values_intersect = [], []
-            for date in y_values_dict:
-                if x_values_dict.has_key(date):
-                    x_values_intersect.append(x_values_dict[date])
-                    y_values_intersect.append(y_values_dict[date])
+                x_values_intersect, y_values_intersect = [], []
+                for date in y_values_dict:
+                    if x_values_dict.has_key(date):
+                        x_values_intersect.append(x_values_dict[date])
+                        y_values_intersect.append(y_values_dict[date])
 
-            scatter,  = scat.plot(x_values_intersect, y_values_intersect, 'o', markerfacecolor='g')
-            scat.set_xlabel(x_label)
-            scat.set_ylabel(y_label)
-            # no legenda, togli i ticks e tutto il resto
+                scat = fig.add_subplot(n_vars, n_vars, plot_nums[i][j])
+                scat.plot(y_values_intersect, x_values_intersect, 'o', markerfacecolor='b')
+                # print labels only if plot is on upper or left border
+                if (i==0): scat.set_title(y_label)
+                if (j==0): scat.set_ylabel(x_label)
+                scat.set_xticks([])
+                scat.set_yticks([])
+
+                # down-left scatters use same values but in reverse order
+                scat = fig.add_subplot(n_vars, n_vars, plot_nums[j][i])
+                scat.plot(x_values_intersect, y_values_intersect, 'o', markerfacecolor='b')
+                if (j==0): scat.set_title(x_label)
+                if (i==0): scat.set_ylabel(y_label)
+                scat.set_xticks([])
+                scat.set_yticks([])
+            elif i==j:
+                # diagonal -> histogram
+                scat = fig.add_subplot(n_vars, n_vars, plot_nums[i][j])
+                Decimal = float
+                scat.hist(x_values)
+                # set labels only for the upper left one
+                if i==0:
+                    scat.set_title(x_label)
+                    scat.set_ylabel(x_label)
+                scat.set_xticks([])
+                scat.set_yticks([])
 
     canvas = FigureCanvasAgg(fig)
 

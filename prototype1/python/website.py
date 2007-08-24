@@ -232,7 +232,7 @@ class call_plotmultiscatter:
             for i, stuff in enumerate(current_id_stuff):
                 # dates are converted to numbers
                 dates_id.append(date2num(stuff['data']))
-                values_id.append(stuff['num'])
+                values_id.append(float(stuff['num']))
             dates_and_values.append( ( "%d - %s" % (stuff['id'], stuff['name']), dates_id, values_id) )
 
         image_buffer = plotmultiscatter(dates_and_values)
@@ -240,7 +240,7 @@ class call_plotmultiscatter:
         print image_buffer
 
 if __name__ == "__main__":
-    web.config.db_parameters = dict(dbn='mysql', user='webuser', host='192.168.1.99', pw='test', db='bayesfortest')
+    web.config.db_parameters = dict(dbn='mysql', user='webuser', pw='test', db='bayesfortest')
 
     # uncomment if website.py runs as cgi with apache
     web.wsgi.runwsgi = lambda func, addr=None: web.wsgi.runfcgi(func, addr)
