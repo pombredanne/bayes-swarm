@@ -1,40 +1,19 @@
-#summary How to get started with the project and setup your pc
+#summary The starting point to learn more about the project
 #labels Phase-Deploy
 
-You need the following softwares and elements to get started on the project :
+== Environment Setup ==
+The first thing you need to do is to setup your pc to properly work with the project sources. You can follow the instructions described in EnvironmentSetup . 
 
-= Database =
-The database of choice is [http://www.mysql.com/ MySql] (version 5 or later).
+== Prototypes ==
+Once your pc is ready, you can start trying some of our prototypes. Here follows the list of available ones : 
 
-You may want to use some database management tool to work with it. We suggest [http://www.minq.se/products/dbvis/ DBVisualizer] , or [http://dev.mysql.com/downloads/gui-tools/5.0.html MySql GUI Tools] .
+  * PrototypeOne : the very first approach to page data extraction
+  * PrototypeTwo : an ETL structured way to data extraction. Browser-guidance techniques are involved in page content analysis.
 
-== Ubuntu ==
-{{{
-sudo apt-get install mysql-server-5.0 mysql-client-5.0
-}}}
+== Data Simulation ==
+The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
 
-= Extraction Engine =
-The engine which performs data extraction, initial analysis and database storage is written in [http://www.ruby-lang.org/en/ ruby]. 
-In addition to ruby, you may require some additional libraries, therefore you should also install the [http://rubygems.org/ rubygems] packaging system. 
+== Live demos ==
+You can try a live demo at http://kate.homeunix.net/bayesfor/website.py/
 
-The list of required libraries will be sorted out one day or another. For the moment refer to current prototype requirements , starting from PrototypeOne . 
-
-== Ubuntu ==
-ruby and its gems
-{{{
-sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems tidy
-sudo gem update --system
-sudo gem install --remote ferret --include-dependencies
-sudo gem install --remote tidy --include-dependencies
-}}}
-mysql ruby
-{{{
-sudo apt-get install libmysql-ruby1.8
-}}}
-rails
-{{{
-sudo apt-get install rails
-}}}
-
-= Analysis Engine =
-The language of choice is [http://www.r-project.org/ R], wich provides, among other nice things like time series and cluster analysis, [http://cran.r-project.org/src/contrib/Descriptions/RMySQL.html RMySQL] an interface to MySql databates.
+A note of *warning* : the demo is still rough and almost for internal-use only. Try not making damage to it, if you can. 
