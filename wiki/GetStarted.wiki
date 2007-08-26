@@ -1,5 +1,5 @@
 #summary The starting point to learn more about the project
-#labels Phase-Deploy
+#labels Phase-Deploy,Featured
 
 == Environment Setup ==
 The first thing you need to do is to setup your pc to properly work with the project sources. You can follow the instructions described in EnvironmentSetup . 
