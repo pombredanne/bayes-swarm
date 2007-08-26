@@ -14,6 +14,6 @@ Once your pc is ready, you can start trying some of our prototypes. Here follows
 The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
 
 == Live demos ==
-You can try a live demo at http://kate.homeunix.net/bayesfor/website.py/
+You can try a live demo at http://kate.homeunix.net/bayesfor/
 
 A note of *warning* : the demo is still rough and almost for internal-use only. Try not making damage to it, if you can. 
