@@ -46,9 +46,14 @@ and finally rails:
 sudo apt-get install rails
 }}}
 
+*warning*: add info on how to install R and how to install and setup python
+
 == Mac Os X ==
-You may follow this guide to set up your environment : 
+You may follow this guide to set up your ruby / mysql environment :
 http://hivelogic.com/narrative/articles/ruby-rails-mongrel-mysql-osx
 
+To install R, just use the official dmg provided at http://www.r-project.org/ . 
+
+*warning*: add info on how to install python (is the default version available with macosx sufficient?)
 == Windows ==
 *warning* : this section is still missing. 
