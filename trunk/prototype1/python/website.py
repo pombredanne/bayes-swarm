@@ -145,7 +145,7 @@ class plots:
 
     def POST(self, plot):
         form = self.myform()
-        if not form.validates(web.input(stems=[])):
+        if not form.validates(web.input(stems=[], pages=[])):
             print render.base( render.plots(form) )
         else:
             # selected_ids is a list of ids, while form returns strings
