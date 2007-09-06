@@ -23,6 +23,7 @@ urls = (
   '/int_words', 'int_words',
   '/addword', 'addword',
   '/most_5_words', 'most_5_words',
+  '/words_avg_count', 'words_avg_count',
   '/own_query', 'own_query',
   '/plots=(.*)', 'plots',
   '/call_plottimeseries=(.*)', 'call_plottimeseries',
@@ -81,6 +82,10 @@ class addword:
             web.insert('int_words', name=word)
             print render.base( render.addword(form) )
 
+#
+# Queries
+#
+
 class most_5_words:
     def GET(self):
         most_5_words_query = '''SELECT a.id, b.name, a.count, a.scantime, c.url
@@ -93,6 +98,15 @@ class most_5_words:
         res = web.query(most_5_words_query)
         print render.base( '<h2>most 5 popular words with page and date</h2>' + render.selectall(res) )
 
+class words_avg_count:
+    def GET(self):
+        words_avg_count_query = '''SELECT a.id, c.name, avg(a.count)
+                                   FROM words a, int_words c
+                                   WHERE a.id=c.id group by a.id, c.name
+                                   ORDER BY avg(a.count) desc;'''
+        res = web.query(words_avg_count_query)
+        print render.base( '<h2>Average count per word per day</h2>' + render.selectall(res) )
+
 class own_query:
     def GET(self):
         print render.base( render.own_query() )
@@ -101,6 +115,10 @@ class own_query:
         i = web.input()
         res = web.query(i.postarea)
         print render.base( '<h2>own query</h2>' + i.postarea + '<br><i>returned</i>' + render.selectall(res) )
+
+#
+# Plots
+#
 
 class plots:
     def __init__(self):
