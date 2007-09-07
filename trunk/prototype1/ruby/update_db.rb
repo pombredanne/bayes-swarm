@@ -4,7 +4,7 @@ require 'rss/1.0'
 require 'rss/2.0'
 require 'open-uri'
 require 'mysql'
-require 'updata_support'
+require 'update_support'
 
 sources = get_sources()
 i=0
