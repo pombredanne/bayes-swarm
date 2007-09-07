@@ -24,6 +24,7 @@ urls = (
   '/addword', 'addword',
   '/most_5_words', 'most_5_words',
   '/words_avg_count', 'words_avg_count',
+  '/hits_per_word', 'hits_per_word',
   '/own_query', 'own_query',
   '/plots=(.*)', 'plots',
   '/call_plottimeseries=(.*)', 'call_plottimeseries',
@@ -106,6 +107,22 @@ class words_avg_count:
                                    ORDER BY avg(a.count) desc;'''
         res = web.query(words_avg_count_query)
         print render.base( '<h2>Average count per word per day</h2>' + render.selectall(res) )
+
+class hits_per_word:
+    def GET(self):
+        hits_per_word_query = '''select id, name, count(*)
+                                 from (
+
+                                  SELECT a.id, c.name, date(a.scantime)
+                                 FROM words a, pages b, int_words c
+                                 WHERE a.page_id=b.id and a.id = c.id
+                                 group by a.id,c.name, date(a.scantime)
+
+                                 ) as a
+                                 group by id,name
+                                 order by count(*) desc;'''
+        res = web.query(hits_per_word_query)
+        print render.base( '<h2>Number of hits per word</h2>' + render.selectall(res) )
 
 class own_query:
     def GET(self):
