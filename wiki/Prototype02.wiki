@@ -1,0 +1,26 @@
+#labels Phase-Implementation,Phase-Design
+#How To Use
+
+= Instructions =
+
+Before running version .2:
+   * build a new database using schema_new.db ( you find it in the db directory ).
+      The new db will be called "bayesfor". Eventually add some words to the "int_words" table.
+   * run just once "load_source.rb". This will uplaod the table "SOURCES" of the db.
+
+To run version .2 :
+   * ruby wrapper.py
+
+= Description =
+
+   * check the news from sources ( 5 italian newspapers )
+   * for every new link, add it to the "PAGES" table with flag 0
+   * read every link from "PAGES"
+         * if flag == 0, run swarm and change flag to 1
+         * if flag == 1, passn
+
+= Note =
+
+   * version .2 add every article link to the tables "PAGES" of the db that may become huge after a while...
+     
+
