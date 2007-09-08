@@ -3,7 +3,7 @@ require 'rss/2.0'
 require 'open-uri'
 require 'mysql'
 
-dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfor")
 sou = dbh.prepare "INSERT INTO sources ( name ) values ( ? )"
 
 sources = Array.new

@@ -60,7 +60,7 @@ def count_stems(stems, int_stems = nil)
 end
 
 def get_interesting_stems()
-  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfor")
   res = dbh.query("SELECT id, name FROM int_words")
 
   #puts "Interesting stems are:"
@@ -76,26 +76,30 @@ def get_interesting_stems()
 end
 
 def get_pages()
-  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
-  res = dbh.query("SELECT id, url FROM pages")
-
+  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfor")
+  res = dbh.query("SELECT id, url, flag FROM pages")
+  chk = dbh.prepare "UPDATE pages SET flag = 1 where id = ? "
   #puts "Pages are:"
   pages = Array.new
   while row = res.fetch_row do
     id = row[0]
     url = row[1]
-    #printf "%s, %s\n", id, url
-    pages << Page.new(id, url)
+    flag = row[2]
+    if flag == "0"
+      #printf "%s, %s\n", id, url
+       pages << Page.new(id, url)
+       chk.execute id
+    end
   end
 
   pages
 end
 
 def insert_stems_into_db(stems, page_id)
-  #GRANT ALL ON bayesfortest.* TO 'testuser'@'localhost' IDENTIFIED BY 'test';
-  #GRANT SELECT, INSERT ON bayesfortest.* TO 'webuser'@'localhost' IDENTIFIED BY 'test';
+  #GRANT ALL ON bayesfor.* TO 'testuser'@'localhost' IDENTIFIED BY 'test';
+  #GRANT SELECT, INSERT ON bayesfor.* TO 'webuser'@'localhost' IDENTIFIED BY 'test';
 
-  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfor")
 
   #insert into sources (name) values ("news.google.com");
   #insert into pages (source_id, url) values (1, 'http://news.google.com');

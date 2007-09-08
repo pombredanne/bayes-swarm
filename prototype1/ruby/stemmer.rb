@@ -23,6 +23,6 @@ class StopAndStemAnalyzer < Ferret::Analysis::Analyzer
   include Ferret::Analysis
   
   def token_stream(field, str)
-    return StemFilter.new(StopFilter.new(LowerCaseFilter.new(StandardTokenizer.new(str)),Ferret::Analysis::EXTENDED_ENGLISH_STOP_WORDS))
+    return StemFilter.new(StopFilter.new(LowerCaseFilter.new(StandardTokenizer.new(str)),Ferret::Analysis::FULL_ITALIAN_STOP_WORDS))
   end
 end
