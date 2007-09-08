@@ -1,0 +1,12 @@
+    <h2>Insert your own query</h2>
+
+    <i>examples</i><br>
+    <pre>SELECT * FROM words;</pre>
+    <pre>SELECT a.id, c.name, a.count, a.scantime, b.source_id, b.url
+    FROM words a, pages b, int_words c
+    WHERE a.page_id=b.id and a.id = c.id;</pre>
+
+    <form action="./own_query" method="post">
+    <textarea id="postarea" name="postarea" cols="80" rows="20">SELECT * FROM words;</textarea><br />
+    <input type="submit" name="post_submit" value="Go!" />
+    </form>

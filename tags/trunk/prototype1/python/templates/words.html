@@ -1,0 +1,22 @@
+$def with (words)
+    <h2>list of stems found on these <a href='pages'>pages</a> wich belong to this <a href='sources'>sources</a></h2>
+    <table class="list">
+        <tr>
+            <td>id</td>
+            <td>name</td>
+            <td>page_id</td>
+            <td>scantime</td>
+            <td>count</td>
+            <td>titlecount</td>
+            <td>weight</td>
+        </tr>
+    $for word in words:
+        <tr>
+            <td>$word.id</td>
+            <td>$word.name</td>
+            <td>$word.page_id</td>
+            <td>$word.scantime</td>
+            <td>$word.count</td>
+            <td>$word.titlecount</td>
+            <td>$word.weight</td>
+        </tr>
