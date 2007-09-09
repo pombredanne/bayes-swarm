@@ -1,16 +1,10 @@
-drop database bayesfor ;
-
-drop table if exists associations;
-drop table if exists int_words;
-drop table if exists words;
-drop table if exists pages;
-drop table if exists sources;
+drop database if exists bayesfor;
 
 create database bayesfor ;
 GRANT ALL ON bayesfor.* TO 'testuser'@'localhost' IDENTIFIED BY 'test' ;
 GRANT SELECT, INSERT ON bayesfor.* TO 'webuser'@'localhost' IDENTIFIED BY 'test' ;
-	
-use  bayesfor ; 
+    
+use bayesfor ; 
 
 CREATE
     TABLE sources
@@ -27,7 +21,7 @@ CREATE
         id int(11) NOT NULL AUTO_INCREMENT,
         source_id int(11) NOT NULL,
         url varchar(255) NOT NULL,
-	    flag int(1) NOT NULL,
+        flag int(1) NOT NULL,
         PRIMARY KEY USING BTREE(id),
         constraint fk_page_source foreign key(source_id) references sources(id)
     )
@@ -75,6 +69,6 @@ CREATE
     ENGINE=InnoDB;
 
 INSERT INTO int_words (name) values ('china'),('india'),('iraq'),('terror'),
-	('mussulm'),('islam'),('bomb'),('bush'),('you-tube'),('italy'),('porn') ,
-	('berlusconi'),('prodi'),('veltron'),('calcio'),('ferrari'),('guerra'),('mafia') ;
-	
+    ('mussulm'),('islam'),('bomb'),('bush'),('you-tube'),('italy'),('porn') ,
+    ('berlusconi'),('prodi'),('veltron'),('calcio'),('ferrari'),('guerra'),('mafia') ;
+    
