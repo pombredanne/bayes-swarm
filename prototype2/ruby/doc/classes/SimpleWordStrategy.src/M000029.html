@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>insert (SimpleWordStrategy)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File etl/mysql.rb, line 171</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">insert</span>(<span class="ruby-identifier">source_id</span>,<span class="ruby-identifier">page_id</span>,<span class="ruby-identifier">scantime</span>,<span class="ruby-identifier">word</span>)
+    <span class="ruby-ivar">@page_id</span> , <span class="ruby-ivar">@scantime</span> , <span class="ruby-ivar">@word</span> = <span class="ruby-identifier">page_id</span>, <span class="ruby-identifier">scantime</span>, <span class="ruby-identifier">word</span>
+
+    <span class="ruby-identifier">insert_if_needed</span>
+    
+    <span class="ruby-keyword kw">case</span> <span class="ruby-identifier">word</span>.<span class="ruby-identifier">position</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;global&quot;</span>
+      <span class="ruby-identifier">update</span> <span class="ruby-value str">&quot;count&quot;</span>
+    <span class="ruby-keyword kw">when</span> <span class="ruby-value str">&quot;title&quot;</span>
+      <span class="ruby-identifier">update</span> <span class="ruby-value str">&quot;titlecount&quot;</span>
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-node">&quot;Unrecognized word position #{word.position} for word #{word.word} and page #{page_id}&quot;</span>
+    <span class="ruby-keyword kw">end</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>
