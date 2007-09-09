@@ -3,8 +3,8 @@ require 'rss/2.0'
 require 'open-uri'
 require 'mysql'
 
-dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfor")
-sou = dbh.prepare "INSERT INTO sources ( name ) values ( ? )"
+dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+sou = dbh.prepare "INSERT INTO sources ( name, language ) values ( ? , ?)"
 
 sources = Array.new
 sources[0]="http://www.corriere.it/rss/homepage.xml"
@@ -15,7 +15,7 @@ sources[4]="http://www.gazzetta.it/rss/Home.xml"
 
 
 sources.each do | source |
-   sou.execute source
+   sou.execute source, 'ita'
 end
 
 

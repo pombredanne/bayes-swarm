@@ -1,4 +1,18 @@
 require "mysql"
+require 'rss/1.0'
+require 'rss/2.0'
+require 'open-uri'
+
+
+class Source
+  attr_accessor :id , :name, :lang
+
+  def initialize(id, name, lang)
+    @id = id
+    @name = name
+    @lang = lang
+  end
+end
 
 class StemCount
   attr_accessor :stem , :count
@@ -124,22 +138,20 @@ end
 
 def get_pages()
   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
-  #res = dbh.query("SELECT id, url, flag FROM pages")
-  res = dbh.query("SELECT id, url, language FROM pages")
-  #chk = dbh.prepare "UPDATE pages SET flag = 1 where id = ? "
+  res = dbh.query("SELECT id, url, language, flag FROM pages")
+  chk = dbh.prepare "UPDATE pages SET flag = 1 where id = ? "
 
   pages = Array.new
   while row = res.fetch_row do
     id = row[0]
     url = row[1]
     language = row[2]
-    pages << Page.new(id, url, language)
-#    flag = row[2]
-#    if flag == "0"
-#      #printf "%s, %s\n", id, url
-#       pages << Page.new(id, url)
-#       chk.execute id
-#    end
+    flag = row[3]
+     if flag == "0"
+       #printf "%s, %s\n", id, url
+        pages << Page.new(id, url, language)
+        chk.execute id
+     end
   end
 
   pages
@@ -154,4 +166,52 @@ def insert_stems_into_db(stems, page_id, language)
   end
 
   res.close
+end
+
+
+def load_pages(s_id, source, s_language)
+
+   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+
+   content = "" # raw content of rss feed will be loaded here
+   open(source) do |s| content = s.read end
+   rss = RSS::Parser.parse(content, false)
+
+   puts "Root values"
+   print "RSS title: ", rss.channel.title, "\n"
+   print "RSS link: ", rss.channel.link, "\n"
+   print "RSS description: ", rss.channel.description, "\n"
+   print "RSS publication date: ", rss.channel.date, "\n"
+
+   count = 0
+
+   res = dbh.prepare "INSERT INTO pages ( source_id, url, language ) VALUES ( ?, ?, ?)"
+   chk = dbh.prepare "SELECT id FROM pages WHERE url = ? "
+   rss.items.size.times do
+       page   = rss.items[count].link
+       hold   = chk.execute page
+       hold   = hold.fetch
+       if hold == nil 
+          print page, "\n"
+          count +=1
+          print page
+          res.execute s_id , page, s_language
+       end
+   end
+   res.close
+   chk.close
+end
+
+def get_sources()
+
+    dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+    sou = dbh.query("SELECT id, name, language FROM sources")
+    sources = Array.new
+    while row = sou.fetch_row do
+        id = row[0]
+        name = row[1]
+        lang = row[2]
+        sources << Source.new(id,name,lang)
+     end
+    sources
 end
