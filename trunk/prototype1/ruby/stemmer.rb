@@ -4,9 +4,12 @@ require 'ferret'
 
 class FerretStemmer
   
-  def stem(content)
+  def stem(content, lang)
+    langs = {'ita' => Ferret::Analysis::FULL_ITALIAN_STOP_WORDS,
+             'eng' => Ferret::Analysis::EXTENDED_ENGLISH_STOP_WORDS}
+  
     analyzer = StopAndStemAnalyzer.new
-    stream = analyzer.token_stream(nil,content)
+    stream = analyzer.token_stream(nil, content, langs[lang])
     token = stream.next
     res = []
     until token.nil?
@@ -22,7 +25,7 @@ end
 class StopAndStemAnalyzer < Ferret::Analysis::Analyzer
   include Ferret::Analysis
   
-  def token_stream(field, str)
-    return StemFilter.new(StopFilter.new(LowerCaseFilter.new(StandardTokenizer.new(str)),Ferret::Analysis::FULL_ITALIAN_STOP_WORDS))
+  def token_stream(field, str, lang)
+    return StemFilter.new(StopFilter.new(LowerCaseFilter.new(StandardTokenizer.new(str)), lang))
   end
 end

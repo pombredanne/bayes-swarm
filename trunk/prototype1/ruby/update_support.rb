@@ -5,7 +5,7 @@ require 'mysql'
 
 def load_pages(s_id, source)
 
-   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfor")
+   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
 
    content = "" # raw content of rss feed will be loaded here
    open(source) do |s| content = s.read end
