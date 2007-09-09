@@ -1,0 +1,21 @@
+globals:
+    :savepoint: false
+
+root:
+    block0: ChainETL,extract
+    block1: ChainETL,transform
+    block2: ChainETL,load
+
+extract:
+    block0: TestETL
+
+transform:
+
+load:
+    block0: MysqlLoader,mysql
+    
+mysql:
+    host:   localhost
+    user:   root
+    pass:   
+    db:     swarm_development
