@@ -33,7 +33,9 @@ urls = (
 
 class index:
     def GET(self):
-        print render.base("")
+        data = {'n_int_words': web.query('SELECT count(*) AS n_int_words FROM int_words;')[0]['n_int_words'],
+                'n_words': web.query('SELECT count(*) AS n_words FROM words;')[0]['n_words']}
+        print render.base( render.homepage( data ) )
 
 class words:
     def GET(self):
