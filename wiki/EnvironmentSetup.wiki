@@ -13,6 +13,9 @@ You may want to use some database management tool to work with it. We suggest [h
 The engine which performs data extraction, initial analysis and database storage is written in [http://www.ruby-lang.org/en/ ruby]. 
 In addition to ruby, you may require some additional libraries, therefore you should also install the [http://rubygems.org/ rubygems] packaging system. 
 
+A good introduction to ruby is Rolling with Ruby on Rails (revisited)
+http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html
+
 The list of required libraries will be sorted out one day or another. For the moment refer to current prototype requirements , starting from PrototypeOne .
 
 == Analysis Engine ==
