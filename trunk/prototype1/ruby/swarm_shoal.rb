@@ -10,25 +10,25 @@ require 'mysql'
 
 
 notidy = true
-sourcetype = :url
+articleType = :url
 
-sources = get_sources()
+pages = get_pages()
 i=0
-sources.length.times do
-     id   = sources[i].id
-     name = sources[i].name   
-     lang = sources[i].lang
-     load_pages(id,name,lang)
+pages.length.times do
+     id   = pages[i].id
+     name = pages[i].name   
+     lang = pages[i].lang
+     load_articles(id,name,lang)
      i += 1
 end
 
-pages = get_pages()
+articles = get_articles()
 
 
-for page in pages
-    interesting_stems = get_interesting_stems(page.language)
-    counted_stems = swarm_extract(page.url, sourcetype, page.language,notidy, interesting_stems)
+for article in articles
+    interesting_stems = get_interesting_stems(article.language)
+    counted_stems = swarm_extract(article.url, articleType, article.language,notidy, interesting_stems)
     if ( counted_stems != nil )
-      insert_stems_into_db(counted_stems, page.id,page.language)
+      insert_stems_into_db(counted_stems, article.id,article.language)
     end
 end
