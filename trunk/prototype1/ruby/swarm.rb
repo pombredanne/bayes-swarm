@@ -19,10 +19,10 @@ if __FILE__ == $0
       opts.banner = "Usage: example.rb [options] FILE
 Usage: example.rb [options] URL"
 
-      opts.on("-s", "--sourcetype SOURCETYPE", [:url, :file], "Type of source to be extracted {url|file}.") do |s|
+      opts.on("-s", "--sourcetype SOURCETYPE", [:url, :file, :rss], "Type of source to be extracted {url|rss|file}.") do |s|
         options.sourcetype = s
       end
-      opts.on("-l", "--language LANGUAGE", "Language of the source") do |l|
+      opts.on("-l", "--language LANGUAGE", [:eng, :ita], "Language of the source") do |l|
         options.language = l
       end      
       opts.on("--no-tidy") do |s|

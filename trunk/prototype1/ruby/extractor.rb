@@ -1,4 +1,7 @@
 require "net/http"
+require 'rss/1.0'
+require 'rss/2.0'
+require 'open-uri'
 
 class HttpExtractor
   
@@ -19,6 +22,24 @@ class HttpExtractor
     else
       response.error!
     end
+  end
+  
+end
+
+class RssExtractor
+
+  def extract(rss_page)
+    rss_content = "" # raw content of rss feed will be loaded here
+    open(rss_page) do |s| rss_content = s.read end
+    rss = RSS::Parser.parse(rss_content, false)
+
+    rss_full_content = "" # collects content from all articles
+    rss.items.each do |item|
+       article_url = item.link
+       extractor = HttpExtractor.new
+       rss_full_content += extractor.extract(article_url)
+    end
+    return rss_full_content
   end
   
 end
