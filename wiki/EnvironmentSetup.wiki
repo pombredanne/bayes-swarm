@@ -31,6 +31,15 @@ Install mysql with apt-get:
 sudo apt-get install mysql-server-5.0 mysql-client-5.0
 }}}
 
+if want to have locally the full database, just download [http://kate.homeunix.net/~matteo/bayesfor/prototype1.sql prototype1.sql] and execute:
+
+{{{
+$ sudo mysql -p
+mysql> create database bayesfortest;
+mysql> use bayesfortest;
+mysql> source /home/matteo/Desktop/prototype1.sql
+}}}
+
 === Ruby ===
 Install ruby, rubygems and the required gems (the list shown below is incomplete):
  
