@@ -25,12 +25,14 @@ The language of choice is [http://www.r-project.org/ R], wich provides, among ot
 
 == Linux: Ubuntu ==
 
+=== MySql ===
 Install mysql with apt-get:
 {{{
 sudo apt-get install mysql-server-5.0 mysql-client-5.0
 }}}
 
-then install ruby, rubygems and the required gems (the list shown below is incomplete):
+=== Ruby ===
+Install ruby, rubygems and the required gems (the list shown below is incomplete):
  
 {{{
 sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems tidy
@@ -44,12 +46,21 @@ mysql/ruby bindings :
 sudo apt-get install libmysql-ruby1.8
 }}}
 
-and finally rails:
+=== R ===
 {{{
-sudo apt-get install rails
+sudo apt-get install r-base
 }}}
 
-*warning*: add info on how to install R and how to install and setup python
+*warning*: you need to use R commands to install RMySql package (http://cran.r-project.org/src/contrib/Descriptions/RMySQL.html)
+
+=== Python ===
+Ubuntu comes with python preinstalled, make sure you have a recent version (2.5)
+
+{{{
+sudo apt-get install python-flup python-webpy
+}}}
+
+Make sure you have weby version >= 0.210. Python dependencies are met with standard Ubuntu repositories as of Gutsy (Ubuntu 7.10)
 
 == Mac Os X ==
 You may follow this guide to set up your ruby / mysql environment :
