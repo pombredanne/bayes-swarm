@@ -16,4 +16,4 @@ The TestSupport page describes the available resources to simulate data, instead
 == Live demos ==
 You can try a live demo at http://kate.homeunix.net/bayesfor/
 
-A note of *warning* : the demo is still rough and almost for internal-use only. Try not making damage to it, if you can. 
+A note of *warning* : the demo is still rough and almost for internal-use only.
