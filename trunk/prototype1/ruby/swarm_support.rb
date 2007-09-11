@@ -1,18 +1,4 @@
 require "mysql"
-require 'rss/1.0'
-require 'rss/2.0'
-require 'open-uri'
-
-
-class Page
-  attr_accessor :id , :name, :lang
-
-  def initialize(id, name, lang)
-    @id = id
-    @name = name
-    @lang = lang
-  end
-end
 
 class StemCount
   attr_accessor :stem , :count
@@ -33,7 +19,7 @@ class StemCountId
   end
 end
 
-class Article
+class Page
   attr_accessor :id, :url, :language
 
   def initialize(id, url, language)
@@ -136,82 +122,36 @@ def get_interesting_stems(language)
   res2
 end
 
-def get_articles()
+def get_pages()
   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
-  res = dbh.query("SELECT id, url, language, flg_visited FROM articles")
-  chk = dbh.prepare "UPDATE articles SET flg_visited = 1 where id = ? "
+  #res = dbh.query("SELECT id, url, flag FROM pages")
+  res = dbh.query("SELECT id, url, language FROM pages")
+  #chk = dbh.prepare "UPDATE pages SET flag = 1 where id = ? "
 
-  articles = Array.new
+  pages = Array.new
   while row = res.fetch_row do
     id = row[0]
     url = row[1]
     language = row[2]
-    flg_visited = row[3]
-     if flg_visited == "0"
-       #printf "%s, %s\n", id, url
-        articles << Article.new(id, url, language)
-        chk.execute id
-     end
+    pages << Page.new(id, url, language)
+#    flag = row[2]
+#    if flag == "0"
+#      #printf "%s, %s\n", id, url
+#       pages << Page.new(id, url)
+#       chk.execute id
+#    end
   end
 
-  articles
+  pages
 end
 
-def insert_stems_into_db(stems, article_id, language)
+def insert_stems_into_db(stems, page_id)
   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
 
-  res = dbh.prepare "INSERT INTO words (id, article_id, scantime, count, language) VALUES (?, ?, ?, ?, ?)"
+  res = dbh.prepare "INSERT INTO words (id, page_id, scantime, count) VALUES (?, ?, ?, ?)"
   stems.each do |stem|
-    res.execute stem.id, article_id, Time.now, stem.count, language
+    res.execute stem.id, page_id, Time.now, stem.count
   end
 
   res.close
-end
-
-
-def load_articles(p_id, page, p_language)
-
-   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
-
-   content = "" # raw content of rss feed will be loaded here
-   open(page) do |s| content = s.read end
-   rss = RSS::Parser.parse(content, false)
-
-   puts "Root values"
-   print "RSS title: ", rss.channel.title, "\n"
-   print "RSS link: ", rss.channel.link, "\n"
-   print "RSS description: ", rss.channel.description, "\n"
-   print "RSS publication date: ", rss.channel.date, "\n"
-
-   count = 0
-
-   res = dbh.prepare "INSERT INTO articles ( page_id, url, language ) VALUES ( ?, ?, ?)"
-   chk = dbh.prepare "SELECT id FROM articles WHERE url = ? "
-   rss.items.size.times do
-       article   = rss.items[count].link
-       hold   = chk.execute article
-       hold   = hold.fetch
-       if hold == nil 
-          print article, "\n"
-          count +=1
-          print article
-          res.execute p_id , article, p_language
-       end
-   end
-   res.close
-   chk.close
-end
-
-def get_pages()
-
-    dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
-    pag = dbh.query("SELECT id, url, language FROM pages")
-    pages = Array.new
-    while row = pag.fetch_row do
-        id = row[0]
-        name = row[1]
-        lang = row[2]
-        pages << Page.new(id,name,lang)
-     end
-    pages
 end
