@@ -5,8 +5,8 @@ require 'ferret'
 class FerretStemmer
   
   def stem(content, lang)
-    langs = {'ita' => Ferret::Analysis::FULL_ITALIAN_STOP_WORDS,
-             'eng' => Ferret::Analysis::EXTENDED_ENGLISH_STOP_WORDS}
+    langs = {:ita => Ferret::Analysis::FULL_ITALIAN_STOP_WORDS,
+             :eng => Ferret::Analysis::EXTENDED_ENGLISH_STOP_WORDS}
   
     analyzer = StopAndStemAnalyzer.new
     stream = analyzer.token_stream(nil, content, langs[lang])

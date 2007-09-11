@@ -20,21 +20,25 @@ class StemCountId
 end
 
 class Page
-  attr_accessor :id, :url, :language
+  attr_accessor :id, :url, :language, :type, :last_scantime
 
-  def initialize(id, url, language)
+  def initialize(id, url, language, type, last_scantime)
     @id = id
     @url = url
     @language = language
+    @type = type
+    @last_scantime = last_scantime
   end
 end
 
-def swarm_extract(source, sourcetype, language='eng', notidy=true, interesting_stems=nil)
+def swarm_extract(source, sourcetype, language, notidy=true, interesting_stems=nil)
     # Components setup
     if (sourcetype == :url)
       extractor = HttpExtractor.new
-    else
+    elsif (sourcetype == :file)
       extractor = FileExtractor.new
+    elsif (sourcetype == :rss)
+      extractor = RssExtractor.new
     end
     cleaner = HtmlTidy.new
     stemmer = FerretStemmer.new
@@ -124,16 +128,16 @@ end
 
 def get_pages()
   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
-  #res = dbh.query("SELECT id, url, flag FROM pages")
-  res = dbh.query("SELECT id, url, language FROM pages")
-  #chk = dbh.prepare "UPDATE pages SET flag = 1 where id = ? "
+  res = dbh.query("SELECT id, url, language, type, last_scantime FROM pages")
 
   pages = Array.new
   while row = res.fetch_row do
     id = row[0]
     url = row[1]
     language = row[2]
-    pages << Page.new(id, url, language)
+    type = row[3]
+    last_scantime = row[4]
+    pages << Page.new(id, url, language, type, last_scantime)
 #    flag = row[2]
 #    if flag == "0"
 #      #printf "%s, %s\n", id, url
