@@ -36,15 +36,18 @@ However for the application we consider, we are really interested only
 on the filtering density p( w_t | y_t ), this because we only want
 to predict the behavior of our observation at a specific time.
 
-This filtering density is estimate in two stages:
-  * prediction : p ( w_t | w_{t-1} )
-  * update     : p ( w_t | y_k     )
+This filtering density is estimate in two stages: prediction and update.
+{{{
 
+   p ( w_t | w_{t-1} )   # prediction
+   p ( w_t | y_k     )   # update
+}}}
+ 
 
 The bayes rule is use to solve the update stage:
 {{{
     p( w_t | y_k ) = p ( y_t | w_t ) p ( w_k | Y_{t-1} ) /
-                             p( y_t | Y_{t-1} 
+                             p( y_t | Y_{t-1} )
 }}}
 
 
@@ -70,20 +73,3 @@ The green line is the observed value.
 
 
  
-
-
-
-
-
-
-
-
-
-
-
-
-
-Add your content here.  Format your content with:
-  * Text in *bold* or _italic_
-  * Headings, paragraphs, and lists
-  * Automatic links to other wiki pages
