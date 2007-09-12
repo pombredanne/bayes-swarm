@@ -23,7 +23,7 @@ mlpratios <- function ( xu,input,y,s1,s2,R)
       q          = array ( 0, dim=c(numsamples,1))
       m          = array ( 0, dim=c(numsamples,1))
 
-      for ( i in 1:numsamples ) {
+      for ( s in 1:numsamples ) {
              m[s,1] = mlp ( input, xu[s,], s1, s2 )
              q[s,1] = exp (-.5*solve(R)%*%(y- m[s,1])^(2))
       }
