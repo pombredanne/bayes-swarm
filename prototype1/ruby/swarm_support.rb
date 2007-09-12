@@ -83,7 +83,7 @@ def count_stems(stems, int_stems)
       res << Stem.new(s, c, nil) unless s.length <= 2 || s =~ /\d+/
     else
       if (int_stems.has_key?(s))
-        res << Stem.new(s, c, int_stem[s])
+        res << Stem.new(s, c, int_stems[s])
       end
     end
   end
