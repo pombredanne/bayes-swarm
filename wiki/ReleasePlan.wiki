@@ -1,0 +1,31 @@
+#summary The sequence of past and future releases
+
+This page contains the release plan and history of past releases for the project.
+
+= Release 0.1 =
+*status* : currently deployed at http://kate.homeunix.net/bayesfor/
+*associated issues* : [http://code.google.com/p/bayes-swarm/issues/list?can=1&q=label%3ARelease-0.1 issue list]
+
+This is the first prototype of the project. See PrototypeOne for further info
+
+= Release 0.1.1 =
+*status* : work in progress
+*associated issues* : [http://code.google.com/p/bayes-swarm/issues/list?can=1&q=label%3ARelease-0.1.1 issue list]
+
+Main features :
+  * multi-language support
+
+= Release 0.2 =
+*status* : work in progress
+*associated issues* : [http://code.google.com/p/bayes-swarm/issues/list?can=1&q=label%3ARelease-0.2 issue list]
+
+Main features :
+  * support for RSS feeds
+  * article storage
+
+= Release 0.3 =
+*status* : planned
+*associated issues* : [http://code.google.com/p/bayes-swarm/issues/list?can=1&q=label%3ARelease-0.3 issue list]
+
+Main features :
+  * adoption of PrototypeTwo
