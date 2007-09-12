@@ -1,15 +1,6 @@
 require "mysql"
 
-class StemCount
-  attr_accessor :stem , :count
-
-  def initialize(stem, count)
-    @stem = stem
-    @count = count
-  end
-end
-
-class StemCountId
+class Stem
   attr_accessor :stem , :count, :id
 
   def initialize(stem, count, id)
@@ -77,53 +68,47 @@ def swarm_extract(source, sourcetype, language, notidy=true, interesting_stems=n
 
 end
 
-def count_stems(stems, int_stems = nil)
+def count_stems(stems, int_stems)
   stem_count = Hash.new
   stems.each do |stem|
     stem_count[stem] ||= 0
     stem_count[stem] += 1
   end
-
+  
   res = Array.new
   stem_count.each do |s,c|
-    res << StemCount.new(s,c) unless s.length <= 2 || s =~ /\d+/
-  end
-
-  # check if it is among interesting stems
-  # skip if int_stems is nil
-  if int_stems != nil
-    res2 = Array.new
-    res.each do |stem|
-      int_stems.each do |int_stem|
-        if stem.stem == int_stem.stem
-          res2 << StemCountId.new(stem.stem, stem.count, int_stem.id)
-        end
+    # check if it is among interesting stems
+    # only if int_stems is provided
+    if int_stems == nil
+      res << Stem.new(s, c, nil) unless s.length <= 2 || s =~ /\d+/
+    else
+      if (int_stems.has_key?(s))
+        res << Stem.new(s, c, int_stem[s])
       end
     end
-  else
-    res2 = res
   end
 
-  res2 = res2.sort_by { |sc| sc.count }.reverse
-  res2
+  sorted_res = res.sort_by { |sc| sc.count }.reverse
 end
 
 def get_interesting_stems(language)
+  # gets the list of interesting stems from db togher with their id
+  # and returns a name=>id hash
   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
   query = dbh.prepare("SELECT id, name FROM int_words WHERE language = ?")
   query.execute language
 
   #puts "Interesting stems are:" #debug
-  res2 = Array.new
+  res = Hash.new
   query.each do |row|
     id = row[0]
     name = row[1]
     #printf "%s, %s\n", id, name #debug
-    res2 << StemCountId.new(name, 0, id)
+    res[name] = id
   end
   query.close
 
-  res2
+  res
 end
 
 def get_pages()
