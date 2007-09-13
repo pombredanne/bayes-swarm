@@ -46,7 +46,9 @@ Usage: example.rb [options] URL"
     if ARGV[0] != nil
         source = ARGV[0]
 
-        stems = swarm_extract(source, options.sourcetype, options.language, options.notidy)
+        page = Page.new(nil, source, options.language, options.sourcetype, nil)
+
+        stems = swarm_extract(page, options.notidy)
     else
       puts "Error: no source specified", "Example: ./swarm.rb --no-tidy http://news.google.com", "", opts
       exit

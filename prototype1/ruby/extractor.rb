@@ -5,8 +5,8 @@ require 'open-uri'
 
 class HttpExtractor
   
-  def extract(url)
-   response = extract_with_redirect(url)
+  def extract(page)
+   response = extract_with_redirect(page.url)
    response.body
   end
   
@@ -30,14 +30,24 @@ class RssExtractor
 
   def extract(rss_page)
     rss_content = "" # raw content of rss feed will be loaded here
-    open(rss_page) do |s| rss_content = s.read end
+    open(rss_page.url) do |s| rss_content = s.read end
     rss = RSS::Parser.parse(rss_content, false)
 
     rss_full_content = "" # collects content from all articles
     rss.items.each do |item|
-       article_url = item.link
-       extractor = HttpExtractor.new
-       rss_full_content += extractor.extract(article_url)
+      begin
+        last_scantime = Time.parse(rss_page.last_scantime)
+      rescue TypeError
+        # handle rss_page.last_scantime = nil (swarm.rb)
+        last_scantime = Time.parse('2000-01-01 00:00:00')
+      end
+      
+      # FIXME: item.date might be nil
+      if (item.date > last_scantime)
+        article_url = item.link
+        extractor = HttpExtractor.new
+        rss_full_content += extractor.extract_with_redirect(article_url).body
+      end
     end
     return rss_full_content
   end
@@ -46,9 +56,9 @@ end
 
 class FileExtractor
   
-  def extract(filename)
+  def extract(page)
     content = ""
-    File.open(filename) do |file| 
+    File.open(page.url) do |file| 
       while line = file.gets 
         content << " " << line 
       end 
