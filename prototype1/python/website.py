@@ -142,17 +142,17 @@ class own_query:
 class plots:
     def __init__(self):
         # find stems to be included in the dropdown list
-        results = web.query('''SELECT DISTINCT a.id, b.name as stem
-                           FROM words a, int_words b
-                           WHERE a.id=b.id;''')
-
+        results = web.query('''SELECT DISTINCT id, name as stem
+                               FROM int_words
+                               WHERE id in (SELECT id from words);''')
         selectable_stems = []
         for result in results:
             selectable_stems.append( ( result.id, result.stem) )
 
         # find pages to be included in the dropdown list
-        results = web.query('''SELECT id, url
-                           FROM pages''')
+        results = web.query('''SELECT DISTINCT id, url
+                               FROM pages
+                               WHERE id in (SELECT page_id as id FROM words);''')
 
         selectable_pages = []
         for result in results:
