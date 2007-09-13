@@ -22,20 +22,21 @@ class Page
   end
 end
 
-def swarm_extract(source, sourcetype, language, notidy=true, interesting_stems=nil)
+def swarm_extract(page, notidy=true, interesting_stems=nil)
     # Components setup
-    if (sourcetype == :url)
+    if (page.type == :url)
       extractor = HttpExtractor.new
-    elsif (sourcetype == :file)
+    elsif (page.type == :file)
       extractor = FileExtractor.new
-    elsif (sourcetype == :rss)
+    elsif (page.type == :rss)
       extractor = RssExtractor.new
     end
     cleaner = HtmlTidy.new
     stemmer = FerretStemmer.new
 
     # Get the work done
-    content = extractor.extract(source)
+    content = extractor.extract(page)
+    update_page_last_scantime(page, Time.now())
     if (notidy == true)
       clean_content = cleaner.strip_tags_and_entities(content)
     else
@@ -43,7 +44,7 @@ def swarm_extract(source, sourcetype, language, notidy=true, interesting_stems=n
     end
     # puts "CLEAN_CONTENT: #{clean_content}"
 
-    stems = stemmer.stem(clean_content, language)
+    stems = stemmer.stem(clean_content, page.language)
     # puts "STEMS: #{stems.inspect}"
 
     counted_stems = count_stems(stems, interesting_stems)
@@ -96,7 +97,7 @@ def get_interesting_stems(language)
   # and returns a name=>id hash
   dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
   query = dbh.prepare("SELECT id, name FROM int_words WHERE language = ?")
-  query.execute language
+  query.execute language.to_s
 
   #puts "Interesting stems are:" #debug
   res = Hash.new
@@ -122,7 +123,7 @@ def get_pages()
     language = row[2]
     type = row[3]
     last_scantime = row[4]
-    pages << Page.new(id, url, language, type, last_scantime)
+    pages << Page.new(id, url, language.intern, type.intern, last_scantime)
 #    flag = row[2]
 #    if flag == "0"
 #      #printf "%s, %s\n", id, url
@@ -142,5 +143,13 @@ def insert_stems_into_db(stems, page_id)
     res.execute stem.id, page_id, Time.now, stem.count
   end
 
+  res.close
+end
+
+def update_page_last_scantime(page, time)
+  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+
+  res = dbh.prepare "UPDATE pages SET last_scantime=? where id=?;"
+  res.execute time, page.id
   res.close
 end
