@@ -4,26 +4,31 @@ require 'rss/2.0'
 require 'open-uri'
 
 class HttpExtractor
-  
+
   def extract(page)
    response = extract_with_redirect(page.url)
    response.body
   end
-  
+
   def extract_with_redirect(url, limit=10)
     fail "#{self.class.name}: http redirect too deep" if limit.zero?
     puts "#{self.class.name}: Trying: #{url}"
-    response = Net::HTTP.get_response(URI.parse(url))
-    case response
-    when Net::HTTPSuccess
-      response
-    when Net::HTTPRedirection
-      extract_with_redirect(response['location'],limit-1)
-    else
-      response.error!
+    begin
+      response = Net::HTTP.get_response(URI.parse(url))
+      case response
+      when Net::HTTPSuccess
+        response
+      when Net::HTTPRedirection
+        extract_with_redirect(response['location'],limit-1)
+      else
+        response.error!
+      end
+    rescue URI::InvalidURIError
+      # FIXME
+      respose = Net::HTTPNotFound.new(1.1, 404, "Not Found")
     end
   end
-  
+
 end
 
 class RssExtractor
@@ -41,7 +46,7 @@ class RssExtractor
         # handle rss_page.last_scantime = nil (swarm.rb)
         last_scantime = Time.parse('2000-01-01 00:00:00')
       end
-      
+
       # FIXME: item.date might be nil
       if (item.date > last_scantime)
         article_url = item.link
@@ -51,19 +56,19 @@ class RssExtractor
     end
     return rss_full_content
   end
-  
+
 end
 
 class FileExtractor
-  
+
   def extract(page)
     content = ""
-    File.open(page.url) do |file| 
-      while line = file.gets 
-        content << " " << line 
-      end 
+    File.open(page.url) do |file|
+      while line = file.gets
+        content << " " << line
+      end
     end
     return content
   end
-  
+
 end
