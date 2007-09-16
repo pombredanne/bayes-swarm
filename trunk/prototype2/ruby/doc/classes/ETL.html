@@ -86,10 +86,12 @@ derive from this class.
 </p>
 <h2>Defining an <a href="ETL.html">ETL</a> block</h2>
 <p>
-In order to be properly inserted within a chain (such as <b>extract</b> ,
-<b>transform</b> or <b>load</b> chains) implementations should define the
-proper callback method, and added to the chain configuration. The callback
-method MUST adhere to this signature:
+In order to be properly inserted within a chain (such as <b><a
+href="ETL.html#M000057">extract</a></b> , <b><a
+href="ETL.html#M000058">transform</a></b> or <b><a
+href="ETL.html#M000059">load</a></b> chains) implementations should define
+the proper callback method, and added to the chain configuration. The
+callback method MUST adhere to this signature:
 </p>
 <pre>
  def [chain_name](dto, context)
@@ -115,8 +117,8 @@ run and the execution context.
 <p>
 Implementations may define multiple callbacks, if they can be inserted into
 multiple chains (for example, an <a href="ETL.html">ETL</a> block may
-implement both <tt>extract</tt> and <tt>transform</tt> if it can work in
-both chains)
+implement both <tt><a href="ETL.html#M000057">extract</a></tt> and <tt><a
+href="ETL.html#M000058">transform</a></tt> if it can work in both chains)
 </p>
 <p>
 See the documentation for <a href="ETLRunner.html">ETLRunner</a> for
@@ -128,11 +130,27 @@ further info.
 
    </div>
 
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000057">extract</a>&nbsp;&nbsp;
+      <a href="#M000059">load</a>&nbsp;&nbsp;
+      <a href="#M000058">transform</a>&nbsp;&nbsp;
+      </div>
+    </div>
 
   </div>
 
 
     <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="Log.html">Log</a></span>
+      </div>
+    </div>
 
     <div id="section">
 
@@ -172,6 +190,68 @@ via the <a href="ETL.html">ETL</a> configuration file.
 
 
     <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000057" class="method-detail">
+        <a name="M000057"></a>
+
+        <div class="method-heading">
+          <a href="ETL.src/M000057.html" target="Code" class="method-signature"
+            onclick="popupCode('ETL.src/M000057.html');return false;">
+          <span class="method-name">extract</span><span class="method-args">(dto,context)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+An empty implementation of the <tt><a
+href="ETL.html#M000057">extract</a></tt> operation. It raises a warning
+when invoked (since you are supposed to have overriden it)
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000059" class="method-detail">
+        <a name="M000059"></a>
+
+        <div class="method-heading">
+          <a href="ETL.src/M000059.html" target="Code" class="method-signature"
+            onclick="popupCode('ETL.src/M000059.html');return false;">
+          <span class="method-name">load</span><span class="method-args">(dto,context)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+An empty implementation of the <tt><a href="ETL.html#M000059">load</a></tt>
+operation. It raises a warning when invoked (since you are supposed to have
+overriden it)
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000058" class="method-detail">
+        <a name="M000058"></a>
+
+        <div class="method-heading">
+          <a href="ETL.src/M000058.html" target="Code" class="method-signature"
+            onclick="popupCode('ETL.src/M000058.html');return false;">
+          <span class="method-name">transform</span><span class="method-args">(dto,context)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+An empty implementation of the <tt><a
+href="ETL.html#M000058">transform</a></tt> operation. It raises a warning
+when invoked (since you are supposed to have overriden it)
+</p>
+        </div>
+      </div>
+
+
+    </div>
 
 
   </div>

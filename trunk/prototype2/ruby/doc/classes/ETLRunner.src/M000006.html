@@ -5,21 +5,18 @@
 
 <html>
 <head>
-  <title>run (ETLRunner)</title>
+  <title>init_default_chains (ETLRunner)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 86</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run</span>()
-    <span class="ruby-ivar">@context</span> = <span class="ruby-identifier">init_context</span>()    
-    <span class="ruby-identifier">enable_savepoints</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">global_opt</span>(<span class="ruby-identifier">:savepoint</span>)  
-
-    <span class="ruby-keyword kw">begin</span>
-      <span class="ruby-ivar">@root_chain</span>.<span class="ruby-identifier">run_chain</span>(<span class="ruby-ivar">@context</span>[<span class="ruby-identifier">:dto</span>],<span class="ruby-ivar">@context</span>) { <span class="ruby-operator">|</span><span class="ruby-identifier">block</span><span class="ruby-operator">|</span> <span class="ruby-identifier">block</span>.<span class="ruby-identifier">name</span>.<span class="ruby-identifier">to_sym</span> }
-      <span class="ruby-identifier">clean</span>
-    <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
-    <span class="ruby-keyword kw">end</span>
+  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 97</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">init_default_chains</span>
+    <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Missing root chain in conf file&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@opts</span>[<span class="ruby-value str">&quot;root&quot;</span>]
+    <span class="ruby-ivar">@root_chain</span> = <span class="ruby-constant">ChainETL</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-ivar">@root_chain</span>.<span class="ruby-identifier">name</span> = <span class="ruby-value str">&quot;root&quot;</span>
+    <span class="ruby-ivar">@root_chain</span>.<span class="ruby-identifier">global_opts</span> = <span class="ruby-ivar">@opts</span>
+    <span class="ruby-ivar">@root_chain</span>.<span class="ruby-identifier">props</span>= <span class="ruby-ivar">@opts</span>[<span class="ruby-value str">&quot;root&quot;</span>]
   <span class="ruby-keyword kw">end</span></pre>
 </body>
 </html>

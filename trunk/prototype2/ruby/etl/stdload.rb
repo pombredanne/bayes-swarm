@@ -1,5 +1,6 @@
-# = MySQL ETL blocks
-# This file contains ETL blocks that can be used to interoperate with the MySQL database, mainly
+# = Database Load ETL blocks
+# This file is part of the ETL package.
+# This file contains ETL blocks that can be used to interoperate with a relational database,
 # during the *load* phase of ETL processes.
 #
 # == Author
@@ -8,10 +9,11 @@
 # == Copyright
 # Copyright(c) 2007 - bayes-swarm project.
 # Licensed under the Apache2 License.
-require 'mysql'
+require 'etl/util/log'
+require 'etl/util/db'
 require 'etl/std'
 
-# This class loads DTO objects into a MySQL database. It can be used within an ETL process only during
+# This class loads DTO objects into a relational database. It can be used within an ETL process only during
 # the *load* phase. The class operates in insert_update mode, creating resources (pages, sources, words) 
 # whenever needed.
 #
@@ -27,38 +29,29 @@ require 'etl/std'
 # <tt>insert(source_id,page_id,scantime,word)</tt> . 
 #
 # The default strategy is SimpleWordStrategy .
-class MysqlLoader < ETL
+class DatabaseLoader < ETL
+  include Log
+  include DatabaseHelper
   
   # loads the dto passed as parameter into a MySQL database
   def load(dto,context)
     print_warnings(dto)
-    begin
-      open_connection
-      
+    with_connection(@props) do 
       with_source(dto) do |source_id|
         with_page(dto,source_id) do |page_id|
           insert_words(source_id,page_id,dto)
         end
       end
-      
-    rescue Mysql::Error => me
-      puts "Mysql Error: #{me}"
-      raise me
-    rescue Exception => e
-      puts "Generic Error: #{e}"
-      raise e
-    ensure
-      close_connection
     end
   end
   
   def print_warnings(dto) #:nodoc:
-    puts "Current etl version ignores DTO tags" unless dto.tags.nil?
+    log "Current etl version ignores DTO tags" unless dto.tags.nil?
     words_have_tags = false
     if dto.words
       dto.words.each { |w| words_have_tags = true && break unless w.tags.nil?}
     end
-    puts "Current etl version ignores Word tags" if words_have_tags
+    log "Current etl version ignores Word tags" if words_have_tags
   end
   private :print_warnings
   
@@ -72,14 +65,14 @@ class MysqlLoader < ETL
   
   # Inserts a single WordDTO into the database, using the provided +strategy+
   def insert_word(strategy,source_id,page_id,scantime,word)
-    puts "Inserting #{word.word} for source #{source_id} and page #{page_id}" if $-v
+    verbose_log "Inserting #{word.word} for source #{source_id} and page #{page_id}"
     strategy.insert(source_id,page_id,scantime,word)
   end
   
   # Returns the strategy that will be used to insert words into the database.
   def get_strategy
     if strategy_class = @props["strategy"]
-      puts "Adopting custom word strategy: #{strategy_class}" if $-v
+      verbose_log "Adopting custom word strategy: #{strategy_class}"
       strategy = eval("#{strategy_class}.new")
     else
       strategy = SimpleWordStrategy.new
@@ -92,7 +85,7 @@ class MysqlLoader < ETL
   # The source is created if yet missing from the database
   def with_source(dto) 
     source_id = get_source_id(dto)
-    puts "Source_id is #{source_id}" if $-v
+    verbose_log "Source_id is #{source_id}" 
     yield source_id
   end
   
@@ -119,7 +112,7 @@ class MysqlLoader < ETL
   # The page is created if yet missing from the database  
   def with_page(dto,source_id) 
     page_id = get_page_id(dto,source_id)
-    puts "Page_id is #{page_id}" if $-v
+    verbose_log "Page_id is #{page_id}"
     yield page_id
   end
   
@@ -141,18 +134,7 @@ class MysqlLoader < ETL
       stmt.close if stmt
     end
   end
-  
-  # Opens a connection to the database
-  def open_connection
-    @conn = Mysql.real_connect(@props["host"],@props["user"],@props["pass"],@props["db"])
-  end
-  private :open_connection
-  
-  # Closes the database connection
-  def close_connection
-    @conn.close if @conn
-  end
-  private :close_connection
+
 end
 
 # This class defines the default word strategy adopted when inserting a word into the database
@@ -161,6 +143,7 @@ end
 # the proper database operations. Strategy instances are associated to MysqlETL blocks via their
 # configuration properties.
 class SimpleWordStrategy
+  include Log
   
   # The database connection
   attr_accessor :conn
@@ -180,14 +163,14 @@ class SimpleWordStrategy
     when "title"
       update "titlecount"
     else
-      puts "Unrecognized word position #{word.position} for word #{word.word} and page #{page_id}"
+      log "Unrecognized word position #{word.position} for word #{word.word} (id=#{word.id}, page=#{page_id})"
     end
   end
   
   def update(what) #:nodoc:
     begin
-      stmt = @conn.prepare("UPDATE words SET #{what} = ? WHERE name = ? AND page_id = ? AND scantime = ?")
-      stmt.execute(@word.count,@word.word, @page_id, @scantime)
+      stmt = @conn.prepare("UPDATE words SET #{what} = ? WHERE id = ? AND page_id = ? AND scantime = ?")
+      stmt.execute(@word.count,@word.id, @page_id, @scantime)
     ensure
       stmt.close if stmt
     end
@@ -196,11 +179,11 @@ class SimpleWordStrategy
   
   def insert_if_needed #:nodoc:
     begin
-      stmt = @conn.prepare("SELECT name FROM words WHERE name=? AND page_id=? AND scantime = ?")
-      stmt.execute(@word.word, @page_id, @scantime)
+      stmt = @conn.prepare("SELECT id FROM words WHERE id=? AND page_id=? AND scantime = ?")
+      stmt.execute(@word.id, @page_id, @scantime)
       if stmt.num_rows == 0
         stmt.close # close the previous statement
-        stmt = @conn.prepare("INSERT INTO words (name,page_id,scantime) VALUES (?,?,?)")
+        stmt = @conn.prepare("INSERT INTO words (id,page_id,scantime) VALUES (?,?,?)")
         stmt.execute(@word.word,@page_id,@scantime)
       end      
     ensure

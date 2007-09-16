@@ -3,6 +3,11 @@
 
 # The *globals* section contains global configuration options for the whole ETL
 globals:
+    # Defines the folder where user custom etl blocks are stored. If unspecified, the default is
+    # a plugins/ folder under the current working directory. 
+    
+    #:pluginsfolder: ./plugins
+    
     # Enables or disables savepoints
     
     :savepoint: true

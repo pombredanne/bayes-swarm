@@ -73,12 +73,16 @@ class ETLDTO
   def self.json_create(o)
     d = ETLDTO.new(*o['data'])
   end
+  
+  def to_s #:nodoc:
+    "#{@source} => #{@url} (#{@words ? @words.size : 0} words)"
+  end
 end
 
 # A word DTO represents a single word extract from a source during
 # an ETL proces. 
 class WordDTO
-  attr_accessor :word, :position, :count, :tags
+  attr_accessor :id, :word, :position, :count, :tags
   
   # Creates a new instance of this DTO. This DTO represents a single
   # +word+ from a given source. A +word+ has two attributes: a +position+
@@ -86,7 +90,8 @@ class WordDTO
   # and so on...) and a +count+ which declares the word count in that position.
   #
   # A word may have a set of optional custom *tags* .
-  def initialize(word = nil, position = nil ,count = 0, tags = nil)
+  def initialize(id = nil, word = nil, position = nil ,count = 0, tags = nil)
+    @id = id
     @word = word
     @position = position
     @count = count
@@ -98,12 +103,16 @@ class WordDTO
   def to_json(*a) 
     {
       'json_class' => self.class.name ,
-      'data' => [ @word, @position , @count ,@tags]
+      'data' => [ @id, @word, @position , @count ,@tags]
     }.to_json(*a)
   end
   
   # Deserializes a JSON object into a proper DTO instance  
   def self.json_create(o)
     w = WordDTO.new(*o['data'])
+  end
+  
+  def to_s #:nodoc:
+    "#{@word} [id=#{@id},pos=#{@position},count=#{@count}]"
   end
 end
