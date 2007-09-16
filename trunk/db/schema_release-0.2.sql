@@ -22,6 +22,15 @@ CREATE
 
 INSERT INTO languages (language) values ('ita'),('eng');
 
+CREATE
+		TABLE formats
+		(
+		format varchar(10) NOT NULL,
+		PRIMARY KEY USING BTREE(format)
+		)	
+		ENGINE=InnoDB;
+
+INSERT INTO formats (format) values ('html'),('xml');
 
 CREATE
     TABLE sources
@@ -42,14 +51,15 @@ CREATE
         id int(11) NOT NULL AUTO_INCREMENT,
         source_id int(11) NOT NULL,
         url varchar(255) NOT NULL,
-	language varchar(3) NOT NULL,
+    	language varchar(3) NOT NULL,
+	    format varchar(10) NOT NULL,
+		scantime DATETIME NOT NULL,
         PRIMARY KEY USING BTREE(id),
+	    constraint fk_page_format foreign key(format) references formats(format),
         constraint fk_page_source foreign key(source_id) references sources(id),
         constraint fk_page_lang   FOREIGN key(language)  references sources(language)
     )
     ENGINE=InnoDB;
-
-
 
 
 CREATE
@@ -58,8 +68,8 @@ CREATE
         id int(11) NOT NULL AUTO_INCREMENT,
         page_id int(11) NOT NULL,
         url varchar(255) NOT NULL,
-	     language varchar(3) NOT NULL,
-        flg_visited int(1) NOT NULL,
+	    language varchar(3) NOT NULL,
+        publish_time DATETIME NOT NULL,
         PRIMARY KEY USING BTREE(id),
         constraint fk_article_page foreign key(page_id) references pages(id),
           constraint fk_article_lang   FOREIGN key(language)  references pages(language)
