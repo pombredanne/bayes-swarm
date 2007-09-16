@@ -93,9 +93,9 @@ href="ETL.html">ETL</a> proces.
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000021">json_create</a>&nbsp;&nbsp;
-      <a href="#M000019">new</a>&nbsp;&nbsp;
-      <a href="#M000020">to_json</a>&nbsp;&nbsp;
+      <a href="#M000032">json_create</a>&nbsp;&nbsp;
+      <a href="#M000030">new</a>&nbsp;&nbsp;
+      <a href="#M000031">to_json</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -117,6 +117,11 @@ href="ETL.html">ETL</a> proces.
         <table>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">count</td>
+          <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
+          <td class="context-item-desc"></td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">id</td>
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
           <td class="context-item-desc"></td>
         </tr>
@@ -145,12 +150,12 @@ href="ETL.html">ETL</a> proces.
     <div id="methods">
       <h3 class="section-bar">Public Class methods</h3>
 
-      <div id="method-M000021" class="method-detail">
-        <a name="M000021"></a>
+      <div id="method-M000032" class="method-detail">
+        <a name="M000032"></a>
 
         <div class="method-heading">
-          <a href="WordDTO.src/M000021.html" target="Code" class="method-signature"
-            onclick="popupCode('WordDTO.src/M000021.html');return false;">
+          <a href="WordDTO.src/M000032.html" target="Code" class="method-signature"
+            onclick="popupCode('WordDTO.src/M000032.html');return false;">
           <span class="method-name">json_create</span><span class="method-args">(o)</span>
           </a>
         </div>
@@ -162,19 +167,19 @@ Deserializes a JSON object into a proper DTO instance
         </div>
       </div>
 
-      <div id="method-M000019" class="method-detail">
-        <a name="M000019"></a>
+      <div id="method-M000030" class="method-detail">
+        <a name="M000030"></a>
 
         <div class="method-heading">
-          <a href="WordDTO.src/M000019.html" target="Code" class="method-signature"
-            onclick="popupCode('WordDTO.src/M000019.html');return false;">
-          <span class="method-name">new</span><span class="method-args">(word = nil, position = nil ,count = 0, tags = nil)</span>
+          <a href="WordDTO.src/M000030.html" target="Code" class="method-signature"
+            onclick="popupCode('WordDTO.src/M000030.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(id = nil, word = nil, position = nil ,count = 0, tags = nil)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Creates a <a href="WordDTO.html#M000019">new</a> instance of this DTO. This
+Creates a <a href="WordDTO.html#M000030">new</a> instance of this DTO. This
 DTO represents a single <tt>word</tt> from a given source. A <tt>word</tt>
 has two attributes: a <tt>position</tt> which declares its position within
 the page ( such as title, headings, corners and so on&#8230;) and a
@@ -188,12 +193,12 @@ A word may have a set of optional custom <b>tags</b> .
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000020" class="method-detail">
-        <a name="M000020"></a>
+      <div id="method-M000031" class="method-detail">
+        <a name="M000031"></a>
 
         <div class="method-heading">
-          <a href="WordDTO.src/M000020.html" target="Code" class="method-signature"
-            onclick="popupCode('WordDTO.src/M000020.html');return false;">
+          <a href="WordDTO.src/M000031.html" target="Code" class="method-signature"
+            onclick="popupCode('WordDTO.src/M000031.html');return false;">
           <span class="method-name">to_json</span><span class="method-args">(*a)</span>
           </a>
         </div>

@@ -140,6 +140,11 @@ What follows is a sample configuration file (etl_config.yml) :
 
   # The *globals* section contains global configuration options for the whole ETL
   globals:
+      # Defines the folder where user custom etl blocks are stored. If unspecified, the default is
+      # a plugins/ folder under the current working directory.
+
+      #:pluginsfolder: ./plugins
+
       # Enables or disables savepoints
 
       :savepoint: true
@@ -212,6 +217,17 @@ Savepoints are enabled from the configuration file. The restart point and
 the data to be used when resuming are defined in the configuration file
 too.
 </p>
+<h2>Plugins and User Custom <a href="ETL.html">ETL</a> Blocks</h2>
+<p>
+In addition to standard <a href="ETL.html">ETL</a> blocks, provided with
+the library, such as <a href="ChainETL.html">ChainETL</a> and <a
+href="SavepointETL.html">SavepointETL</a>, the user may want to provide its
+own custom <a href="ETL.html">ETL</a> blocks. To do so, he must collect its
+own <a href="ETL.html">ETL</a> blocks in files stored within the same
+directory and then declare that directory as the <b>plugins folder</b>. The
+<a href="ETLRunner.html">ETLRunner</a> will dinamically load all suitable
+ruby files found within such directory.
+</p>
 <h2>Verbose execution</h2>
 <p>
 <a href="ETLRunner.html">ETLRunner</a> and standard ETLs observe the hints
@@ -224,7 +240,6 @@ A sample invocation works as follows :
 </p>
 <pre>
   require 'etl/runner'
-  require 'your_specific_etls'
   e = ETLRunner.new('my_etl_config.yml')
   e.run
 </pre>
@@ -244,14 +259,16 @@ into a user-specified folder for debugging purposes.
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000009">add_savepoints_to</a>&nbsp;&nbsp;
-      <a href="#M000010">clean</a>&nbsp;&nbsp;
-      <a href="#M000008">enable_savepoints</a>&nbsp;&nbsp;
-      <a href="#M000011">global_opt</a>&nbsp;&nbsp;
-      <a href="#M000007">init_context</a>&nbsp;&nbsp;
-      <a href="#M000005">init_default_chains</a>&nbsp;&nbsp;
+      <a href="#M000011">add_savepoints_to</a>&nbsp;&nbsp;
+      <a href="#M000012">clean</a>&nbsp;&nbsp;
+      <a href="#M000010">enable_savepoints</a>&nbsp;&nbsp;
+      <a href="#M000009">enrich_context</a>&nbsp;&nbsp;
+      <a href="#M000013">global_opt</a>&nbsp;&nbsp;
+      <a href="#M000008">init_context</a>&nbsp;&nbsp;
+      <a href="#M000006">init_default_chains</a>&nbsp;&nbsp;
+      <a href="#M000005">init_plugins</a>&nbsp;&nbsp;
       <a href="#M000004">new</a>&nbsp;&nbsp;
-      <a href="#M000006">run</a>&nbsp;&nbsp;
+      <a href="#M000007">run</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -259,6 +276,13 @@ into a user-specified folder for debugging purposes.
 
 
     <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="Log.html">Log</a></span>
+      </div>
+    </div>
 
     <div id="section">
 
@@ -293,12 +317,12 @@ using <tt>configFile</tt> as the source of configuration options
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000009" class="method-detail">
-        <a name="M000009"></a>
+      <div id="method-M000011" class="method-detail">
+        <a name="M000011"></a>
 
         <div class="method-heading">
-          <a href="ETLRunner.src/M000009.html" target="Code" class="method-signature"
-            onclick="popupCode('ETLRunner.src/M000009.html');return false;">
+          <a href="ETLRunner.src/M000011.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000011.html');return false;">
           <span class="method-name">add_savepoints_to</span><span class="method-args">(chain)</span>
           </a>
         </div>
@@ -312,12 +336,12 @@ between each block.
         </div>
       </div>
 
-      <div id="method-M000010" class="method-detail">
-        <a name="M000010"></a>
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
 
         <div class="method-heading">
-          <a href="ETLRunner.src/M000010.html" target="Code" class="method-signature"
-            onclick="popupCode('ETLRunner.src/M000010.html');return false;">
+          <a href="ETLRunner.src/M000012.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000012.html');return false;">
           <span class="method-name">clean</span><span class="method-args">()</span>
           </a>
         </div>
@@ -330,12 +354,12 @@ data if no errors occurred.
         </div>
       </div>
 
-      <div id="method-M000008" class="method-detail">
-        <a name="M000008"></a>
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
 
         <div class="method-heading">
-          <a href="ETLRunner.src/M000008.html" target="Code" class="method-signature"
-            onclick="popupCode('ETLRunner.src/M000008.html');return false;">
+          <a href="ETLRunner.src/M000010.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000010.html');return false;">
           <span class="method-name">enable_savepoints</span><span class="method-args">()</span>
           </a>
         </div>
@@ -348,12 +372,30 @@ context the folder where savepoint dumps will be stored.
         </div>
       </div>
 
-      <div id="method-M000011" class="method-detail">
-        <a name="M000011"></a>
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
 
         <div class="method-heading">
-          <a href="ETLRunner.src/M000011.html" target="Code" class="method-signature"
-            onclick="popupCode('ETLRunner.src/M000011.html');return false;">
+          <a href="ETLRunner.src/M000009.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000009.html');return false;">
+          <span class="method-name">enrich_context</span><span class="method-args">(extra_context)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Enriches the shared <b>context</b> with extra data which may provided from
+the outside of the <a href="ETLRunner.html">ETLRunner</a> .
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000013.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000013.html');return false;">
           <span class="method-name">global_opt</span><span class="method-args">(sym)</span>
           </a>
         </div>
@@ -365,12 +407,12 @@ Returns a global configuration option
         </div>
       </div>
 
-      <div id="method-M000007" class="method-detail">
-        <a name="M000007"></a>
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
 
         <div class="method-heading">
-          <a href="ETLRunner.src/M000007.html" target="Code" class="method-signature"
-            onclick="popupCode('ETLRunner.src/M000007.html');return false;">
+          <a href="ETLRunner.src/M000008.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000008.html');return false;">
           <span class="method-name">init_context</span><span class="method-args">()</span>
           </a>
         </div>
@@ -384,17 +426,17 @@ each other.
 <p>
 The shared context always contains at least the +:dto+ variable which
 points to the ETLDto which collects analysis data for the current <a
-href="ETLRunner.html#M000006">run</a>.
+href="ETLRunner.html#M000007">run</a>.
 </p>
         </div>
       </div>
 
-      <div id="method-M000005" class="method-detail">
-        <a name="M000005"></a>
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
 
         <div class="method-heading">
-          <a href="ETLRunner.src/M000005.html" target="Code" class="method-signature"
-            onclick="popupCode('ETLRunner.src/M000005.html');return false;">
+          <a href="ETLRunner.src/M000006.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000006.html');return false;">
           <span class="method-name">init_default_chains</span><span class="method-args">()</span>
           </a>
         </div>
@@ -410,13 +452,27 @@ The root chain MUST always be present in the configuration file
         </div>
       </div>
 
-      <div id="method-M000006" class="method-detail">
-        <a name="M000006"></a>
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
 
         <div class="method-heading">
-          <a href="ETLRunner.src/M000006.html" target="Code" class="method-signature"
-            onclick="popupCode('ETLRunner.src/M000006.html');return false;">
-          <span class="method-name">run</span><span class="method-args">()</span>
+          <a href="ETLRunner.src/M000005.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000005.html');return false;">
+          <span class="method-name">init_plugins</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000007.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000007.html');return false;">
+          <span class="method-name">run</span><span class="method-args">(extra_context = {})</span>
           </a>
         </div>
       

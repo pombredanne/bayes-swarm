@@ -11,6 +11,7 @@
 # Licensed under the Apache2 License.
 
 require 'json'
+require 'etl/util/log'
 
 # This class defines properties and methods which are shared among all ETL block implementations.
 # All implementation should derive from this class. 
@@ -41,6 +42,8 @@ require 'json'
 # See the documentation for ETLRunner for further info.
 #
 class ETL
+  include Log
+  
   # The etl name. Implementations should not override this property, since the ETL name is 
   # managed via the ETL configuration file.
   attr_accessor :name
@@ -48,6 +51,24 @@ class ETL
   # The block configuration properties. Implementations should not override this property, 
   # since the ETL properties are managed via the ETL configuration file.
   attr_accessor :props
+  
+  # An empty implementation of the +extract+ operation.
+  # It raises a warning when invoked (since you are supposed to have overriden it)
+  def extract(dto,context)
+    log "warning: call to unimplemented extract method"
+  end
+
+  # An empty implementation of the +transform+ operation.
+  # It raises a warning when invoked (since you are supposed to have overriden it)  
+  def transform(dto,context)
+    log "warning: call to unimplemented transform method"
+  end
+  
+  # An empty implementation of the +load+ operation.
+  # It raises a warning when invoked (since you are supposed to have overriden it)  
+  def load(dto,context)
+    log "warning: call to unimplemented load method"
+  end
 end
 
 # The Identity ETL, i.e., and ETL which performs nothing and just pass the ball to the next one in the
@@ -72,12 +93,13 @@ end
 
 # Defines an ETL chain, i.e. a block in the ETL process which triggers the execution of a sequence
 # of blocks. The chain may be configured in two different ways:
-# * via the ETL configuration file using the +block+ parameters ( +block0+,+block1+ ...)
+# * via the ETL configuration file using the +block+ parameters ( <tt>block0</tt>,<tt>block1</tt> ...)
 # * programmatically by direct invocations of methods on this class.
 #
 # This class wraps a plain array to store the chain sequence, therefore you may use standard methods to
 # manipulate the chains, such as << operator.
 class ChainETL < ETL
+  include Log
   
   # The sequence of blocks which compose this chain
   attr_reader :blocks
@@ -94,6 +116,11 @@ class ChainETL < ETL
     @blocks.send(meth,*args, &block)
   end
   
+  # A marker method which identifies this block as a chain. This method always returns +true+ 
+  def chain?
+    true
+  end
+  
   # Receives the global configuration options for the whole ETL, instead of only the ones relevant for this
   # chain. 
   def global_opts=(globals)
@@ -104,7 +131,7 @@ class ChainETL < ETL
   # the documentation associated to configuration files for further info on how to define a proper chain
   # sequence.
   def props=(chain_config)
-    puts "Configuring chain #{@name} ..." if $-v
+    verbose_log "Configuring chain #{@name} ..."
     @props = chain_config
     i = 0
     unless chain_config.nil?
@@ -116,12 +143,23 @@ class ChainETL < ETL
         if (etl.respond_to?(:global_opts=))
           etl.global_opts = @opts
         end
-        etl.props = @opts[etl.name]
+        etl.props = resolve_props(@opts[etl.name])
         @blocks << etl
         i += 1
       end    
     end
-    puts "Chain #{@name} has #{length} blocks in it" if $-v
+    verbose_log "Chain #{@name} has #{length} blocks in it"
+  end
+  
+  # Resolve a set of properties in case it points to another one. In order to
+  # define a pointer, the set of properties must contain the <tt>refer_to</tt> key and
+  # the name of the referred set as value.
+  def resolve_props(p)
+    if p && p["refer_to"] 
+      @opts[p["refer_to"]]
+    else
+      p
+    end
   end
   
   # Runs this chain within the *extract* phase. This means that the +extract+ method will be invoked
@@ -158,7 +196,7 @@ class ChainETL < ETL
     @blocks.each do |block| 
       if block_given?
         @phase = yield block
-        puts "Phase is now #{@phase}" if $-v
+        verbose_log "Phase is now #{@phase}"
       end
       run_block(block, dto, context)
     end
@@ -169,44 +207,99 @@ class ChainETL < ETL
   def run_block(block, dto, context)
     unless_step_over(block,context) do |block, ctx|
       begin
-        set_step(ctx, block.name) && block.send(@phase,ctx[:dto], ctx)
+        set_step(ctx, block.name)
+
+        while_mplexing(ctx,block) do
+          verbose_log "with DTO #{ctx[:dto]}" 
+          block.send(@phase,ctx[:dto], ctx)
+        end
+        
       rescue Exception => e
         handle_block_exception ctx, e
       end      
     end
   end
-  private :run_block 
+  protected :run_block 
+  
+  # handles multiplexed DTOs and subsequently yields to the code block passed as parameter
+  # for all the DTOs which compose a multiplexed one. 
+  #
+  #--
+  # FIXME: as a consequence multiplexing at block level instead of chain level, savepoints are
+  # executed only once the block has executed the whole MultiplexDTO. Therefore, when recovering
+  # from a crash in the middle of a multiplex, the whole multiplex will be re-executed.
+  #++
+  def while_mplexing(ctx, block, &code)
+
+    if !is_savepoint?(block) && !is_chain?(block) && is_mplex?(ctx[:dto])
+      while ctx[:dto].cur
+        # de-mux
+        mplex_dto = ctx[:dto]
+        ctx[:dto] = mplex_dto.cur
+
+        while_mplexing(ctx, block, &code) # recursive call
+
+        # re-mux
+        mplex_dto.increment_exec(ctx[:dto])
+        ctx[:dto] = mplex_dto        
+      end
+      ctx[:dto].reset_exec
+    else
+      # invoke the code: we're out of multiplexed DTOs, or we're dealing with savepoints or chains
+      # (only the innermost chain performs the actual demultiplexing)
+      yield 
+    end    
+  end
+  protected :while_mplexing
   
   # Executes the block passed as parameter unless skipping is needed.
   def unless_step_over(block, ctx)
     if ctx[:initialstep].nil? or block.name == ctx[:initialstep]
-      puts "Invoking phase #{@phase} on #{block.name}" if $-v
+      verbose_log "Invoking phase #{@phase} on #{block.name}"
       ctx[:initialstep] = nil
       
       yield(block, ctx)
       
     else
       ctx[:curstep] = block.name
-      puts "Skipping block #{block.name}" if $-v
+      verbose_log "Skipping block #{block.name}"
     end
   end
-  private :unless_step_over
+  protected :unless_step_over
   
   # sets the current step name
   def set_step(context, stepname)
     context[:curstep] = stepname
   end
-  private :set_step
+  protected :set_step
   
   # handles exceptions which may occur while executing a block
   def handle_block_exception(context,exc)
-    puts "Error in step #{context[:curstep]} : #{exc}"
+    log "Error in step #{context[:curstep]} : #{exc}"
     if (context[:lastsavepointfile])
-      puts "Last savepoint file #{context[:lastsavepointfile]}"
+      log "Last savepoint file #{context[:lastsavepointfile]}"
     end
     raise exc # reraise the exception to abort the whole etl
   end
-  private :handle_block_exception
+  protected :handle_block_exception
+  
+  # Checks whether the given block is a savepoint block or not
+  def is_savepoint?(block)
+    block.respond_to?(:savepoint?) && block.savepoint?
+  end
+  protected :is_savepoint?
+  
+  # Checks whether the given block is a chain block or not
+  def is_chain?(block)
+    block.respond_to?(:chain?) && block.chain?
+  end
+  protected :is_chain?
+  
+  # Checks whether the given block is a MultiplexDTO or not
+  def is_mplex?(dto)
+    dto.respond_to?(:mplex?) && dto.mplex?
+  end
+  protected :is_mplex?
   
   def to_s #:nodoc:
     names = @blocks.collect { |b| b.name }.join(',')
@@ -224,6 +317,7 @@ end
 # * by manually adding instances of this class into the standard ETL chains
 #
 class SavepointETL < ETL
+  include Log
   
   # Creates a new instance of the class. The +dump+ option defines if this savepoint is working
   # in dump-mode. When in dump-mode, the savepoint will not try to delete any previous savepoint
@@ -235,6 +329,11 @@ class SavepointETL < ETL
     @counter = @@savepoint_counter
     @@savepoint_counter += 1
     @dump = dump
+  end
+  
+  # A marker method which identifies this block as a savepoint. This method always returns +true+ 
+  def savepoint?
+    true
   end
   
   # Stores the current ETL status (an ETLDto object) to the persisten store. Due to the nature of DTOs, the file
@@ -263,9 +362,9 @@ class SavepointETL < ETL
   # this specific savepoint in the whole ETL chain.
   def save(dto,context)
     savepointfile = context[:saveloc] + '/' + Process.pid.to_s + "_" + Time.now.to_i.to_s + "_" + @counter.to_s + ".dto"
-    puts "Savepoint: saving to #{savepointfile}" if $-v
+    verbose_log "Savepoint: saving to #{savepointfile}"
     File.open(savepointfile,"w") do |f|
-      f.puts JSON.generate(dto)
+      f.puts JSON.pretty_generate(dto)
     end
     
     prevfile = context[:lastsavepointfile]
@@ -274,4 +373,5 @@ class SavepointETL < ETL
     context[:lastsavepointfile] = savepointfile
   end
   private :save
+  
 end

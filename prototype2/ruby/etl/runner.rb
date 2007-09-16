@@ -11,8 +11,10 @@
 #
 require 'json'
 require 'yaml'
+require 'etl/util/log'
 require 'dto/dto'
 require 'etl/std'
+require 'etl/stdload'
 
 # The ETL Runner is responsible for running ETL processes. 
 #
@@ -46,6 +48,12 @@ require 'etl/std'
 # Savepoints are enabled from the configuration file. The restart point and the data to be used when resuming
 # are defined in the configuration file too.
 #
+# == Plugins and User Custom ETL Blocks
+# In addition to standard ETL blocks, provided with the library, such as ChainETL and SavepointETL, the user may
+# want to provide its own custom ETL blocks. To do so, he must collect its own ETL blocks in files stored within
+# the same directory and then declare that directory as the <b>plugins folder</b>. The ETLRunner will dinamically
+# load all suitable ruby files found within such directory.
+#
 # == Verbose execution
 # ETLRunner and standard ETLs observe the hints for verbose execution. Use the <tt>-v</tt> command line
 # switch or the <tt>$-v</tt> global variable to enable verbose execution.
@@ -53,7 +61,6 @@ require 'etl/std'
 # == Sample Invocation
 # A sample invocation works as follows :
 #   require 'etl/runner'
-#   require 'your_specific_etls'
 #   e = ETLRunner.new('my_etl_config.yml')
 #   e.run
 #
@@ -61,13 +68,26 @@ require 'etl/std'
 # while running the ETL process may produce output to +stdout+, or save intermediate
 # dtos into a user-specified folder for debugging purposes. 
 class ETLRunner
+  include Log
   
   # Creates a new instance of the class, using +configFile+ as the source of configuration options
   def initialize(configFile="etl_config.yml")
     @applied_savepoints = false
     @config_file = configFile
     @opts = YAML.load(File.open(configFile))
+    init_plugins
     init_default_chains
+  end
+  
+  def init_plugins
+    pluginsfolder = @opts[:pluginsfolder] || "./plugins"
+    $: << pluginsfolder
+    Dir.new(pluginsfolder).each do |filename|
+      if filename =~ /([^\.]*)\.rb$/ && File.file?(pluginsfolder + "/" + filename)
+        log "Loaded plugin #{$1} from #{pluginsfolder}" if require $1
+      end
+    end
+    
   end
   
   # Initializes the root chain, which in turn defines the
@@ -104,7 +124,7 @@ class ETLRunner
     if global_opt(:recover)
       recover_file = (global_opt(:saveloc) || File.dirname($0)) + "/" + global_opt(:recover)
       dto = JSON.load(File.new(recover_file))
-      puts "Recovered DTO from #{recover_file}" if $-v 
+      verbose_log "Recovered DTO from #{recover_file}"
     else
       dto = ETLDTO.new
     end
@@ -138,7 +158,7 @@ class ETLRunner
      
   # Returns a global configuration option
   def global_opt(sym)
-    @opts["globals"][sym]
+    @opts["globals"] && @opts["globals"][sym]
   end
   
   def to_s #:nodoc:

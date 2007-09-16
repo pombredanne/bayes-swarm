@@ -5,18 +5,21 @@
 
 <html>
 <head>
-  <title>init_default_chains (ETLRunner)</title>
+  <title>init_plugins (ETLRunner)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 77</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">init_default_chains</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-value str">&quot;Missing root chain in conf file&quot;</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@opts</span>[<span class="ruby-value str">&quot;root&quot;</span>]
-    <span class="ruby-ivar">@root_chain</span> = <span class="ruby-constant">ChainETL</span>.<span class="ruby-identifier">new</span>
-    <span class="ruby-ivar">@root_chain</span>.<span class="ruby-identifier">name</span> = <span class="ruby-value str">&quot;root&quot;</span>
-    <span class="ruby-ivar">@root_chain</span>.<span class="ruby-identifier">global_opts</span> = <span class="ruby-ivar">@opts</span>
-    <span class="ruby-ivar">@root_chain</span>.<span class="ruby-identifier">props</span>= <span class="ruby-ivar">@opts</span>[<span class="ruby-value str">&quot;root&quot;</span>]
+  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 82</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">init_plugins</span>
+    <span class="ruby-identifier">pluginsfolder</span> = <span class="ruby-ivar">@opts</span>[<span class="ruby-identifier">:pluginsfolder</span>] <span class="ruby-operator">||</span> <span class="ruby-value str">&quot;./plugins&quot;</span>
+    <span class="ruby-identifier">$:</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">pluginsfolder</span>
+    <span class="ruby-constant">Dir</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">pluginsfolder</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">filename</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">filename</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp re">/([^\.]*)\.rb$/</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-constant">File</span>.<span class="ruby-identifier">file?</span>(<span class="ruby-identifier">pluginsfolder</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;/&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">filename</span>)
+        <span class="ruby-identifier">log</span> <span class="ruby-node">&quot;Loaded plugin #{$1} from #{pluginsfolder}&quot;</span> <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">require</span> <span class="ruby-identifier">$1</span>
+      <span class="ruby-keyword kw">end</span>
+    <span class="ruby-keyword kw">end</span>
+    
   <span class="ruby-keyword kw">end</span></pre>
 </body>
 </html>
