@@ -36,7 +36,6 @@ def swarm_extract(page, notidy=true, interesting_stems=nil)
 
     # Get the work done
     content = extractor.extract(page)
-    update_page_last_scantime(page, Time.now())
     if (notidy == true)
       clean_content = cleaner.strip_tags_and_entities(content)
     else
