@@ -1,4 +1,7 @@
 require "mysql"
+require 'extractor'
+require 'html_tidy'
+require 'stemmer'
 
 class Stem
   attr_accessor :stem , :count, :id
@@ -94,7 +97,7 @@ end
 def get_interesting_stems(language)
   # gets the list of interesting stems from db togher with their id
   # and returns a name=>id hash
-  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
   query = dbh.prepare("SELECT id, name FROM int_words WHERE language = ?")
   query.execute language.to_s
 
@@ -112,7 +115,7 @@ def get_interesting_stems(language)
 end
 
 def get_pages()
-  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
   res = dbh.query("SELECT id, url, language, type, last_scantime FROM pages")
 
   pages = Array.new
@@ -135,7 +138,7 @@ def get_pages()
 end
 
 def insert_stems_into_db(stems, page_id)
-  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
 
   res = dbh.prepare "INSERT INTO words (id, page_id, scantime, count) VALUES (?, ?, ?, ?)"
   stems.each do |stem|
@@ -146,7 +149,7 @@ def insert_stems_into_db(stems, page_id)
 end
 
 def update_page_last_scantime(page, time)
-  dbh = Mysql.real_connect("localhost", "testuser", "test", "bayesfortest")
+  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
 
   res = dbh.prepare "UPDATE pages SET last_scantime=? where id=?;"
   res.execute time, page.id

@@ -4,10 +4,7 @@
 require 'optparse'
 require 'ostruct'
 
-# Requires
-require 'extractor'
-require 'html_tidy'
-require 'stemmer'
+# bayes-swarm specific
 require 'swarm_support'
 
 if __FILE__ == $0
