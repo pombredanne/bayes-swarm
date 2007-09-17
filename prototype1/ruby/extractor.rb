@@ -13,19 +13,14 @@ class HttpExtractor
   def extract_with_redirect(url, limit=10)
     fail "#{self.class.name}: http redirect too deep" if limit.zero?
     puts "#{self.class.name}: Trying: #{url}"
-    begin
-      response = Net::HTTP.get_response(URI.parse(url))
-      case response
-      when Net::HTTPSuccess
-        response
-      when Net::HTTPRedirection
-        extract_with_redirect(response['location'],limit-1)
-      else
-        response.error!
-      end
-    rescue URI::InvalidURIError
-      # FIXME
-      respose = Net::HTTPNotFound.new(1.1, 404, "Not Found")
+    response = Net::HTTP.get_response(URI.parse(url))
+    case response
+    when Net::HTTPSuccess
+      response
+    when Net::HTTPRedirection
+      extract_with_redirect(response['location'],limit-1)
+    else
+      response.error!
     end
   end
 
@@ -47,18 +42,24 @@ class RssExtractor
         last_scantime = Time.parse('2000-01-01 00:00:00')
       end
 
-      # FIXME: item.date might be nil
-      if (item.date > last_scantime)
-        article_url = item.link
-        extractor = HttpExtractor.new
-        rss_full_content += extractor.extract_with_redirect(article_url).body
+      begin
+        if (item.date > last_scantime)
+          article_url = item.link
+          extractor = HttpExtractor.new
+          rss_full_content += extractor.extract_with_redirect(article_url).body
+        end
+      rescue URI::InvalidURIError
+        # article_url is invalid
+        nil
+      rescue TypeError
+        # item.date might is nil
+        puts "warning, rss feed contains articles with no date, consider it for remuval"
       end
     end
     return rss_full_content
   end
 
 end
-
 class FileExtractor
 
   def extract(page)
