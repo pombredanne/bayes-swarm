@@ -2,15 +2,9 @@
 # db definition for release 0.2
 # it works, but need to be refined
 
-
-
-drop database if exists bayesfortest ;
-
-create database bayesfortest ;
-GRANT ALL ON bayesfortest.* TO 'testuser'@'localhost' IDENTIFIED BY 'test' ;
-GRANT SELECT, INSERT ON bayesfortest.* TO 'webuser'@'localhost' IDENTIFIED BY 'test' ;
-    
-use bayesfortest ; 
+# do not select any db, so that we prevent applying
+# this commands to the wrong db   
+# use bayesfortest ; 
 
 CREATE
 	TABLE languages
