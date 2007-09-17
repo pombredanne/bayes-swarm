@@ -31,7 +31,7 @@ Install mysql with apt-get:
 sudo apt-get install mysql-server-5.0 mysql-client-5.0
 }}}
 
-if want to have locally the full database, just download [http://kate.homeunix.net/~matteo/bayesfor/prototype1.sql prototype1.sql] and execute:
+if you want to have locally the full database, just download [http://kate.homeunix.net/~matteo/bayesfor/prototype1.sql prototype1.sql] and execute:
 
 {{{
 $ sudo mysql -p
@@ -79,4 +79,18 @@ To install R, just use the official dmg provided at http://www.r-project.org/ .
 
 *warning*: add info on how to install python (is the default version available with macosx sufficient?)
 == Windows ==
+
+=== MySql ===
+After installing MySQL Server 5.0, to get the full database, just download [http://kate.homeunix.net/~matteo/bayesfor/prototype1.sql prototype1.sql] and save it in C:\Programmi\MySQL. Then open MySQL Command Line Client and execute:
+
+{{{
+$ sudo mysql -p
+mysql> create database bayesfortest;
+mysql> use bayesfortest;
+mysql> source C:\Programmi\MySQL\prototype1.sql
+}}}
+
+=== R ===
 *warning* : this section is still missing. 
+ 
+ 
