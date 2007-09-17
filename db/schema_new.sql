@@ -1,10 +1,4 @@
-drop database if exists bayesfortest ;
-
-create database bayesfortest ;
-GRANT ALL ON bayesfortest.* TO 'testuser'@'localhost' IDENTIFIED BY 'test' ;
-GRANT SELECT, INSERT ON bayesfortest.* TO 'webuser'@'localhost' IDENTIFIED BY 'test' ;
-    
-use bayesfortest ; 
+# current working version
 
 CREATE
 	TABLE languages
