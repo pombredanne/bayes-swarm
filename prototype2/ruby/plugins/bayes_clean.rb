@@ -17,7 +17,7 @@ class StripTagsAndEntities < ETL
   def transform(dto,context)
     raw_word_list = strip_tags_and_entities(context[:raw_content]).split
     dto.words ||= []
-    raw_word_list.each { |w| dto.words << WordDTO.new(nil,w,"global")}
+    raw_word_list.each { |w| dto.words << WordDTO.new(nil,w,"global",1)}
   end
   
   def strip_tags_and_entities(content = "")

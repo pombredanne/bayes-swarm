@@ -16,6 +16,9 @@ require 'dto/dto'
 
 class MultiplexDTO
   
+  # The pointer to the currently executing block within a multiplexed sequence.
+  attr_reader :execpointer
+  
   # creates a new instance of the class. +execpointer+ is the pointer the first DTO that will be
   # executed when this multiplex will be demuxed in a ChainETL . +dtos+ contains the list of DTOs which
   # compose this multiplex.

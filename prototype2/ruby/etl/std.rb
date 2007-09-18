@@ -196,7 +196,7 @@ class ChainETL < ETL
     @blocks.each do |block| 
       if block_given?
         @phase = yield block
-        verbose_log "Phase is now #{@phase}"
+        log "Phase is now #{@phase}"
       end
       run_block(block, dto, context)
     end
@@ -255,7 +255,7 @@ class ChainETL < ETL
   # Executes the block passed as parameter unless skipping is needed.
   def unless_step_over(block, ctx)
     if ctx[:initialstep].nil? or block.name == ctx[:initialstep]
-      verbose_log "Invoking phase #{@phase} on #{block.name}"
+      log "Invoking phase #{@phase} on #{block.name}"
       ctx[:initialstep] = nil
       
       yield(block, ctx)
