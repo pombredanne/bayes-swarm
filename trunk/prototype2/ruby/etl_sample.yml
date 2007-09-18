@@ -11,15 +11,19 @@ root:
 extract:
     block0: IntWordInitializer,intword
     block1: LocalFileMultiplexer,localfile
+    block2: FileExtractor
     # block1: SourceMultiplexer,source
     # block2: PageMultiplexer,page
 
 transform:
     block0: Timestamper
-    block1: TestMplexedInvokeETL
+    block1: StripTagsAndEntities
+#    block2: InterestingFilter
+    block2: StemFilter
+    block3: WordGroupByNameAndPosition
 
 load:
-    block0: TestMplexedInvokeETL
+    block0: CSVLoader,csv
 #    block0: DatabaseLoader,dbload
 
     
@@ -31,7 +35,6 @@ intword:
     refer_to:   database
 source:
     refer_to:   database
-    
 page:
     refer_to:   database
     
@@ -40,4 +43,7 @@ database:
     user:   root
     pass:   
     db:     swarm_development
+    
+csv:
+    filename:   /Users/battlehorse/Devel/ruby/swarm/trunk/prototype1/test/output.csv
     
