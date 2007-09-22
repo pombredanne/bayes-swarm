@@ -10,6 +10,7 @@
 # Licensed under the Apache2 License.
 require 'etl/std'
 require 'etl/mplex'
+require 'etl/util/log'
 
 class TestETL < ETL
   def extract(dto, context)
@@ -30,6 +31,31 @@ class TestMplexedInvokeETL < ETL
   end
   def load(dto,context)
     puts "loading #{dto.source}, #{dto.url}"
+  end
+end
+
+class MartinETL < ETL
+  include Log
+  def transform(dto,context)
+    log "Martin ETL is running!"
+    dto
+  end
+end
+
+class ItalyETL < ETL
+  include Log
+  def transform(dto,context)
+    log "Italy ETL is running!"
+    dto
+  end
+end
+
+class TestCondETL < ConditionETL
+  include Log
+  def run?(block,dto,context)
+    log "Testing condition for #{block.name} and #{dto.url}"
+    r = Regexp.new(block.name)
+    dto.url =~ r
   end
 end
 
