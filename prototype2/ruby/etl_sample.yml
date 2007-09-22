@@ -17,10 +17,15 @@ extract:
 
 transform:
     block0: Timestamper
+#    block1: TestCondETL,cond
     block1: StripTagsAndEntities
 #    block2: InterestingFilter
     block2: StemFilter
     block3: WordGroupByNameAndPosition
+
+#cond:
+#    block0: MartinETL,martin
+#    block1: ItalyETL,italy
 
 load:
     block0: CSVLoader,csv

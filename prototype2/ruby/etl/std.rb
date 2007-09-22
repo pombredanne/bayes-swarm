@@ -211,7 +211,7 @@ class ChainETL < ETL
 
         while_mplexing(ctx,block) do
           verbose_log "with DTO #{ctx[:dto]}" 
-          block.send(@phase,ctx[:dto], ctx)
+          b_send(block,ctx)
         end
         
       rescue Exception => e
@@ -220,6 +220,14 @@ class ChainETL < ETL
     end
   end
   protected :run_block 
+  
+  # Delegates execution to the current block. This method is the last one before passing the buck
+  # to the block. At this point multiplexing, savepoint recovery and every other precondition
+  # has already been resolved.
+  def b_send(block,ctx)
+    block.send(@phase,ctx[:dto],ctx)
+  end
+  protected :b_send
   
   # handles multiplexed DTOs and subsequently yields to the code block passed as parameter
   # for all the DTOs which compose a multiplexed one. 

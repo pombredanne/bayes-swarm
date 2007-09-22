@@ -15,6 +15,7 @@ require 'etl/util/log'
 require 'dto/dto'
 require 'etl/std'
 require 'etl/stdload'
+require 'etl/cond'
 
 # The ETL Runner is responsible for running ETL processes. 
 #
