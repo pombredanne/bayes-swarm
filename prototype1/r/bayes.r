@@ -6,27 +6,39 @@
 #           y(t) =  x(t)^(2) / 20  + 6 squareWave(0.05(t-1)) + 3
 #                   + time varying measurement noise
 #           using a multi-layer perceptron (MLP) and both the EKF and
-#           the hybrid importance-samping resampling (SIR) algorithm.            
+#           the hybrid importance-samping resampling (SIR) algorithm.
 
 # AUTHOR  : Nando de Freitas - Thanks for the acknowledgement :-)
 # DATE    : 08-09-98
 # TRANSLATED TO R By : Alessandro Bonazzi
 # DATE    : 10-08-07
 
+library(RMySQL)
+mycon <- dbConnect(MySQL(), user='testuser', dbname="bayesfortest", host="localhost", password='test')
+query_1 <- dbSendQuery(mycon, "SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
+                             FROM words a, int_words c, pages b
+                             WHERE a.id = c.id
+                               AND a.page_id = b.id
+                               AND a.id = 1
+                             GROUP BY a.id, c.name, date(a.scantime);")
+china <- fetch(query_1, n = -1)
+
+query_2 <- dbSendQuery(mycon, "SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
+                             FROM words a, int_words c, pages b
+                             WHERE a.id = c.id
+                               AND a.page_id = b.id
+                               AND a.id = 2
+                             GROUP BY a.id, c.name, date(a.scantime);")
+india <- fetch(query_2, n = -1)
+
 source("hybridsir.r")
 source("reader.r")
-china=read("china.txt")
-india=read("india.txt")
 
-hold_x = sum.count(china)
-hold_y = sum.count(india)
-
-
-N= length(hold_x)
+N= length(china[,3])
 x<-y<-array(0,dim=c(N,1))
 
-y[,1]=hold_y
-x[,1]=hold_x
+y[,1]=india[,3]
+x[,1]=china[,3]
 # INITIALISATION AND PARAMETERS:
 # =============================
 
@@ -52,13 +64,18 @@ KalmanP = 1            # Kalman filter initial weights covariance hyperparameter
 hyb = hybridsir(x,y,s1,s2,numSamples,Q,initVar1,
            initVar2,R,KalmanR,KalmanQ,KalmanP,N)
 
-
-counts=ts(x[10:42,1])
-plot(counts,type="o",col=2,ylim=c(-10, 50),lwd=2)
-lines(ts(y[10:42,1]),type="b",col=3,lwd=2)
+png(file="figure/prediction.png")
+plot(ts(x),type="o",col=2,ylim=c(-10, 50),lwd=2)
+lines(ts(y),type="b",col=3,lwd=2)
 for ( i in 1: numSamples ) {
-lines(ts(hyb$m[i,10:42]),type="b",lwd=1)
+lines(ts(hyb$m[i,]),type="b",lwd=1)
 }
-lines(counts,type="o",col=2,ylim=c(-10, 50),lwd=2)
-lines(ts(y[10:42,1]),type="b",col=3,lwd=2)
-tile("Predictor (RED), Forecast ( Black ), Verification ( Green )")
+lines(ts(x),type="o",col=2,ylim=c(-10, 50),lwd=2)
+lines(ts(y),type="b",col=3,lwd=2)
+title("Predictor (RED), Forecast ( Black ), Verification ( Green )")
+dev.off
+
+png(file="figure/hist.png")
+hist(hyb$m[,N],100, main="Histogram of forecast at last time series pillar")
+# FIXME: add observed value line in graph
+dev.off()
