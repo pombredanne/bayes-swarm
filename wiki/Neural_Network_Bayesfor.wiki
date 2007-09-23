@@ -1,4 +1,4 @@
-#Neural_Network_Bayesfor
+#summary Bayesian neural networks theory applied to Bayesfor data
 
 * Introduction *
 
@@ -72,4 +72,5 @@ This figure shows the forecast distribution at time step 37.
 The green line is the observed value.
 
 
+ 
  
