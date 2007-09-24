@@ -25,7 +25,7 @@ for page in pages
     if ( counted_stems != nil )    
       insert_stems_into_db(counted_stems, page.id)
     end
-  rescue Net::HTTPServerException
-    nil
+  rescue
+    puts "Unhandled exception: #{$!}"
   end
 end
