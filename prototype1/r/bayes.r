@@ -14,31 +14,40 @@
 # DATE    : 10-08-07
 
 library(RMySQL)
-mycon <- dbConnect(MySQL(), user='testuser', dbname="bayesfortest", host="localhost", password='test')
-query_1 <- dbSendQuery(mycon, "SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
-                             FROM words a, int_words c, pages b
-                             WHERE a.id = c.id
-                               AND a.page_id = b.id
-                               AND a.id = 1
-                             GROUP BY a.id, c.name, date(a.scantime);")
-china <- fetch(query_1, n = -1)
+library(zoo)
 
-query_2 <- dbSendQuery(mycon, "SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
-                             FROM words a, int_words c, pages b
-                             WHERE a.id = c.id
-                               AND a.page_id = b.id
-                               AND a.id = 2
-                             GROUP BY a.id, c.name, date(a.scantime);")
-india <- fetch(query_2, n = -1)
+# define which variables we are goin to use
+x_id <- 2
+y_id <- 1
+
+mycon <- dbConnect(MySQL(), user='testuser', dbname="bayesfortest", host="localhost", password="test")
+query <- dbSendQuery(mycon, paste("SELECT a.id, c.name, avg(a.count) as num, date(a.scantime) as data
+                                   FROM words a, int_words c, pages b
+                                   WHERE a.id = c.id
+                                     AND a.page_id = b.id
+                                     AND a.id in (", x_id, ",", y_id,")
+                                   GROUP BY a.id, c.name, date(a.scantime);"))
+data <- fetch(query, n = -1)
+
+# use zoo class, so that we can easily deal with eventaul missing values and merge the two series
+x <- zoo(as.matrix(subset(data, id==x_id, select=num)), as.matrix(subset(data, id==x_id, select=data)))
+y <- zoo(as.matrix(subset(data, id==y_id, select=num)), as.matrix(subset(data, id==y_id, select=data)))
+
+# merge x and y so that we make sure we only deal with pillars with same date
+m <- merge(x, y, all = FALSE)
+
+N = dim(m)[1]
+
+# reassign to x and y as vectors
+# FIXME: we should make use of ts class, so that we take full advantage of R abilities
+# but hybridsir wants x and y to be matrices, so for the moment let's keep it like this    
+x<-y<-array(0,dim=c(N,1))
+x <- as.matrix(m[,1])
+y <- as.matrix(m[,2])
 
 source("hybridsir.r")
 source("reader.r")
 
-N= length(china[,3])
-x<-y<-array(0,dim=c(N,1))
-
-y[,1]=india[,3]
-x[,1]=china[,3]
 # INITIALISATION AND PARAMETERS:
 # =============================
 

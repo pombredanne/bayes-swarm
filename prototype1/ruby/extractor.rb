@@ -29,6 +29,7 @@ end
 class RssExtractor
 
   def extract(rss_page)
+    puts "#{self.class.name}: Trying: #{rss_page.url}"
     rss_content = "" # raw content of rss feed will be loaded here
     open(rss_page.url) do |s| rss_content = s.read end
     rss = RSS::Parser.parse(rss_content, false)
