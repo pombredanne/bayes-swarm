@@ -54,15 +54,15 @@ source("reader.r")
 t = 1:1:N              # Time.
 actualR = 2            # Measurement noise variance.
 actualQ = 1e-2         # Process noise variance.
-numSamples=1000          # Number of Monte Carlo samples per time step.
+numSamples=1000        # Number of Monte Carlo samples per time step.
 s1=10                  # Neurons in the hidden layer.
 s2=1                   # Neurons in the output layer - only one in this implementation.
-Q = 10               # Process noise variance.
+Q = 10                 # Process noise variance.
 R = 2                  # Measurement noise variance.
 initVar1= 10           # Variance of prior for weights in the hidden layer.
 initVar2= 10           # Variance of prior for weights in the output layer.
 KalmanR = 1            # Kalman filter measurement noise covariance hyperparameter;
-KalmanQ = 1        # Kalman filter process noise covariance hyperparameter;
+KalmanQ = 1            # Kalman filter process noise covariance hyperparameter;
 KalmanP = 1            # Kalman filter initial weights covariance hyperparameter;
 
 
@@ -82,7 +82,7 @@ lines(ts(hyb$m[i,]),type="b",lwd=1)
 lines(ts(x),type="o",col=2,ylim=c(-10, 50),lwd=2)
 lines(ts(y),type="b",col=3,lwd=2)
 title("Predictor (RED), Forecast ( Black ), Verification ( Green )")
-dev.off
+dev.off()
 
 png(file="figure/hist.png")
 hist(hyb$m[,N],100, main="Histogram of forecast at last time series pillar")
