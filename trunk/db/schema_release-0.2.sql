@@ -17,14 +17,14 @@ CREATE
 INSERT INTO languages (language) values ('ita'),('eng');
 
 CREATE
-		TABLE formats
+		TABLE types
 		(
-		format varchar(10) NOT NULL,
-		PRIMARY KEY USING BTREE(format)
+		type varchar(3) NOT NULL,
+		PRIMARY KEY USING BTREE(type)
 		)	
 		ENGINE=InnoDB;
 
-INSERT INTO formats (format) values ('html'),('xml');
+INSERT INTO types (type) values ('url'),('rss');
 
 CREATE
     TABLE sources
@@ -46,10 +46,10 @@ CREATE
         source_id int(11) NOT NULL,
         url varchar(255) NOT NULL,
     	language varchar(3) NOT NULL,
-	    format varchar(10) NOT NULL,
-		scantime DATETIME NOT NULL,
+	    type varchar(3) NOT NULL,
+		last_scantime DATETIME NOT NULL,
         PRIMARY KEY USING BTREE(id),
-	    constraint fk_page_format foreign key(format) references formats(format),
+	    constraint fk_page_type foreign key(type) references types(type),
         constraint fk_page_source foreign key(source_id) references sources(id),
         constraint fk_page_lang   FOREIGN key(language)  references sources(language)
     )
