@@ -5,6 +5,21 @@
 # bayesfor
 # reference : http://www.rainsoft.de/publications/gp_for_ml.pdf
 
+myCov <-  function( x, n, sigma, l1, sigmav ) {
+
+   d=array(0, dim=c(n,n))
+   for ( i in 1:n) {
+       for ( j in 1:n ) {
+           d[i,j] = sqrt( (  x[i] - x[j] )^2)
+        }
+    }
+
+K= sigma * exp ( -1/(2*l1) * d^2 )
+noise=array(rnorm(n*n), dim=c(n,n))
+K = K + noise*sigmav
+
+return(K)
+}
 
 # set grid
 x= 1: 10
@@ -34,44 +49,18 @@ y2m <-  -solve(C) %*% BT %*% y1
 
 
 # plot input data + mean of forecast
-plot(ts(c(y1,y2m)))
+#plot(ts(c(y1,y2m)))
 
 y=c(y1,y2m)
 error=c(rep(0,ly1),sqrt(diag(solve(C))) )
 
 # do be done, plot with error bar....
-%plotCI( y, uiw= error, liw = uiw, err='y')
-     
+#plotCI( y, uiw= error, liw = uiw, err='y')
 
-
-     
-myCov <-  function( x, n, sigma, l1, sigmav ) {
-
-   d=array(0, dim=c(n,n))
-   for ( i in 1:n) {
-       for ( j in 1:n ) {
-           d[i,j] = sqrt( (  x[i] - x[j] )^2)
-        }
-    }
-
-K= sigma * exp ( -1/(2*l1) * d^2 )
-noise=array(rnorm(n*n), dim=c(n,n))
-K = K + noise*sigmav
-   
-return(K)
-}
-
-
-
-
-
-     
-
-     
-
-
-     
-
-
-
-     
+pdf(file="gauss.pdf")
+  plot(y)
+  lines(1:4, y1)
+  lines(4:10, rbind(y1[4],y2m), col="red")
+  lines(4:10, rbind(y1[4],y2m)+error[4:10], col="red", lty="dashed")
+  lines(4:10, rbind(y1[4],y2m)-error[4:10], col="red", lty="dashed")
+dev.off()
