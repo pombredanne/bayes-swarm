@@ -1,0 +1,153 @@
+% presentation with pdflatex + foils package
+% http://robotics.stanford.edu/~gerkey/tools/saynotopowerpoint.html
+
+% use the foils document class, with large fonts and landscape orientation
+\documentclass[20pt,landscape]{foils}
+
+% setup the page geometry for landscape and use maximum screen real estate
+\usepackage[pdftex]{geometry}
+\geometry{headsep=2.0em,hscale=0.80}
+
+% title, author, date
+\title{Bayes-swarm\\bayesian web spidering}
+\author{Matteo Zandi\\matteo.zandi@bayesfor.eu}
+\date{6 ottobre 2007}
+
+% the contents of \MyLogo are placed at the bottom center on the title slide
+% and in the bottom left of other slides
+\MyLogo{Matteo Zandi, Bayes-swarm}
+
+% basic things that we need are below
+\usepackage[italian]{babel}
+\usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+\hypersetup{
+  pdftitle={Bayes-swarm, bayesian web spidering},
+  pdfauthor={Matteo Zandi},
+  pdfsubject={Bayes-swarm, research project which aims to spider web sources and extract data with bayesian models},
+  pdfpagemode={FullScreen},
+  pdfborder={0 0 0}
+}
+\usepackage{graphicx}
+
+% set slide command
+\newcommand{\slide}[1]{\foilhead{#1}}
+%\newcommand{\slide}[1]{\foilhead{#1}\noindent}
+
+% document
+\begin{document}
+
+\LogoOff
+\maketitle
+\begin{center}
+  \includegraphics[width=0.3\hsize]{./figures/creative_camp_banner.png}
+\end{center}
+
+\slide{Cos'è Bayesfor?}
+\LogoOn
+\noindent
+Una associazione che si propone di promuovere e realizzare ricerche, 
+studi o sperimentazioni in materia di analisi dei dati e utilizzo di 
+tecniche statistiche
+
+\begin{center}
+  http://bayesfor.eu
+\end{center}
+
+\slide{... e Bayes-swarm?}
+\noindent
+E' un progetto della associazione Bayesfor, che ha l'obiettivo di fare spidering 
+di fonti sul web con lo scopo di estrarre informazioni come ad esempio:
+\begin{itemize}
+\item Correlazione tra parole nel tempo
+\item Associazioni tra parole nelle fonti
+\item Correlazione tra uso di parole e notizie
+\item Correlazione tra uso di parole e mercati finanziari
+\end{itemize}
+
+\begin{center}
+  http://bayes-swarm.googlecode.com
+\end{center}
+
+\slide{Come funziona}
+\begin{itemize}
+\item Lista di fonti (siti di quotidiani italiani ed esteri, agenzie
+di stampa, etc)
+\item Lista di parole "interessanti" (per ora, ma non per molto)
+\item Ruby + gemme (ferret, etc)
+\item Mysql, database in cui sono salvate tutte le informazioni
+\end{itemize}
+
+\slide{Alcuni numeri}
+\begin{itemize}
+\item 7 fonti (times, guardian, euronews, ny times, al jazeera, etc)
+\item 22 pagine, circa 3 per fonte (pagina principale, economica, finanziaria, etc)
+\item 87 parole interessanti (china, india, bush, iraq, terror, muslim, etc)
+\item circa 1000 occorrenze a settimana
+\end{itemize}
+
+\slide{Grafico serie storica bush}
+\begin{center}
+  \includegraphics{./figures/timeseries_bush.pdf}
+\end{center}
+\noindent
+Cosa è successo a metà agosto?
+
+\slide{Grafico serie storiche china e india}
+\begin{center}
+  \includegraphics{./figures/timeseries_chinaindia.pdf}
+\end{center}
+\noindent
+China e india tendono ad muoversi congiuntamente?
+
+\slide{Grafico scatter di china e india}
+\begin{center}
+  \includegraphics{./figures/scatterplot_chinaindia.pdf}
+\end{center}
+\noindent
+Coefficiente di correlazione $\cong 0.59$
+
+\slide{Applicazione di modelli statistici 1/3}
+\begin{center}
+  \includegraphics{./figures/lm_hw_gp.pdf}
+\end{center}
+\noindent
+Regressione semplice: $y=a+bx$.\\
+Exponential smoothing: media di $n$ osservazioni precedenti con peso 
+decrescente in funzione della distanza da oggi.\\
+Processo gaussiano: i parametri variano nel tempo.
+
+\slide{Applicazione di modelli statistici 2/3}
+\begin{center}
+  \includegraphics{./figures/bi_lm_gp.pdf}
+\end{center}
+\noindent
+Minimi quadrati e processo gaussiano, caso bivariato
+
+\slide{Applicazione di modelli statistici 3/3}
+\begin{center}
+  \includegraphics[width=0.4\hsize]{./figures/neural-prediction.png}
+  \includegraphics[width=0.4\hsize]{./figures/neural-hist.png}
+\end{center}
+\noindent
+Neural network
+
+\slide{Visualizzazione con i grafi}
+\begin{center}
+  \includegraphics[width=0.4\hsize]{./figures/graphs.png}
+\end{center}
+\noindent
+Ogni parola costituisce una 'stella', a parole con frequenza maggiore
+sono associate stelle di dimensione maggiore. Ogni parola è connessa alle 
+altre se sono state almeno una volta nella stessa pagina, la connessione 
+è tanto più marcata quante più volte le parole si sono trovate nella stessa pagina.
+
+\slide{Grazie per l'attenzione}
+\noindent
+\begin{center}
+  http://bayesfor.eu\\http://bayes-swarm.googlecode.com
+  
+  \huge{domande?}
+\end{center}
+
+\end{document}

@@ -1,0 +1,32 @@
+## Makefile
+
+# File lists
+
+DISTFILES = *~
+FIGURES = lm_hw_gp.pdf bi_lm_gp.pdf timeseries_bush.pdf\
+	timeseries_chinaindia.pdf scatterplot_chinaindia.pdf
+CLEANFILES = $(DISTFILES) $(FIGURES)
+
+# Build rules
+
+all: $(FIGURES)
+
+lm_hw_gp.pdf: lm_hw_gp_demo.r
+	cat Univ_JB.R | R --vanilla
+
+bi_lm_gp.pdf: bi_lm_gp_demo.r
+	cat bi_lm_gp_demo.r | R --vanilla
+
+timeseries_bush.pdf: timeseries_bush.r
+	cat timeseries_bush.r | R --vanilla
+
+timeseries_chinaindia.pdf scatterplot_chinaindia.pdf: timeseries_chinaindia.r
+	cat timeseries_chinaindia.r | R --vanilla
+
+# Clean-up rules
+
+clean:
+	rm -f $(CLEANFILES)
+
+distclean:
+	rm -f $(DISTFILES)
