@@ -16,16 +16,17 @@ CLEANFILES = $(DISTFILES)
 all: $(BASENAME).pdf figures
 
 $(BASENAME).pdf: figures $(BASENAME).tex
-	pdflatex bayes-swarm.tex > /dev/null
-	pdflatex bayes-swarm.tex > /dev/null
+	pdflatex bayes-swarm.tex -interaction=nonstopmode > /dev/null
+	pdflatex bayes-swarm.tex -interaction=nonstopmode > /dev/null
 
+.PHONY: figures
 figures:
 	make -C $(FIGDIR)
 
 # Clean-up rules
 
 clean:
-	make -C clean $(FIGDIR)
+	make -C $(FIGDIR) clean
 	rm -f $(CLEANFILES)
 
 distclean:

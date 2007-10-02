@@ -12,7 +12,7 @@ CLEANFILES = $(DISTFILES) $(FIGURES)
 all: $(FIGURES)
 
 lm_hw_gp.pdf: lm_hw_gp_demo.r
-	cat Univ_JB.R | R --vanilla
+	cat lm_hw_gp_demo.r | R --vanilla
 
 bi_lm_gp.pdf: bi_lm_gp_demo.r
 	cat bi_lm_gp_demo.r | R --vanilla
