@@ -8,6 +8,15 @@
 \usepackage[pdftex]{geometry}
 \geometry{headsep=2.0em,hscale=0.80}
 
+% Define page margins
+\setlength{\topmargin}{-1.0in}
+%\addtolength{\oddsidemargin}{-0.5in}
+%\addtolength{\textwidth}{1.0in}
+\setlength{\oddsidemargin}{-0.5in}
+\setlength{\textwidth}{10.0in}
+\setlength{\textheight}{7in} 
+\setlength{\foilheadskip}{-0.5in}
+
 % title, author, date
 \title{Bayes-swarm\\bayesian web spidering}
 \author{Associazione BayesFor\\info@bayesfor.eu}
@@ -100,58 +109,58 @@ di stampa, feed rss, etc)
 \item ... attualmente a dimensioni prototipali, puo' scalare a volumi molto maggiori
 \end{itemize}
 
-\slide{Il processo di estrazione}
-Il processo di estrazione comprende diverse fasi:
+\slide{Le fasi del processo di estrazione}
 \begin{center}
   \includegraphics{./figures/elab_phases.png}
 \end{center}
-\begin{center}
-	http://www.miislita.com/information-retrieval-tutorial/indexing.html
-\end{center}
+Il processo di estrazione utilizza un sistema modulare facilmente estendibile, 
+basato sul concetto di ETL (Extact, Transform and Load) tipico dei datawarehouse.
+%\begin{center}
+%	http://www.miislita.com/information-retrieval-tutorial/indexing.html
+%\end{center}
 
-\slide{Il processo di estrazione (continua)}
-Il processo di estrazione utilzza un sistema modulare facilmente estendibile con un minimo di conoscenze necessarie, basato sul concetto di ETL (Extact, Transform and Load) tipico dei datawarehouse
-\begin{center}
-	\includegraphics{./figures/etl_chains.png}
-\end{center}
+%\slide{Le fasi del processo di estrazione (continua)}
+%\begin{center}
+%	\includegraphics{./figures/etl_chains.png}
+%\end{center}
 
 \slide{Grafico serie storica bush}
 \begin{center}
   \includegraphics{./figures/timeseries_bush.pdf}
 \end{center}
 \noindent
-Cosa è successo a metà agosto?
+\begin{itemize}
+\item Cosa è successo a metà agosto?
+\end{itemize}
 
-\slide{Grafico serie storiche china e india}
+\slide{Grafici di china e india}
 \begin{center}
   \includegraphics{./figures/timeseries_chinaindia.pdf}
-\end{center}
-\noindent
-China e india tendono ad muoversi congiuntamente?
-
-\slide{Grafico scatter di china e india}
-\begin{center}
   \includegraphics{./figures/scatterplot_chinaindia.pdf}
 \end{center}
 \noindent
-Coefficiente di correlazione $\cong 0.59$
+\begin{itemize}
+  \item China e india tendono ad muoversi congiuntamente?
+  \item Coefficiente di correlazione $\cong 0.59$
+\end{itemize}
 
 \slide{Applicazione di modelli statistici 1/3}
 \begin{center}
   \includegraphics{./figures/lm_hw_gp.pdf}
 \end{center}
 \noindent
-Regressione semplice: $y=a+bx$.\\
-Exponential smoothing: media di $n$ osservazioni precedenti con peso 
-decrescente in funzione della distanza da oggi.\\
-Processo gaussiano: i parametri variano nel tempo.
+\begin{itemize}
+  \item Least squares: regressione semplice, presuppone una dipendenza lineare del tipo $y=a+bx$.
+  \item Exponential smoothing: media di $n$ osservazioni precedenti con peso decrescente in funzione della distanza da oggi.
+  \item Processo gaussiano: i parametri del modello sono funzione nel tempo.
+\end{itemize}
 
 \slide{Applicazione di modelli statistici 2/3}
 \begin{center}
   \includegraphics{./figures/bi_lm_gp.pdf}
 \end{center}
 \noindent
-Minimi quadrati e processo gaussiano, caso bivariato
+Regressione semplice e processo gaussiano, caso bivariato
 
 \slide{Applicazione di modelli statistici 3/3}
 \begin{center}
@@ -164,8 +173,9 @@ Neural network
 \slide{Teoria dei grafi}
 Utilizzo dei legami parola - pagina per creare grafi di relazioni, da cui estrarre relazioni dirette tra parole che appaiono nello stesso contesto (quando si parla di questo, si parla anche di...)
 \begin{center}
-  \includegraphics{./figures/graph_compression.png}
+  \includegraphics{./figures/graph_compression2.png}
 \end{center}
+\noindent
 E' alla base dei sistemi di advertising piu' famosi: Amazon.com, ('chi ha comprato questo, ha comprato anche...'), Google Adwords ('se hai fatto questa ricerca, forse sei interessato anche a ...') 
 
 \slide{Teoria dei grafi (continua)}
@@ -179,10 +189,11 @@ altre se sono state almeno una volta nella stessa pagina, la connessione
 è tanto più marcata quante più volte le parole si sono trovate nella stessa pagina.
 
 \slide{Teoria dei grafi e Clustering}
+\noindent
 Applicare tecniche di clustering e raggruppamento (k-means, hierarchical, edge-betweenness) aiuta a identificare quali parole sono contestuali tra loro e quali invece irrilevanti. 
 
 \begin{center}
-  \includegraphics{./figures/clustering.png}
+  \includegraphics{./figures/graph_clustering.png}
 \end{center}
 
 \slide{Da qui in avanti}

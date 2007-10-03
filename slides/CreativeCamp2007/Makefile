@@ -13,7 +13,7 @@ CLEANFILES = $(DISTFILES)
 
 # Build rules
 
-all: $(BASENAME).pdf figures
+all: $(BASENAME).pdf
 
 $(BASENAME).pdf: figures $(BASENAME).tex
 	pdflatex bayes-swarm.tex -interaction=nonstopmode > /dev/null

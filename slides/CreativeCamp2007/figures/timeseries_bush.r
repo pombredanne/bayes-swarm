@@ -9,7 +9,7 @@ attributes(stem_data)$colnames[1] = subset(data, id==stem_id, select=name)[1]
 n <- length(stem_data)[1]
 x <- 1:n
 
-pdf(file="timeseries_bush.pdf", width=4, height=4)
+pdf(file="timeseries_bush.pdf", width=5, height=5)
   par(cex.axis=1, cex.lab=1, mar=c(3.1, 3.1, 2.1, 2.1))
   plot(stem_data ~ x, 
     main="", xlab="time", 
