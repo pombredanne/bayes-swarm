@@ -15,7 +15,7 @@ CLEANFILES = $(DISTFILES)
 
 all: $(BASENAME).pdf
 
-$(BASENAME).pdf: figures $(BASENAME).tex
+$(BASENAME).pdf: $(BASENAME).tex figures
 	pdflatex bayes-swarm.tex -interaction=nonstopmode > /dev/null
 	pdflatex bayes-swarm.tex -interaction=nonstopmode > /dev/null
 

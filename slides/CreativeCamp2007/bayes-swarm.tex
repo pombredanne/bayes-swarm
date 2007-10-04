@@ -2,7 +2,7 @@
 % http://robotics.stanford.edu/~gerkey/tools/saynotopowerpoint.html
 
 % use the foils document class, with large fonts and landscape orientation
-\documentclass[20pt,landscape]{foils}
+\documentclass[20pt,landscape,a4paper]{foils}
 
 % setup the page geometry for landscape and use maximum screen real estate
 \usepackage[pdftex]{geometry}
@@ -14,7 +14,7 @@
 %\addtolength{\textwidth}{1.0in}
 \setlength{\oddsidemargin}{-0.5in}
 \setlength{\textwidth}{10.0in}
-\setlength{\textheight}{7in} 
+\setlength{\textheight}{7in}
 \setlength{\foilheadskip}{-0.5in}
 
 % title, author, date
@@ -55,8 +55,8 @@
 \slide{Cos'è Bayesfor?}
 \LogoOn
 \noindent
-Una associazione che si propone di promuovere e realizzare ricerche, 
-studi o sperimentazioni in materia di analisi dei dati e utilizzo di 
+Una associazione che si propone di promuovere e realizzare ricerche,
+studi o sperimentazioni in materia di analisi dei dati e utilizzo di
 tecniche statistiche
 
 \begin{center}
@@ -65,11 +65,11 @@ tecniche statistiche
 
 Membri:
 \begin{itemize}
- 	\item Bonazzi Alessandro (a.bonazzi@bayesfor.eu)
-	\item Brunori Paolo (p.brunori@bayesfor.eu)
-	\item Govoni Riccardo (r.govoni@bayesfor.eu)
-	\item Lampronti Giulio (g.lampronti@bayesfor.eu)
-	\item Zandi Matteo (m.zandi@bayesfor.eu). 
+  \item Bonazzi Alessandro (alessandro.bonazzi@bayesfor.eu)
+  \item Brunori Paolo (paolo.brunori@bayesfor.eu)
+  \item Govoni Riccardo (riccardo.govoni@bayesfor.eu)
+  \item Lampronti Giulio (giulio.lampronti@bayesfor.eu)
+  \item Zandi Matteo (matteo.zandi@bayesfor.eu).
 \end{itemize}
 
 \begin{center}
@@ -78,13 +78,13 @@ http://code.google.com/p/bayes-swarm/wiki/AboutUs
 
 \slide{... e Bayes-swarm?}
 \noindent
-E' un progetto della associazione Bayesfor, che ha l'obiettivo di fare spidering 
+E' un progetto della associazione Bayesfor, che ha l'obiettivo di fare spidering
 di fonti sul web con lo scopo di estrarre informazioni come ad esempio:
 \begin{itemize}
-\item Correlazione tra parole nel tempo
-\item Associazioni tra parole nelle fonti
-\item Correlazione tra uso di parole e notizie
-\item Correlazione tra uso di parole e mercati finanziari
+  \item Correlazione tra parole nel tempo
+  \item Associazioni tra parole nelle fonti
+  \item Correlazione tra uso di parole e notizie
+  \item Correlazione tra uso di parole e mercati finanziari
 \end{itemize}
 
 \begin{center}
@@ -113,15 +113,15 @@ di stampa, feed rss, etc)
 \begin{center}
   \includegraphics{./figures/elab_phases.png}
 \end{center}
-Il processo di estrazione utilizza un sistema modulare facilmente estendibile, 
+Il processo di estrazione utilizza un sistema modulare facilmente estendibile,
 basato sul concetto di ETL (Extact, Transform and Load) tipico dei datawarehouse.
 %\begin{center}
-%	http://www.miislita.com/information-retrieval-tutorial/indexing.html
+%    http://www.miislita.com/information-retrieval-tutorial/indexing.html
 %\end{center}
 
 %\slide{Le fasi del processo di estrazione (continua)}
 %\begin{center}
-%	\includegraphics{./figures/etl_chains.png}
+%    \includegraphics{./figures/etl_chains.png}
 %\end{center}
 
 \slide{Grafico serie storica bush}
@@ -152,7 +152,7 @@ basato sul concetto di ETL (Extact, Transform and Load) tipico dei datawarehouse
 \begin{itemize}
   \item Least squares: regressione semplice, presuppone una dipendenza lineare del tipo $y=a+bx$.
   \item Exponential smoothing: media di $n$ osservazioni precedenti con peso decrescente in funzione della distanza da oggi.
-  \item Processo gaussiano: i parametri del modello sono funzione nel tempo.
+  \item Processo gaussiano: i parametri del modello non sono fissi, dipendono dal tempo.
 \end{itemize}
 
 \slide{Applicazione di modelli statistici 2/3}
@@ -160,7 +160,12 @@ basato sul concetto di ETL (Extact, Transform and Load) tipico dei datawarehouse
   \includegraphics{./figures/bi_lm_gp.pdf}
 \end{center}
 \noindent
-Regressione semplice e processo gaussiano, caso bivariato
+\begin{itemize}
+  \item Least squares: stiamo ipotizzando che tra china e india esista
+  una dipendenza fissa.
+  \item Processo gaussiano: il modello di dipendenza varia in funzione
+  del numero di volte in cui le parole sono citate.
+\end{itemize}
 
 \slide{Applicazione di modelli statistici 3/3}
 \begin{center}
@@ -171,12 +176,12 @@ Regressione semplice e processo gaussiano, caso bivariato
 Neural network
 
 \slide{Teoria dei grafi}
+\noindent
 Utilizzo dei legami parola - pagina per creare grafi di relazioni, da cui estrarre relazioni dirette tra parole che appaiono nello stesso contesto (quando si parla di questo, si parla anche di...)
 \begin{center}
   \includegraphics{./figures/graph_compression2.png}
 \end{center}
-\noindent
-E' alla base dei sistemi di advertising piu' famosi: Amazon.com, ('chi ha comprato questo, ha comprato anche...'), Google Adwords ('se hai fatto questa ricerca, forse sei interessato anche a ...') 
+E' alla base dei sistemi di advertising piu' famosi: Amazon.com, ('chi ha comprato questo, ha comprato anche...'), Google Adwords ('se hai fatto questa ricerca, forse sei interessato anche a ...')
 
 \slide{Teoria dei grafi (continua)}
 \begin{center}
@@ -184,13 +189,13 @@ E' alla base dei sistemi di advertising piu' famosi: Amazon.com, ('chi ha compra
 \end{center}
 \noindent
 Ogni parola costituisce una 'stella', a parole con frequenza maggiore
-sono associate stelle di dimensione maggiore. Ogni parola è connessa alle 
-altre se sono state almeno una volta nella stessa pagina, la connessione 
+sono associate stelle di dimensione maggiore. Ogni parola è connessa alle
+altre se sono state almeno una volta nella stessa pagina, la connessione
 è tanto più marcata quante più volte le parole si sono trovate nella stessa pagina.
 
 \slide{Teoria dei grafi e Clustering}
 \noindent
-Applicare tecniche di clustering e raggruppamento (k-means, hierarchical, edge-betweenness) aiuta a identificare quali parole sono contestuali tra loro e quali invece irrilevanti. 
+Applicare tecniche di clustering e raggruppamento (k-means, hierarchical, edge-betweenness) aiuta a identificare quali parole sono contestuali tra loro e quali invece irrilevanti.
 
 \begin{center}
   \includegraphics{./figures/graph_clustering.png}
@@ -198,17 +203,17 @@ Applicare tecniche di clustering e raggruppamento (k-means, hierarchical, edge-b
 
 \slide{Da qui in avanti}
 \begin{itemize}
-	\item aumento del corpus di dati oggetto di analisi
-	\item analisi sulle forme di distribuzione dell'informazione derivanti dal web 2.0: i feed rss
-	\item sperimentazione di altre tecniche statistiche (SVD, ...)
-	\item sperimentazione su corpus di dati preesistenti di grandi dimensioni (il dataset Enron)
+  \item aumento del corpus di dati oggetto di analisi
+  \item analisi sulle forme di distribuzione dell'informazione derivanti dal web 2.0: i feed rss
+  \item sperimentazione di altre tecniche statistiche (SVD, ...)
+  \item sperimentazione su corpus di dati preesistenti di grandi dimensioni (il dataset Enron)
 \end{itemize}
 
 \slide{Grazie per l'attenzione}
 \noindent
 \begin{center}
   http://bayesfor.eu\\http://bayes-swarm.googlecode.com
-  
+
   \huge{domande?}
 \end{center}
 

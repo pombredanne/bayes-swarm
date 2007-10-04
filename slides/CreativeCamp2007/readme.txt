@@ -4,6 +4,12 @@ Assicurati di aver installato:
 * pdflatex + pacchetto foils
 * R + pacchetto tgp
 
+Su Ubuntu:
+$ sudo apt-get install texlive-latex-base texlive-latex-extra texlive-fonts-recommended foiltex
+$ sudo apt-get install r-base
+$ sudo R
+R> install.packages("tgp")
+
 some_data.Rdata contiene le serie storiche al 1/10/2007 di bayes-swarm degli stem:
 * 1 - china
 * 2 - india

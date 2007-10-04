@@ -1,6 +1,8 @@
 load("some_data.Rdata")
 library(tgp)
 
+# FIXME: this is a hack, either use zoo library or even better some
+# data.frame subset magic to select counts belonging to the same date
 ir = as.data.frame(
   list(india=subset(data,id==2,select=num)[3:62,],
     russia=subset(data,id==21,select=num)[1:60,]
