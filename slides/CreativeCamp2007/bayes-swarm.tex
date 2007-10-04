@@ -17,6 +17,9 @@
 \setlength{\textheight}{7in}
 \setlength{\foilheadskip}{-0.5in}
 
+% boldmath, serve per fare le lettere greche in bold
+\usepackage{bm}
+
 % title, author, date
 \title{Bayes-swarm\\bayesian web spidering}
 \author{Associazione BayesFor\\info@bayesfor.eu}
@@ -173,7 +176,13 @@ basato sul concetto di ETL (Extact, Transform and Load) tipico dei datawarehouse
   \includegraphics[width=0.4\hsize]{./figures/neural-hist.png}
 \end{center}
 \noindent
-Neural network
+Neural network:
+\begin{itemize}
+  \item{Il modello è indotto dalla misurazione dei dati.}
+  \item{Il processo di modellizzazione implica il riconoscimento di
+  regolarità (pattern) in modo da ottenere una efficace rappresentazione
+  dei dati utilizzabile per fare previsioni.}
+\end{itemize}
 
 \slide{Teoria dei grafi}
 \noindent
@@ -217,4 +226,22 @@ Applicare tecniche di clustering e raggruppamento (k-means, hierarchical, edge-b
   \huge{domande?}
 \end{center}
 
+\slide{Backup}
+
+\slide{Distribuzione gaussiana e processo gaussiano a confronto}
+\textbf{Distribuzione Gaussiana}
+\[X \sim N(\mu, \sigma)\]
+Distribuzione statistica per eccellenza, ha densità pari a
+\[ P(X=x)= \frac{1}{\sigma\sqrt{2\pi}} \,\exp\biggl( -\frac{(x- \mu)^2}{2\sigma^2}\biggr)\]
+
+\textbf{Processo gaussiano}
+\[ X(t) \sim N(\mu(t), \sigma(t)) \]
+Processo stocastico $X(t)_{t \in T}$ tale per cui ogni combinazione
+di $X(t)$ considerata è distribuita normalmente.
+\[ \left[ \begin{array}{c} x_{n+1} \\ \bm{x}_{1:n} \end{array} \right]
+  \sim N\left( \left[ \begin{array}{c} m(t_{n+1}) \\ m(\bm{t}_{1:n}) \end{array} \right] ,
+    \left[ \begin{array}{cc} k & \bm{k}^T \\ \bm{k} & \bm{K} \end{array} \right]
+  \right)
+\]
+Una delle possibili matrici di covarianza è definita come $k(x_i,x_j)=e^{-\frac{1}{2 \sigma}(x_i-x_j)^2}$
 \end{document}

@@ -30,4 +30,5 @@ clean:
 	rm -f $(CLEANFILES)
 
 distclean:
+	make -C $(FIGDIR) distclean
 	rm -f $(DISTFILES)

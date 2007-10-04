@@ -1,8 +1,9 @@
 bayesfor_hw <- function(x, n_ahead=10)  {
   n = length(x)
 
-  plot(x, xlim=c(1, n + n_ahead), main="exponential smoothing",
+  plot(x, xlim=c(0, n + n_ahead), main="exponential smoothing",
     xaxt = "n", yaxt = "n", xlab="time", ylab="bush")
+  abline(v=n, col="darkgrey", lty="dashed")
   lines(1:n, x)
   # exponential smoothing with stagionality = 0
   x.hw <- HoltWinters(ts(data.matrix(x)), gamma=0)
@@ -52,6 +53,7 @@ pdf(file="lm_hw_gp.pdf", width=9, height=3)
     mar=c(3.1, 3.1, 2.1, 2.1), mgp=c(1,1,0))
   plot(stem_data ~ x, xlim=c(0,n+ahead), main="least squares",
     xaxt = "n", yaxt = "n", xlab="time", ylab="bush")
+  abline(v=n, col="darkgrey", lty="dashed")
   lines(x, stem_data)
   abline(lm(stem_data ~ x), col="red")
 
@@ -64,5 +66,6 @@ pdf(file="lm_hw_gp.pdf", width=9, height=3)
   stem_data.bgp <- bgp(X = x, XX=1:n+ahead, Z = stem_data, verb = 0)
   plot(stem_data.bgp, xlim=c(0,n+ahead), main = "gaussian process, ", layout = "surf",
     xaxt = "n", yaxt = "n", xlab="time", ylab="bush")
+  abline(v=n, col="darkgrey", lty="dashed")
   lines(x, stem_data)
 dev.off()
