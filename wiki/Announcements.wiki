@@ -1,8 +1,8 @@
 #summary Announcements and news about the project
 #labels Featured
 
-== Official presentation of bayes-swarm at CreativeCamp == 
+== 2007/10/06 - Official presentation of bayes-swarm at CreativeCamp == 
 
-Bayes-swarm will be presented at the general public at [http://barcamp.org/CreativeCamp CreativeCamp] on October 6th, 2007. 
+Bayes-swarm will be presented at the general public at [http://barcamp.org/CreativeCamp CreativeCamp] on October 6th, 2007.
 
-The presentation will be in italian. The presentation slides will be available on this site (you can already checkout the presentation sources in tex format from the svn repository). 
+The presentation will be in italian, presentation slides are available either in [http://www.bayesfor.eu/BayesSwarm/Progetti_files/bayes-swarm.pdf pdf] or tex and R source (/slides directory in svn repository). 
