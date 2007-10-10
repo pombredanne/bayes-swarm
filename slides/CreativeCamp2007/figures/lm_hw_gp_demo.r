@@ -1,27 +1,3 @@
-bayesfor_hw <- function(x, n_ahead=10)  {
-  n = length(x)
-
-  plot(x, xlim=c(0, n + n_ahead), main="exponential smoothing",
-    xaxt = "n", yaxt = "n", xlab="time", ylab="bush")
-  abline(v=n, col="darkgrey", lty="dashed")
-  lines(1:n, x)
-  # exponential smoothing with stagionality = 0
-  x.hw <- HoltWinters(ts(data.matrix(x)), gamma=0)
-
-  lines(x.hw$fitted[,1], col="red")
-
-  # find the index of last element in x.hw
-  last_xhw = end(x.hw$fitted)[1]-start(x.hw$fitted[,1])[1]+1
-  # predict() only deals from last_xhw+1, let's create a ts
-  # which begins at last_xhw so that we don't end up with a missing
-  # line in the graph
-  x.hw_predict = ts(rbind(x.hw$fitted[last_xhw], predict(x.hw, n.ahead=n_ahead)),
-    start = end(x.hw$fitted)[1],
-    end = end(x.hw$fitted)[1] + n_ahead
-    )
-  lines(x.hw_predict, col="red", lty="dashed")
-}
-
 # load some data, contains:
 # 1 - china
 # 2 - india
@@ -36,36 +12,63 @@ stem_id <- 8
 # number of points to predict
 ahead <- 10
 
-#
-# linear model
-#
-
-stem_data <- matrix(subset(data, id==stem_id, select=num)[,1])
+stem_data = data.frame(count=subset(data, id==stem_id, select=num)[,1], 
+ date=as.Date(subset(data, id==stem_id, select=data)[,1]))
 n <- dim(stem_data)[1]
-stem_data <- stem_data[20:n]
-attributes(stem_data)$colnames[1] = subset(data, id==stem_id, select=name)[1]
+stem_data <- stem_data[20:n,]
 
-n <- length(stem_data)[1]
+n <- dim(stem_data)[1]
 x <- 1:n
 
 pdf(file="lm_hw_gp.pdf", width=9, height=3)
   par(mfrow=c(1,3), cex.axis=1, cex.lab=1,
-    mar=c(3.1, 3.1, 2.1, 2.1), mgp=c(1,1,0))
-  plot(stem_data ~ x, xlim=c(0,n+ahead), main="least squares",
-    xaxt = "n", yaxt = "n", xlab="time", ylab="bush")
-  abline(v=n, col="darkgrey", lty="dashed")
-  lines(x, stem_data)
-  abline(lm(stem_data ~ x), col="red")
+    mar=c(4.1, 3.1, 2.1, 2.1), mgp=c(2,1,0))
+  
+  # least squares
+  
+  plot(count ~ date, stem_data, 
+    xlim=c(stem_data$date[1],stem_data$date[n]+ahead), main="least squares",
+    yaxt = "n", xlab="time", ylab="bush")
+  abline(v=stem_data$date[n], col="darkgrey", lty="dashed")
+  lines(count ~ date, stem_data)
+  abline(lm(count ~ date, stem_data), col="red")
 
-  # Holt Winters
-  bayesfor_hw(stem_data, ahead)
+  # Holt Winters exponential smoothing
+  
+  plot(count ~ date, stem_data, 
+    xlim=c(stem_data$date[1],stem_data$date[n]+ahead), main="exponential smoothing",
+    yaxt = "n", xlab="time", ylab="bush")
+  abline(v=stem_data$date[n], col="darkgrey", lty="dashed")
+  lines(count ~ date, stem_data)
+  # exponential smoothing with stagionality = 0
+  stem_data.hw <- HoltWinters(stem_data$count, gamma=0)
+
+  lines(stem_data.hw$fitted[,1] ~ stem_data$date[start(stem_data.hw$fitted)[1]:n],
+    col="red")
+
+  # find the index of last element in stem_data.hw
+  last_xhw = end(stem_data.hw$fitted)[1]-start(stem_data.hw$fitted[,1])[1]+1
+  # predict() only deals from last_xhw+1, let's create a ts
+  # which begins at last_xhw so that we don't end up with a missing
+  # line in the graph
+  stem_data.hw_predict = ts(rbind(stem_data.hw$fitted[last_xhw], predict(stem_data.hw, n.ahead=ahead)),
+    start = end(stem_data.hw$fitted)[1],
+    end = end(stem_data.hw$fitted)[1] + ahead
+    )
+  lines(stem_data.hw_predict[,1] ~ seq.Date(stem_data$date[n],by="day", length.out=ahead+1),
+    col="red", lty="dashed")
 
   # gaussian process
 
   library(tgp)
-  stem_data.bgp <- bgp(X = x, XX=1:n+ahead, Z = stem_data, verb = 0)
-  plot(stem_data.bgp, xlim=c(0,n+ahead), main = "gaussian process, ", layout = "surf",
-    xaxt = "n", yaxt = "n", xlab="time", ylab="bush")
-  abline(v=n, col="darkgrey", lty="dashed")
-  lines(x, stem_data)
+  stem_data.bgp <- bgp(X = stem_data$date,
+    XX=stem_data$date[1]:stem_data$date[n]+ahead,
+    Z = stem_data$count, verb = 0)
+  plot(stem_data.bgp, layout = "surf",
+    xlim=c(stem_data$date[1],stem_data$date[n]+ahead), main = "gaussian process, ",
+    xaxt="n", yaxt = "n", xlab="time", ylab="bush")
+  # for some reasons, plot.tgp doesn't like having dates on x axis
+  Axis(side=1, seq.Date(stem_data$date[1],by="day", length.out=ahead+1))
+  abline(v=stem_data$date[n], col="darkgrey", lty="dashed")
+  lines(count ~ date, stem_data)
 dev.off()

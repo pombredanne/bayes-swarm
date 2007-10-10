@@ -3,8 +3,7 @@ load("some_data.Rdata")
 stem_id <- 8
 
 stem_data = data.frame(count=subset(data, id==stem_id, select=num)[,1], 
- date=subset(data, id==stem_id, select=data)[,1])
-stem_data$date = as.Date(stem_data$date)
+ date=as.Date(subset(data, id==stem_id, select=data)[,1]))
 
 pdf(file="timeseries_bush.pdf", width=5, height=5)
   par(cex.axis=1, cex.lab=1, mar=c(4.1, 3.1, 2.1, 2.1))
