@@ -1,42 +1,41 @@
-#####
-# db definition for release 0.2
-# it works, but need to be refined
-
-# do not select any db, so that we prevent applying
-# this commands to the wrong db   
-# use bayesfortest ; 
+drop table if exists associations;
+drop table if exists int_words;
+drop table if exists words;
+drop table if exists pages;
+drop table if exists sources;
+drop table if exists languages;
+drop table if exists types;
 
 CREATE
-	TABLE languages
-	(
-	language varchar(100) NOT NULL,
-	PRIMARY KEY USING BTREE(language)
-	)	
-	ENGINE=InnoDB;
+    TABLE languages
+    (
+        language varchar(3) NOT NULL,
+        PRIMARY KEY USING BTREE(language)
+    )
+    ENGINE=InnoDB;
 
 INSERT INTO languages (language) values ('ita'),('eng');
 
+
 CREATE
-		TABLE types
-		(
-		type varchar(3) NOT NULL,
-		PRIMARY KEY USING BTREE(type)
-		)	
-		ENGINE=InnoDB;
+    TABLE types
+    (
+        type varchar(3) NOT NULL,
+        PRIMARY KEY USING BTREE(type)
+    )    
+    ENGINE=InnoDB;
 
 INSERT INTO types (type) values ('url'),('rss');
+
 
 CREATE
     TABLE sources
     (
         id int(11) NOT NULL AUTO_INCREMENT,
         name varchar(100) NOT NULL,
-	    language varchar(3) NOT NULL,
-        PRIMARY KEY USING BTREE(id),
-	    constraint fk_source_lang   FOREIGN key(language)  references languages(language)
+        PRIMARY KEY USING BTREE(id)
     )
     ENGINE=InnoDB;
-
 
 
 CREATE
@@ -45,30 +44,28 @@ CREATE
         id int(11) NOT NULL AUTO_INCREMENT,
         source_id int(11) NOT NULL,
         url varchar(255) NOT NULL,
-    	language varchar(3) NOT NULL,
-	    type varchar(3) NOT NULL,
-		last_scantime DATETIME NOT NULL,
+        language varchar(3) NOT NULL,
+        type varchar(3) NOT NULL,
+        last_scantime DATETIME NOT NULL,
         PRIMARY KEY USING BTREE(id),
-	    constraint fk_page_type foreign key(type) references types(type),
         constraint fk_page_source foreign key(source_id) references sources(id),
-        constraint fk_page_lang   FOREIGN key(language)  references sources(language)
+        constraint fk_page_lang FOREIGN key(language) references languages(language),
+        constraint fk_page_type foreign key(type) references types(type)
     )
     ENGINE=InnoDB;
 
 
-CREATE
-    TABLE articles
-    (
-        id int(11) NOT NULL AUTO_INCREMENT,
-        page_id int(11) NOT NULL,
-        url varchar(255) NOT NULL,
-	    language varchar(3) NOT NULL,
-        publish_time DATETIME NOT NULL,
-        PRIMARY KEY USING BTREE(id),
-        constraint fk_article_page foreign key(page_id) references pages(id),
-          constraint fk_article_lang   FOREIGN key(language)  references pages(language)
-    )
-    ENGINE=InnoDB;
+--CREATE
+--    TABLE articles
+--    (
+--        id int(11) NOT NULL AUTO_INCREMENT,
+--        page_id int(11) NOT NULL,
+--        url varchar(255) NOT NULL,
+--        publish_time DATETIME NOT NULL,
+--        PRIMARY KEY USING BTREE(id),
+--        constraint fk_article_page foreign key(page_id) references pages(id),
+--    )
+--    ENGINE=InnoDB;
 
 
 CREATE
@@ -76,9 +73,9 @@ CREATE
     (
         id int(11) NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
-	    language varchar(3) NOT NULL,
+        language varchar(3) NOT NULL,
         PRIMARY KEY USING BTREE(id),
-	    constraint fk_int_word_lang FOREIGN key(language) references languages(language)
+        constraint fk_int_word_lang FOREIGN key(language) references languages(language)
     )
     ENGINE=InnoDB;
 
@@ -87,16 +84,14 @@ CREATE
     TABLE words
     (
         id int(11) NOT NULL,
-        article_id int(11) NOT NULL,
+        page_id int(11) NOT NULL,
         scantime DATETIME NOT NULL,
         count int(11) NOT NULL DEFAULT 0,
         titlecount int(11) NOT NULL DEFAULT 0,
         weight decimal(6,3) NOT NULL DEFAULT 0.0,
-        language varchar(3) NOT NULL,
-        PRIMARY KEY USING BTREE(id, article_id, scantime),
+        PRIMARY KEY USING BTREE(id, page_id, scantime),
         constraint fk_word_intword foreign key(id) references int_words(id),
-        constraint fk_word_article foreign key(article_id) references articles(id),
-        constraint fk_word_lang FOREIGN key(language) references articles(language)
+        constraint fk_word_page foreign key(page_id) references pages(id)
     )
     ENGINE=InnoDB;
 
@@ -117,16 +112,11 @@ CREATE
         constraint fK_assoc_to_word foreign key(words_to_id) references words(id)
     )
     ENGINE=InnoDB;
-
-
-INSERT INTO int_words (name,language) values ('cina','ita'),('india','ita'),('iraq','ita'),('terror','ita'),
-    ('mussulm','ita'),('islam','ita'),('bomb','ita'),('bush','ita'),('you-tube','ita'),('italy','ita'),('porn','ita') ;
-
-	
+    
 
 
 
 
 
-	
+    
 
