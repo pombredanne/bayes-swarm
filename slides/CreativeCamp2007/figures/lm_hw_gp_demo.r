@@ -1,19 +1,13 @@
-# load some data, contains:
-# 1 - china
-# 2 - india
-# 8 - bush
-# 21 - russia
-# 25 - korea
-# 26 - japan
-load("some_data.Rdata")
+source("bayesfor_data_retrieve.r")
 
 stem_id <- 8
+
+stem_data <- bayesfor_ts(stem_id)
 
 # number of points to predict
 ahead <- 10
 
-stem_data = data.frame(count=subset(data, id==stem_id, select=num)[,1], 
- date=as.Date(subset(data, id==stem_id, select=data)[,1]))
+# remove some noise at the beginning of the ts
 n <- dim(stem_data)[1]
 stem_data <- stem_data[20:n,]
 

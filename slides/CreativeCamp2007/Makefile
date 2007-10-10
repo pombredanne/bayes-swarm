@@ -9,7 +9,7 @@ FIGDIR = figures/
 # File lists
 
 DISTFILES = *~ $(BASENAME).log $(BASENAME).aux $(BASENAME).out
-CLEANFILES = $(DISTFILES)
+CLEANFILES = $(DISTFILES) $(BASENAME).pdf
 
 # Build rules
 

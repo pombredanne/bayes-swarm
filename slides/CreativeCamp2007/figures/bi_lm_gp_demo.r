@@ -1,13 +1,11 @@
-load("some_data.Rdata")
+source("bayesfor_data_retrieve.r")
+
 library(tgp)
 
-# FIXME: this is a hack, either use zoo library or even better some
-# data.frame subset magic to select counts belonging to the same date
-ir = as.data.frame(
-  list(india=subset(data,id==2,select=num)[3:62,],
-    russia=subset(data,id==21,select=num)[1:60,]
-  )
-)
+india_id <- 2
+russia_id <- 21
+
+ir <- bayesfor_ts(c(india_id, russia_id))
 
 pdf(file="bi_lm_gp.pdf", width=8, height=4)
   par(mfrow=c(1,2), cex.axis=1, cex.lab=1,
