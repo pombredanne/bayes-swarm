@@ -1,5 +1,3 @@
-use bayesfortest;
-
 CREATE
     TABLE languages
     (
