@@ -3,7 +3,7 @@ source("bayesfor_data_retrieve.r")
 china_id <- 1
 india_id <- 2
 
-stems_data <- bayesfor_ts(c(1,2))
+stems_data <- bayesfor_ts(c(1,2), infile="some_data.Rdata")
 
 pdf(file="timeseries_chinaindia.pdf", width=4, height=4)
   par(cex.axis=1, cex.lab=1, mar=c(4.1, 3.1, 2.1, 2.1))

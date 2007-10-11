@@ -2,7 +2,7 @@ source("bayesfor_data_retrieve.r")
 
 stem_id <- 8
 
-stem_data <- bayesfor_ts(stem_id)
+stem_data <- bayesfor_ts(stem_id, infile="some_data.Rdata")
 
 # number of points to predict
 ahead <- 10
@@ -20,22 +20,22 @@ pdf(file="lm_hw_gp.pdf", width=9, height=3)
   
   # least squares
   
-  plot(count ~ date, stem_data, 
+  plot(bush ~ date, stem_data, 
     xlim=c(stem_data$date[1],stem_data$date[n]+ahead), main="least squares",
     yaxt = "n", xlab="time", ylab="bush")
   abline(v=stem_data$date[n], col="darkgrey", lty="dashed")
-  lines(count ~ date, stem_data)
-  abline(lm(count ~ date, stem_data), col="red")
+  lines(bush ~ date, stem_data)
+  abline(lm(bush ~ date, stem_data), col="red")
 
   # Holt Winters exponential smoothing
   
-  plot(count ~ date, stem_data, 
+  plot(bush ~ date, stem_data, 
     xlim=c(stem_data$date[1],stem_data$date[n]+ahead), main="exponential smoothing",
     yaxt = "n", xlab="time", ylab="bush")
   abline(v=stem_data$date[n], col="darkgrey", lty="dashed")
-  lines(count ~ date, stem_data)
+  lines(bush ~ date, stem_data)
   # exponential smoothing with stagionality = 0
-  stem_data.hw <- HoltWinters(stem_data$count, gamma=0)
+  stem_data.hw <- HoltWinters(stem_data$bush, gamma=0)
 
   lines(stem_data.hw$fitted[,1] ~ stem_data$date[start(stem_data.hw$fitted)[1]:n],
     col="red")
@@ -57,12 +57,12 @@ pdf(file="lm_hw_gp.pdf", width=9, height=3)
   library(tgp)
   stem_data.bgp <- bgp(X = stem_data$date,
     XX=stem_data$date[1]:stem_data$date[n]+ahead,
-    Z = stem_data$count, verb = 0)
+    Z = stem_data$bush, verb = 0)
   plot(stem_data.bgp, layout = "surf",
     xlim=c(stem_data$date[1],stem_data$date[n]+ahead), main = "gaussian process, ",
     xaxt="n", yaxt = "n", xlab="time", ylab="bush")
   # for some reasons, plot.tgp doesn't like having dates on x axis
   Axis(side=1, seq.Date(stem_data$date[1],by="day", length.out=ahead+1))
   abline(v=stem_data$date[n], col="darkgrey", lty="dashed")
-  lines(count ~ date, stem_data)
+  lines(bush ~ date, stem_data)
 dev.off()

@@ -5,7 +5,7 @@ library(tgp)
 india_id <- 2
 russia_id <- 21
 
-ir <- bayesfor_ts(c(india_id, russia_id))
+ir <- bayesfor_ts(c(india_id, russia_id), infile="some_data.Rdata")
 
 pdf(file="bi_lm_gp.pdf", width=8, height=4)
   par(mfrow=c(1,2), cex.axis=1, cex.lab=1,

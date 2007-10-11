@@ -7,11 +7,7 @@ bayesfor_ts <- function(stem_id, infile = NULL, db_params = NULL) {
   # 1  2007-08-01 12.0000 12.0000
   # 2  2007-08-02 12.0000 12.0000
   # 3  2007-08-03 11.0000 14.0000
-
-  # FIXME: bayesfor_ts should be able to either read a .Rdata file
-  # or access directly bayes-swarm db via RMySql
-  #load("some_data.Rdata")
-  
+ 
   if ((is.null(infile)) && (is.null(db_params)) ||
     (!is.null(infile)) && (!is.null(db_params)))
     stop("you have to enter either infile or db_params")
@@ -32,8 +28,9 @@ bayesfor_ts <- function(stem_id, infile = NULL, db_params = NULL) {
                                          AND a.id in (",ids_list,")
                                        GROUP BY a.id, c.name, date(a.scantime);"))
     data <- fetch(query, n = -1)
-    data
   }
+  # FIXME: provide a outfile param which allows the user to save data
+  # in a .Rdata file
 
   if (length(stem_id)==1) {
     stems_data <- data.frame(date=as.Date(subset(data, id==stem_id, select=data)[,1]),
