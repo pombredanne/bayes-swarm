@@ -5,6 +5,9 @@
 
 Prototype 2 is a structured approach to page data extraction. It models the extraction approach as a standard [http://en.wikipedia.org/wiki/Extract%2C_transform%2C_load ETL] process . 
 
+== RDocs ==
+Take a look at [http://bayes-swarm.googlecode.com/svn/trunk/prototype2/ruby/doc/index.html the latest documentation] about this prototype.
+
 == Extract Transform and Load ==
 
 The page extraction process is divided into three phases ; 
@@ -67,5 +70,3 @@ The proposed approach has several pros and cons :
   * [http://openqa.org/selenium-rc/ Selenium Remote Control] for the extract phase
   * [http://ferret.davebalmain.com/trac/ Ferret] for the transform phase
   * [http://dev.mysql.com/downloads/ruby.html Ruby/Mysql] for the load phase
-
-
