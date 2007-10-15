@@ -5,15 +5,14 @@
 
 <html>
 <head>
-  <title>increment_exec (MultiplexDTO)</title>
+  <title>json_create (MultiplexDTO)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File dto/mplex.rb, line 50</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">increment_exec</span>(<span class="ruby-identifier">dto</span>)
-    <span class="ruby-ivar">@dtos</span>[<span class="ruby-ivar">@execpointer</span>] = <span class="ruby-identifier">dto</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">dto</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-comment cmt"># replace current dto with the one returned by from block execution</span>
-    <span class="ruby-ivar">@execpointer</span> <span class="ruby-operator">+=</span> <span class="ruby-value">1</span>
+  <pre><span class="ruby-comment cmt"># File dto/mplex.rb, line 47</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-keyword kw">self</span>.<span class="ruby-identifier">json_create</span>(<span class="ruby-identifier">o</span>)
+    <span class="ruby-identifier">d</span> = <span class="ruby-constant">MultiplexDTO</span>.<span class="ruby-identifier">new</span>(<span class="ruby-operator">*</span><span class="ruby-identifier">o</span>[<span class="ruby-value str">'data'</span>])
   <span class="ruby-keyword kw">end</span></pre>
 </body>
 </html>

@@ -110,23 +110,24 @@ operator.
       <h3 class="section-bar">Methods</h3>
 
       <div class="name-list">
-      <a href="#M000041">chain?</a>&nbsp;&nbsp;
-      <a href="#M000045">extract</a>&nbsp;&nbsp;
-      <a href="#M000042">global_opts=</a>&nbsp;&nbsp;
-      <a href="#M000053">handle_block_exception</a>&nbsp;&nbsp;
-      <a href="#M000055">is_chain?</a>&nbsp;&nbsp;
-      <a href="#M000056">is_mplex?</a>&nbsp;&nbsp;
-      <a href="#M000054">is_savepoint?</a>&nbsp;&nbsp;
-      <a href="#M000047">load</a>&nbsp;&nbsp;
-      <a href="#M000040">new</a>&nbsp;&nbsp;
-      <a href="#M000043">props=</a>&nbsp;&nbsp;
-      <a href="#M000044">resolve_props</a>&nbsp;&nbsp;
-      <a href="#M000049">run_block</a>&nbsp;&nbsp;
-      <a href="#M000048">run_chain</a>&nbsp;&nbsp;
-      <a href="#M000052">set_step</a>&nbsp;&nbsp;
-      <a href="#M000046">transform</a>&nbsp;&nbsp;
-      <a href="#M000051">unless_step_over</a>&nbsp;&nbsp;
-      <a href="#M000050">while_mplexing</a>&nbsp;&nbsp;
+      <a href="#M000054">b_send</a>&nbsp;&nbsp;
+      <a href="#M000045">chain?</a>&nbsp;&nbsp;
+      <a href="#M000049">extract</a>&nbsp;&nbsp;
+      <a href="#M000046">global_opts=</a>&nbsp;&nbsp;
+      <a href="#M000058">handle_block_exception</a>&nbsp;&nbsp;
+      <a href="#M000060">is_chain?</a>&nbsp;&nbsp;
+      <a href="#M000061">is_mplex?</a>&nbsp;&nbsp;
+      <a href="#M000059">is_savepoint?</a>&nbsp;&nbsp;
+      <a href="#M000051">load</a>&nbsp;&nbsp;
+      <a href="#M000044">new</a>&nbsp;&nbsp;
+      <a href="#M000047">props=</a>&nbsp;&nbsp;
+      <a href="#M000048">resolve_props</a>&nbsp;&nbsp;
+      <a href="#M000053">run_block</a>&nbsp;&nbsp;
+      <a href="#M000052">run_chain</a>&nbsp;&nbsp;
+      <a href="#M000057">set_step</a>&nbsp;&nbsp;
+      <a href="#M000050">transform</a>&nbsp;&nbsp;
+      <a href="#M000056">unless_step_over</a>&nbsp;&nbsp;
+      <a href="#M000055">while_mplexing</a>&nbsp;&nbsp;
       </div>
     </div>
 
@@ -166,9 +167,9 @@ The sequence of blocks which compose this chain
           <td class="context-item-value">&nbsp;[RW]&nbsp;</td>
           <td class="context-item-desc">
 The phase this chain will run. May be one <tt><a
-href="ChainETL.html#M000045">extract</a></tt>, <tt><a
-href="ChainETL.html#M000046">transform</a></tt> or <tt><a
-href="ChainETL.html#M000047">load</a></tt>, or custom ones.
+href="ChainETL.html#M000049">extract</a></tt>, <tt><a
+href="ChainETL.html#M000050">transform</a></tt> or <tt><a
+href="ChainETL.html#M000051">load</a></tt>, or custom ones.
 
 </td>
         </tr>
@@ -182,19 +183,19 @@ href="ChainETL.html#M000047">load</a></tt>, or custom ones.
     <div id="methods">
       <h3 class="section-bar">Public Class methods</h3>
 
-      <div id="method-M000040" class="method-detail">
-        <a name="M000040"></a>
+      <div id="method-M000044" class="method-detail">
+        <a name="M000044"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000040.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000040.html');return false;">
+          <a href="ChainETL.src/M000044.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000044.html');return false;">
           <span class="method-name">new</span><span class="method-args">()</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Initializes a <a href="ChainETL.html#M000040">new</a> chain. After this
+Initializes a <a href="ChainETL.html#M000044">new</a> chain. After this
 method call, the chain phase is still undefined.
 </p>
         </div>
@@ -202,12 +203,12 @@ method call, the chain phase is still undefined.
 
       <h3 class="section-bar">Public Instance methods</h3>
 
-      <div id="method-M000041" class="method-detail">
-        <a name="M000041"></a>
+      <div id="method-M000045" class="method-detail">
+        <a name="M000045"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000041.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000041.html');return false;">
+          <a href="ChainETL.src/M000045.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000045.html');return false;">
           <span class="method-name">chain?</span><span class="method-args">()</span>
           </a>
         </div>
@@ -220,12 +221,12 @@ returns <tt>true</tt>
         </div>
       </div>
 
-      <div id="method-M000045" class="method-detail">
-        <a name="M000045"></a>
+      <div id="method-M000049" class="method-detail">
+        <a name="M000049"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000045.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000045.html');return false;">
+          <a href="ChainETL.src/M000049.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000049.html');return false;">
           <span class="method-name">extract</span><span class="method-args">(dto,context)</span>
           </a>
         </div>
@@ -233,20 +234,20 @@ returns <tt>true</tt>
         <div class="method-description">
           <p>
 Runs this chain within the <b><a
-href="ChainETL.html#M000045">extract</a></b> phase. This means that the
-<tt><a href="ChainETL.html#M000045">extract</a></tt> method will be invoked
+href="ChainETL.html#M000049">extract</a></b> phase. This means that the
+<tt><a href="ChainETL.html#M000049">extract</a></tt> method will be invoked
 on all the blocks composing the chain sequence. Invoking this method
 overrides any previously set phase.
 </p>
         </div>
       </div>
 
-      <div id="method-M000042" class="method-detail">
-        <a name="M000042"></a>
+      <div id="method-M000046" class="method-detail">
+        <a name="M000046"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000042.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000042.html');return false;">
+          <a href="ChainETL.src/M000046.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000046.html');return false;">
           <span class="method-name">global_opts=</span><span class="method-args">(globals)</span>
           </a>
         </div>
@@ -259,33 +260,33 @@ href="ETL.html">ETL</a>, instead of only the ones relevant for this chain.
         </div>
       </div>
 
-      <div id="method-M000047" class="method-detail">
-        <a name="M000047"></a>
+      <div id="method-M000051" class="method-detail">
+        <a name="M000051"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000047.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000047.html');return false;">
+          <a href="ChainETL.src/M000051.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000051.html');return false;">
           <span class="method-name">load</span><span class="method-args">(dto,context)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
-Runs this chain within the <b><a href="ChainETL.html#M000047">load</a></b>
+Runs this chain within the <b><a href="ChainETL.html#M000051">load</a></b>
 phase. This means that the <tt><a
-href="ChainETL.html#M000047">load</a></tt> method will be invoked on all
+href="ChainETL.html#M000051">load</a></tt> method will be invoked on all
 the blocks composing the chain sequence. Invoking this method overrides any
 previously set phase.
 </p>
         </div>
       </div>
 
-      <div id="method-M000043" class="method-detail">
-        <a name="M000043"></a>
+      <div id="method-M000047" class="method-detail">
+        <a name="M000047"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000043.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000043.html');return false;">
+          <a href="ChainETL.src/M000047.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000047.html');return false;">
           <span class="method-name">props=</span><span class="method-args">(chain_config)</span>
           </a>
         </div>
@@ -299,12 +300,12 @@ files for further info on how to define a proper chain sequence.
         </div>
       </div>
 
-      <div id="method-M000044" class="method-detail">
-        <a name="M000044"></a>
+      <div id="method-M000048" class="method-detail">
+        <a name="M000048"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000044.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000044.html');return false;">
+          <a href="ChainETL.src/M000048.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000048.html');return false;">
           <span class="method-name">resolve_props</span><span class="method-args">(p)</span>
           </a>
         </div>
@@ -318,12 +319,12 @@ key and the name of the referred set as value.
         </div>
       </div>
 
-      <div id="method-M000048" class="method-detail">
-        <a name="M000048"></a>
+      <div id="method-M000052" class="method-detail">
+        <a name="M000052"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000048.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000048.html');return false;">
+          <a href="ChainETL.src/M000052.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000052.html');return false;">
           <span class="method-name">run_chain</span><span class="method-args">(dto,context) {|block| ...}</span>
           </a>
         </div>
@@ -333,24 +334,24 @@ key and the name of the referred set as value.
 Runs this chain. The chain phase is defined by setting the <tt>phase</tt>
 property on this class prior to invoking this method. Phase may be
 overriden by passing a block to this method and returning the <a
-href="ChainETL.html#M000040">new</a> phase to be used.
+href="ChainETL.html#M000044">new</a> phase to be used.
 </p>
 <p>
 Chain phase defines which method will be invoked on chain blocks. Standard
-phases are <tt><a href="ChainETL.html#M000045">extract</a></tt>, <tt><a
-href="ChainETL.html#M000046">transform</a></tt> and <tt><a
-href="ChainETL.html#M000047">load</a></tt>, but custom chains may define
+phases are <tt><a href="ChainETL.html#M000049">extract</a></tt>, <tt><a
+href="ChainETL.html#M000050">transform</a></tt> and <tt><a
+href="ChainETL.html#M000051">load</a></tt>, but custom chains may define
 their own phases (such as lifecycle phases).
 </p>
         </div>
       </div>
 
-      <div id="method-M000046" class="method-detail">
-        <a name="M000046"></a>
+      <div id="method-M000050" class="method-detail">
+        <a name="M000050"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000046.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000046.html');return false;">
+          <a href="ChainETL.src/M000050.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000050.html');return false;">
           <span class="method-name">transform</span><span class="method-args">(dto,context)</span>
           </a>
         </div>
@@ -358,8 +359,8 @@ their own phases (such as lifecycle phases).
         <div class="method-description">
           <p>
 Runs this chain within the <b><a
-href="ChainETL.html#M000046">transform</a></b> phase. This means that the
-<tt><a href="ChainETL.html#M000046">transform</a></tt> method will be
+href="ChainETL.html#M000050">transform</a></b> phase. This means that the
+<tt><a href="ChainETL.html#M000050">transform</a></tt> method will be
 invoked on all the blocks composing the chain sequence. Invoking this
 method overrides any previously set phase.
 </p>
@@ -368,12 +369,31 @@ method overrides any previously set phase.
 
       <h3 class="section-bar">Protected Instance methods</h3>
 
-      <div id="method-M000053" class="method-detail">
-        <a name="M000053"></a>
+      <div id="method-M000054" class="method-detail">
+        <a name="M000054"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000053.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000053.html');return false;">
+          <a href="ChainETL.src/M000054.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000054.html');return false;">
+          <span class="method-name">b_send</span><span class="method-args">(block,ctx)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Delegates execution to the current block. This method is the last one
+before passing the buck to the block. At this point multiplexing, savepoint
+recovery and every other precondition has already been resolved.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000058" class="method-detail">
+        <a name="M000058"></a>
+
+        <div class="method-heading">
+          <a href="ChainETL.src/M000058.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000058.html');return false;">
           <span class="method-name">handle_block_exception</span><span class="method-args">(context,exc)</span>
           </a>
         </div>
@@ -385,12 +405,12 @@ handles exceptions which may occur while executing a block
         </div>
       </div>
 
-      <div id="method-M000055" class="method-detail">
-        <a name="M000055"></a>
+      <div id="method-M000060" class="method-detail">
+        <a name="M000060"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000055.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000055.html');return false;">
+          <a href="ChainETL.src/M000060.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000060.html');return false;">
           <span class="method-name">is_chain?</span><span class="method-args">(block)</span>
           </a>
         </div>
@@ -402,12 +422,12 @@ Checks whether the given block is a chain block or not
         </div>
       </div>
 
-      <div id="method-M000056" class="method-detail">
-        <a name="M000056"></a>
+      <div id="method-M000061" class="method-detail">
+        <a name="M000061"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000056.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000056.html');return false;">
+          <a href="ChainETL.src/M000061.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000061.html');return false;">
           <span class="method-name">is_mplex?</span><span class="method-args">(dto)</span>
           </a>
         </div>
@@ -420,12 +440,12 @@ href="MultiplexDTO.html">MultiplexDTO</a> or not
         </div>
       </div>
 
-      <div id="method-M000054" class="method-detail">
-        <a name="M000054"></a>
+      <div id="method-M000059" class="method-detail">
+        <a name="M000059"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000054.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000054.html');return false;">
+          <a href="ChainETL.src/M000059.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000059.html');return false;">
           <span class="method-name">is_savepoint?</span><span class="method-args">(block)</span>
           </a>
         </div>
@@ -437,12 +457,12 @@ Checks whether the given block is a savepoint block or not
         </div>
       </div>
 
-      <div id="method-M000049" class="method-detail">
-        <a name="M000049"></a>
+      <div id="method-M000053" class="method-detail">
+        <a name="M000053"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000049.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000049.html');return false;">
+          <a href="ChainETL.src/M000053.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000053.html');return false;">
           <span class="method-name">run_block</span><span class="method-args">(block, dto, context)</span>
           </a>
         </div>
@@ -456,12 +476,12 @@ defined in the configuration file.
         </div>
       </div>
 
-      <div id="method-M000052" class="method-detail">
-        <a name="M000052"></a>
+      <div id="method-M000057" class="method-detail">
+        <a name="M000057"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000052.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000052.html');return false;">
+          <a href="ChainETL.src/M000057.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000057.html');return false;">
           <span class="method-name">set_step</span><span class="method-args">(context, stepname)</span>
           </a>
         </div>
@@ -473,12 +493,12 @@ sets the current step name
         </div>
       </div>
 
-      <div id="method-M000051" class="method-detail">
-        <a name="M000051"></a>
+      <div id="method-M000056" class="method-detail">
+        <a name="M000056"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000051.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000051.html');return false;">
+          <a href="ChainETL.src/M000056.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000056.html');return false;">
           <span class="method-name">unless_step_over</span><span class="method-args">(block, ctx) {|block, ctx| ...}</span>
           </a>
         </div>
@@ -490,12 +510,12 @@ Executes the block passed as parameter unless skipping is needed.
         </div>
       </div>
 
-      <div id="method-M000050" class="method-detail">
-        <a name="M000050"></a>
+      <div id="method-M000055" class="method-detail">
+        <a name="M000055"></a>
 
         <div class="method-heading">
-          <a href="ChainETL.src/M000050.html" target="Code" class="method-signature"
-            onclick="popupCode('ChainETL.src/M000050.html');return false;">
+          <a href="ChainETL.src/M000055.html" target="Code" class="method-signature"
+            onclick="popupCode('ChainETL.src/M000055.html');return false;">
           <span class="method-name">while_mplexing</span><span class="method-args">(ctx, block) {|| ...}</span>
           </a>
         </div>
