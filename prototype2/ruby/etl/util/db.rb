@@ -20,7 +20,7 @@ module DatabaseHelper
   # takes precedence. The relevant keys to be used as params are +host+ , +user+ , +pass+ , +db+ .
   def open_connection(params = {})
     params ||= @props
-    @conn = Mysql.real_connect(params["host"],params["user"],params["pass"],params["db"])
+    @conn = Mysql.real_connect(params["host"],params["username"],params["password"],params["database"])
   end
   
   # Closes the database connection. This method can be safely invoked multiple times.

@@ -44,10 +44,11 @@ page:
     refer_to:   database
     
 database:
-    host:   localhost
-    user:   root
-    pass:   
-    db:     swarm_development
+    adapter:    mysql
+    host:       localhost
+    username:       root
+    password:   
+    database:         swarm_development
     
 csv:
     filename:   /Users/battlehorse/Devel/ruby/swarm/trunk/prototype1/test/output.csv

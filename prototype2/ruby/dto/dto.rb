@@ -79,10 +79,58 @@ class ETLDTO
   end
 end
 
+class SourceDTO
+  attr_accessor :source, :language
+  
+  def initialize(source = nil, language = nil)
+    @source = source
+    @language = language
+  end
+  
+  def to_json(*a)
+    {
+      'json_class' => self.class.name ,
+      'data' => [ @source , @language ]
+    }.to_json(*a)
+  end
+  
+  def self.json_create(o)
+    s = SourceDTO.new(*o['data'])
+  end
+  
+  def to_s #:nodoc:
+    "#{@source}"
+  end
+end
+
+class PageDTO
+  attr_accessor :url, :language
+  
+  def initialize(url = nil, language = nil)
+    @url = url
+    @language = language
+  end
+  
+  def to_json(*a)
+    {
+      'json_class' => self.class.name ,
+      'data' => [ @url , @language ]
+    }.to_json(*a)
+  end
+  
+  def self.json_create(o)
+    s = PageDTO.new(*o['data'])
+  end
+  
+  def to_s #:nodoc:
+    "#{@source}"
+  end
+end
+
 # A word DTO represents a single word extract from a source during
 # an ETL proces. 
 class WordDTO
-  attr_accessor :id, :word, :position, :count, :tags
+  attr_accessor :id, :word, :position, :count, :language, :tags
   
   # Creates a new instance of this DTO. This DTO represents a single
   # +word+ from a given source. A +word+ has two attributes: a +position+
@@ -90,10 +138,11 @@ class WordDTO
   # and so on...) and a +count+ which declares the word count in that position.
   #
   # A word may have a set of optional custom *tags* .
-  def initialize(id = nil, word = nil, position = nil ,count = 0, tags = nil)
+  def initialize(id = nil, word = nil, position = nil ,count = 0,language = nil, tags = nil)
     @id = id
     @word = word
     @position = position
+    @language = language
     @count = count
     @tags = tags
   end
@@ -103,7 +152,7 @@ class WordDTO
   def to_json(*a) 
     {
       'json_class' => self.class.name ,
-      'data' => [ @id, @word, @position , @count ,@tags]
+      'data' => [ @id, @word, @position , @count, @language ,@tags]
     }.to_json(*a)
   end
   
@@ -114,5 +163,35 @@ class WordDTO
   
   def to_s #:nodoc:
     "#{@word} [id=#{@id},pos=#{@position},count=#{@count}]"
+  end
+end
+
+# A language DTO represents a language that may be applied
+# to sources, pages or words.
+class LanguageDTO
+  attr_accessor :id , :language
+  
+  # Creates a new instance of this DTO
+  def initialize(id = nil, language = nil)
+    @id = id
+    @language = language
+  end
+
+  # Serializes this DTO into a JSON object. Refer to the JSON library
+  # documentation for further info  
+  def to_json(*a)
+    {
+      'json_class' => self.class.name,
+      'data' => [ @id , @language ]
+    }.to_json(*a)
+  end
+  
+  # Deserializes a JSON object into a proper DTO instance  
+  def self.json_create(o)
+    lang = LanguageDTO.new(*o['data'])
+  end
+  
+  def to_s #:nodoc:
+    "#{@language}"
   end
 end
