@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 149</span>
+  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 153</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">add_savepoints_to</span>(<span class="ruby-identifier">chain</span>)
     <span class="ruby-identifier">chain</span>.<span class="ruby-identifier">collect!</span> { <span class="ruby-operator">|</span>  <span class="ruby-identifier">block</span><span class="ruby-operator">|</span> [ <span class="ruby-identifier">block</span> , <span class="ruby-constant">SavepointETL</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">global_opt</span>(<span class="ruby-identifier">:savepointdump</span>)) ] }.<span class="ruby-identifier">flatten!</span>
     <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">chain</span>

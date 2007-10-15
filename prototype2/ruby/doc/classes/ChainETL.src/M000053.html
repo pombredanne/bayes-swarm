@@ -5,18 +5,26 @@
 
 <html>
 <head>
-  <title>handle_block_exception (ChainETL)</title>
+  <title>run_block (ChainETL)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File etl/std.rb, line 277</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">handle_block_exception</span>(<span class="ruby-identifier">context</span>,<span class="ruby-identifier">exc</span>)
-    <span class="ruby-identifier">log</span> <span class="ruby-node">&quot;Error in step #{context[:curstep]} : #{exc}&quot;</span>
-    <span class="ruby-keyword kw">if</span> (<span class="ruby-identifier">context</span>[<span class="ruby-identifier">:lastsavepointfile</span>])
-      <span class="ruby-identifier">log</span> <span class="ruby-node">&quot;Last savepoint file #{context[:lastsavepointfile]}&quot;</span>
+  <pre><span class="ruby-comment cmt"># File etl/std.rb, line 207</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">run_block</span>(<span class="ruby-identifier">block</span>, <span class="ruby-identifier">dto</span>, <span class="ruby-identifier">context</span>)
+    <span class="ruby-identifier">unless_step_over</span>(<span class="ruby-identifier">block</span>,<span class="ruby-identifier">context</span>) <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">block</span>, <span class="ruby-identifier">ctx</span><span class="ruby-operator">|</span>
+      <span class="ruby-keyword kw">begin</span>
+        <span class="ruby-identifier">set_step</span>(<span class="ruby-identifier">ctx</span>, <span class="ruby-identifier">block</span>.<span class="ruby-identifier">name</span>)
+
+        <span class="ruby-identifier">while_mplexing</span>(<span class="ruby-identifier">ctx</span>,<span class="ruby-identifier">block</span>) <span class="ruby-keyword kw">do</span>
+          <span class="ruby-identifier">verbose_log</span> <span class="ruby-node">&quot;with DTO #{ctx[:dto]}&quot;</span> 
+          <span class="ruby-identifier">b_send</span>(<span class="ruby-identifier">block</span>,<span class="ruby-identifier">ctx</span>)
+        <span class="ruby-keyword kw">end</span>
+        
+      <span class="ruby-keyword kw">rescue</span> <span class="ruby-constant">Exception</span> =<span class="ruby-operator">&gt;</span> <span class="ruby-identifier">e</span>
+        <span class="ruby-identifier">handle_block_exception</span> <span class="ruby-identifier">ctx</span>, <span class="ruby-identifier">e</span>
+      <span class="ruby-keyword kw">end</span>      
     <span class="ruby-keyword kw">end</span>
-    <span class="ruby-identifier">raise</span> <span class="ruby-identifier">exc</span> <span class="ruby-comment cmt"># reraise the exception to abort the whole etl</span>
   <span class="ruby-keyword kw">end</span></pre>
 </body>
 </html>

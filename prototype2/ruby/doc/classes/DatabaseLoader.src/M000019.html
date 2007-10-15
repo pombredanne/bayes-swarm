@@ -5,15 +5,17 @@
 
 <html>
 <head>
-  <title>insert_word (DatabaseLoader)</title>
+  <title>insert_words (DatabaseLoader)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File etl/stdload.rb, line 67</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">insert_word</span>(<span class="ruby-identifier">strategy</span>,<span class="ruby-identifier">source_id</span>,<span class="ruby-identifier">page_id</span>,<span class="ruby-identifier">scantime</span>,<span class="ruby-identifier">word</span>)
-    <span class="ruby-identifier">verbose_log</span> <span class="ruby-node">&quot;Inserting #{word.word} for source #{source_id} and page #{page_id}&quot;</span>
-    <span class="ruby-identifier">strategy</span>.<span class="ruby-identifier">insert</span>(<span class="ruby-identifier">source_id</span>,<span class="ruby-identifier">page_id</span>,<span class="ruby-identifier">scantime</span>,<span class="ruby-identifier">word</span>)
+  <pre><span class="ruby-comment cmt"># File etl/stdload.rb, line 59</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">insert_words</span>(<span class="ruby-identifier">source_id</span>,<span class="ruby-identifier">page_id</span>,<span class="ruby-identifier">dto</span>)
+    <span class="ruby-identifier">strategy</span> = <span class="ruby-identifier">get_strategy</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">dto</span>.<span class="ruby-identifier">words</span>
+      <span class="ruby-identifier">dto</span>.<span class="ruby-identifier">words</span>.<span class="ruby-identifier">each</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">w</span><span class="ruby-operator">|</span> <span class="ruby-identifier">insert_word</span>(<span class="ruby-identifier">strategy</span>,<span class="ruby-identifier">source_id</span>,<span class="ruby-identifier">page_id</span>,<span class="ruby-identifier">dto</span>.<span class="ruby-identifier">scantime</span>,<span class="ruby-identifier">w</span>) }
+    <span class="ruby-keyword kw">end</span>
   <span class="ruby-keyword kw">end</span></pre>
 </body>
 </html>

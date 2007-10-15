@@ -5,16 +5,21 @@
 
 <html>
 <head>
-  <title>with_source (DatabaseLoader)</title>
+  <title>get_strategy (DatabaseLoader)</title>
   <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File etl/stdload.rb, line 86</span>
-  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">with_source</span>(<span class="ruby-identifier">dto</span>) 
-    <span class="ruby-identifier">source_id</span> = <span class="ruby-identifier">get_source_id</span>(<span class="ruby-identifier">dto</span>)
-    <span class="ruby-identifier">verbose_log</span> <span class="ruby-node">&quot;Source_id is #{source_id}&quot;</span> 
-    <span class="ruby-keyword kw">yield</span> <span class="ruby-identifier">source_id</span>
+  <pre><span class="ruby-comment cmt"># File etl/stdload.rb, line 73</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">get_strategy</span>
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">strategy_class</span> = <span class="ruby-ivar">@props</span>[<span class="ruby-value str">&quot;strategy&quot;</span>]
+      <span class="ruby-identifier">verbose_log</span> <span class="ruby-node">&quot;Adopting custom word strategy: #{strategy_class}&quot;</span>
+      <span class="ruby-identifier">strategy</span> = <span class="ruby-identifier">eval</span>(<span class="ruby-node">&quot;#{strategy_class}.new&quot;</span>)
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-identifier">strategy</span> = <span class="ruby-constant">SimpleWordStrategy</span>.<span class="ruby-identifier">new</span>
+    <span class="ruby-keyword kw">end</span>
+    <span class="ruby-identifier">strategy</span>.<span class="ruby-identifier">conn</span> = <span class="ruby-ivar">@conn</span> <span class="ruby-comment cmt"># pass the connection to the strategy</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-identifier">strategy</span>
   <span class="ruby-keyword kw">end</span></pre>
 </body>
 </html>

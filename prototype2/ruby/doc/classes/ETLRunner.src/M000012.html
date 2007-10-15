@@ -10,7 +10,7 @@
   <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
 </head>
 <body class="standalone-code">
-  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 155</span>
+  <pre><span class="ruby-comment cmt"># File etl/runner.rb, line 159</span>
   <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">clean</span>
     <span class="ruby-constant">File</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-ivar">@context</span>[<span class="ruby-identifier">:lastsavepointfile</span>]) <span class="ruby-keyword kw">unless</span> <span class="ruby-ivar">@context</span>[<span class="ruby-identifier">:lastsavepointfile</span>].<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">global_opt</span>(<span class="ruby-identifier">:savepointdump</span>)
   <span class="ruby-keyword kw">end</span></pre>
