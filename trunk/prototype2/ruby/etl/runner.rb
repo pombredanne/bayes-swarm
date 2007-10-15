@@ -79,7 +79,10 @@ class ETLRunner
     init_plugins
     init_default_chains
   end
-  
+
+  # Initializes available plugins. Plugins are loaded from the directory defined by
+  # the +pluginsfolder+ global configuration option, or from the +plugins+ subdirectory
+  # of the current working one if the configuration option is missing. 
   def init_plugins
     pluginsfolder = @opts[:pluginsfolder] || "./plugins"
     $: << pluginsfolder
