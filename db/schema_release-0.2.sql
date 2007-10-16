@@ -45,12 +45,12 @@ CREATE
         source_id int(11) NOT NULL,
         url varchar(255) NOT NULL,
         language varchar(3) NOT NULL,
-        type varchar(3) NOT NULL,
+        page_type varchar(3) NOT NULL,
         last_scantime DATETIME NOT NULL,
         PRIMARY KEY USING BTREE(id),
         constraint fk_page_source foreign key(source_id) references sources(id),
         constraint fk_page_lang FOREIGN key(language) references languages(language),
-        constraint fk_page_type foreign key(type) references types(type)
+        constraint fk_page_type foreign key(page_type) references types(type)
     )
     ENGINE=InnoDB;
 
