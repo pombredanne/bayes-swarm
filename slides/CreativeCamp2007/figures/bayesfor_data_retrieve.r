@@ -42,7 +42,7 @@ bayesfor_ts <- function(stem_id, infile = NULL, db_params = NULL) {
     m <- length(stem_id)
     matching_dates_int <- as.integer(as.Date(subset(data, id==stem_id[1], select=data)[,1]))
     for (i in 2:m) {
-      matching_dates_next <- as.Date(subset(data, id==stem_id[i], select=data)[,1])
+      matching_dates_next <- as.integer(as.Date(subset(data, id==stem_id[i], select=data)[,1]))
       matching_dates_int <- intersect(matching_dates_int, matching_dates_next)
     }
     matching_dates <- as.Date("1970-01-01") + matching_dates_int
