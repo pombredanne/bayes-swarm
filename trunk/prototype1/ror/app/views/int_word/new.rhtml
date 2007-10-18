@@ -1,0 +1,29 @@
+<html>
+ <head>
+  <title>New Interesting word</title>
+ </head>
+ <body>
+ <h1>New Interesting word</h1>
+
+ <form action="../create" method="POST"">
+  <p><b>Name</b><br>
+  <input id="int_word_name" name="int_word[name]" size="30" type="text" value="" />
+
+  <p><b>Language:</b><br>
+  <select name="int_word[language]">
+   <% @languages.each do |language| %>
+       <option value="<%= language.language %>" >
+         <%= language.language %>
+       </option>
+   <% end %>
+  </select></p>
+  
+  <input name="commit" type="submit" value="Create" />
+ </form>
+
+ <a href="/int_word/list">
+  Back 
+ </a>
+
+ </body>
+</html>
