@@ -1,0 +1,64 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Bayes-swarm</title>
+  <link rel="stylesheet" type="text/css" href="stylesheets/screen.css" media="screen">  
+</head>
+<body>
+<div id="page">
+
+    <div id="sidebar">
+    <ul id="sidebar-items">
+      <li>
+        <h3>Browse the documentation</h3>
+        <ul class="links">
+          <li><a href="documentation">documentation</a></li>
+          <li><a href="http://bayes-swarm.googlecode.com/">development</a></li>
+        </ul>
+      </li>
+      <li>
+        <h3>Get in touch</h3>
+        <ul class="links">
+          <li><a href="http://www.bayesfor.eu">about us</a></li>
+          <li><a href="mailto:info@bayesfor.eu">email us</a></li>
+        </ul>
+      </li>
+    </ul>
+    </div>
+
+    <div id="content">
+        <div id="header">
+            <h1>Bayes-swarm</h1>
+            <h2>bayesian web spidering</h2>
+        </div>
+
+        <div id="getting-started">
+            <h1>What is Bayes-Swarm?</h1>
+
+            <p>Bayes-Swarm is a research project, its aim is to spider
+            web sources (news portals, blogs and online newspapers)
+            and extract correlations between such sources. <a href="documentation">Read more</a></p>
+
+            <h1>What has Bayes-Swarm found so far?</h1>
+
+            <div id="stem_cloud">
+              <%= render :partial => "int_word/cloud", :locals => { :int_words => @int_words } %>
+            </div>
+             
+            <p>There are currently <%= @n_int_words %> interesting words among <%= @n_languages %>
+            languages in the database (<a href= 
+            "int_word/cloud">full cloud</a> or <a href="int_word/new">add a new one</a>!). 
+            Since project's start we found <%= @n_words %> occurrences of these words on these <a 
+            href="page/list">pages</a> which belong to these <a href="source/list">sources</a>.
+
+            <h1>What next?</h1>
+
+            <p>For a closer look, please have a look at <i>queries</i> and <i>graphs</i> sections.</p>
+        </div>
+    </div>
+    
+    <div id="footer">&nbsp;</div>
+</div>    
+</body>
+</html>

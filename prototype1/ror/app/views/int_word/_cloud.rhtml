@@ -1,0 +1,7 @@
+     <% int_words.sort_by { |w| w[:name] }.each do |w| %>
+      <%= content_tag('a', w.name, :style =>
+        font_size_for_tag_cloud_new( w.freq.to_i,
+          int_words.last.freq.to_i,
+          int_words.first.freq.to_i),
+          :href => ["../int_word/show/", w.id.to_i].join ) %>
+     <% end %>
