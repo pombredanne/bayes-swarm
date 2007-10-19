@@ -17,9 +17,17 @@ require 'json'
 
 # An ETL block that needs to fork execution of the ETL chain, varying the DTOs in use for each forked 
 # segment should mix in this module. This module relies on a <tt>mplex(dto,context)</tt> method,
-# which must return an array of DTOs and must be implemented by the mixing class. 
+# which must return one or more DTOs and must be implemented by the mixing class. 
 # The ETL chain will then fork for each of the returned DTOs. The execution of the chain from now on will proceed in
 # parallel: every step will be executed for all the child DTOs before advancing to the next.
+#
+# Two forms of execution are supported, depending on the return type of <tt>mplex(dto,context)</tt>:
+# if the returned type responds to methods +next+ and +adjust+ as required by LazyMultiplexDTO, a lazy
+# form of execution is used, otherwise if the returned type does not respond to such methods or is an Array,
+# the default form of execution is used. 
+#
+# When executing lazily, not all DTOs are concurrently stored in memory, but they are recalled in a linked list
+# fashion.
 #--
 # FIXME: this may be a problem, since it will force all the results to be available at the end of the
 # whole processing and not incrementally. This will also block every result if an error occurs even in 
@@ -43,7 +51,11 @@ module MultiplexETL
     if dtos.class == Array
       context[:dto] = MultiplexDTO.new(0,dtos)
     else
-      context[:dto] = LazyMultiplexDTO.new(dtos)
+      if dtos.respond_to?(:next) && dtos.respond_to?(:adjust)
+        context[:dto] = LazyMultiplexDTO.new(dtos)
+      else
+        context[:dto] = MultiplexDTO.new(0,[ dtos ])
+      end
     end
   end
   alias transform extract
