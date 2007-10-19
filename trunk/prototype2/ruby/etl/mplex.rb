@@ -24,6 +24,8 @@ require 'json'
 # FIXME: this may be a problem, since it will force all the results to be available at the end of the
 # whole processing and not incrementally. This will also block every result if an error occurs even in 
 # a single child. 
+#
+# A possible solution is the usage of LazyMultiplexDTO which allows for incremental processing of DTOs.
 #++
 # A sample usage of this module follows :
 #   class MyMultiplexETL < ETL
@@ -38,7 +40,11 @@ module MultiplexETL
   
   def extract(dto,context) 
     dtos = mplex(dto,context)
-    context[:dto] = MultiplexDTO.new(0,dtos)
+    if dtos.class == Array
+      context[:dto] = MultiplexDTO.new(0,dtos)
+    else
+      context[:dto] = LazyMultiplexDTO.new(dtos)
+    end
   end
   alias transform extract
   alias load extract
