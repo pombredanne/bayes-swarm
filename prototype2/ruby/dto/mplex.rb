@@ -81,6 +81,11 @@ end
 # A LazyMultiplexDTO extends its superclass to provide a lazy-loading
 # mechanism of its nested DTOs, so that even large datasets can be 
 # handled without the need of having them completely in memory.
+#
+# To work properly a LazyMultiplexDTO expects its dtos to implement
+# two methods: +next+ which returns the next dto or +nil+, in a linked
+# list fashion, and <tt>adjust(dto)</tt> which is passed the dto <b>after</b>
+# having being processed by the ETL.
 class LazyMultiplexDTO < MultiplexDTO
 
   # creates a new instance of the class. +headdto+ is the head of the linked

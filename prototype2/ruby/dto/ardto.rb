@@ -109,24 +109,3 @@ class ActiveRecord::Base #:nodoc:
   end
     
 end
-
-# An ActiveRecord model which represents a Source
-class Source < ActiveRecord::Base #:nodoc:
-  
-  has_many :pages
-  json_include :pages
-end
-
-# An ActiveRecord model which represents a Page
-class Page < ActiveRecord::Base #:nodoc:
-  
-  belongs_to :source
-  has_many :words
-  json_include :words
-end
-
-# An ActiveRecord model which represents a Word
-class Word < ActiveRecord::Base #:nodoc: 
-  
-  belongs_to :page
-end
