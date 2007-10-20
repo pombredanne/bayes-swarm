@@ -19,6 +19,7 @@
 # Licensed under the Apache2 License.
 #
 require 'json'
+require 'bigdecimal'
 
 class Time #:nodoc:
   # need to open up the Time class to perform a proper JSON conversion
@@ -32,6 +33,21 @@ class Time #:nodoc:
     
   def self.json_create(o)
     t = Time.parse(*o['time'])
+  end
+end
+
+class BigDecimal #:nodoc:
+  # need to open up the BigDecimal class to perform a proper JSON conversion
+  
+  def to_json(*a)
+    {
+      'json_class' => self.class.name ,
+      'val' => [ to_s ]
+    }.to_json(*a)
+  end
+  
+  def self.json_create(o)
+    d = BigDecimal.new(*o['val'])
   end
 end
 

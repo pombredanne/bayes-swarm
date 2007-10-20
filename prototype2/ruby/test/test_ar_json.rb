@@ -14,7 +14,9 @@
 
 require 'test/unit'
 require 'json'
+require 'dto/dto'
 require 'dto/ardto'
+require 'plugins/bayes_ardto'
 require 'etl/util/ar'
 
 class TestArJson < Test::Unit::TestCase
@@ -34,6 +36,7 @@ class TestArJson < Test::Unit::TestCase
     assert_not_nil(s)
     
     s_json = JSON.generate(s)
+    # File.open("test.json","w") { |f| f.puts s_json }
     
     assert_match(/json_class/,s_json)
     assert_match(/Source/,s_json)
@@ -41,6 +44,14 @@ class TestArJson < Test::Unit::TestCase
     s2 = JSON.parse(s_json)
     assert_equal(s2.class.name,Source.name)
   end
+  
+  # def test_ar_read_and_serialize_page
+  #   p = Page.find(1)
+  #   assert_not_nil(p)
+  #   
+  #   p_json = JSON.generate(p)
+  #   File.open("test.json","w") { |f| f.puts p_json }
+  # end
   
   # Verifies serialization to JSON and restore of a hierarchy of AR entities
   def test_ar_read_with_childs
