@@ -1,31 +1,34 @@
+drop view if exists extended_words; 
 drop table if exists associations;
-drop table if exists int_words;
 drop table if exists words;
+drop table if exists int_words;
 drop table if exists pages;
 drop table if exists sources;
 drop table if exists languages;
-drop table if exists types;
+drop table if exists kinds;
 
 CREATE
     TABLE languages
     (
+		id int(11) NOT NULL AUTO_INCREMENT,
         language varchar(3) NOT NULL,
-        PRIMARY KEY USING BTREE(language)
+        PRIMARY KEY USING BTREE(id)
     )
     ENGINE=InnoDB;
 
-INSERT INTO languages (language) values ('ita'),('eng');
+INSERT INTO languages (id,language) values (1,'ita'),(2,'eng');
 
 
 CREATE
-    TABLE types
+    TABLE kinds
     (
-        type varchar(3) NOT NULL,
-        PRIMARY KEY USING BTREE(type)
+		id int(11) NOT NULL AUTO_INCREMENT,
+        kind varchar(3) NOT NULL,
+        PRIMARY KEY USING BTREE(id)
     )    
     ENGINE=InnoDB;
 
-INSERT INTO types (type) values ('url'),('rss');
+INSERT INTO kinds (id,kind) values (1,'url'),(2,'rss');
 
 
 CREATE
@@ -44,13 +47,13 @@ CREATE
         id int(11) NOT NULL AUTO_INCREMENT,
         source_id int(11) NOT NULL,
         url varchar(255) NOT NULL,
-        language varchar(3) NOT NULL,
-        page_type varchar(3) NOT NULL,
+        language_id int(11) NOT NULL,
+        kind_id int(11) NOT NULL,
         last_scantime DATETIME NOT NULL,
         PRIMARY KEY USING BTREE(id),
         constraint fk_page_source foreign key(source_id) references sources(id),
-        constraint fk_page_lang FOREIGN key(language) references languages(language),
-        constraint fk_page_type foreign key(page_type) references types(type)
+        constraint fk_page_lang FOREIGN key(language_id) references languages(id),
+        constraint fk_page_kind foreign key(kind_id) references kinds(id)
     )
     ENGINE=InnoDB;
 
@@ -73,9 +76,9 @@ CREATE
     (
         id int(11) NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
-        language varchar(3) NOT NULL,
+        language_id int(11) NOT NULL,
         PRIMARY KEY USING BTREE(id),
-        constraint fk_int_word_lang FOREIGN key(language) references languages(language)
+        constraint fk_int_word_lang FOREIGN key(language_id) references languages(id)
     )
     ENGINE=InnoDB;
 
@@ -95,6 +98,11 @@ CREATE
     )
     ENGINE=InnoDB;
 
+CREATE
+	VIEW extended_words AS
+	SELECT w.* , iw.name , iw.language_id
+	FROM words w , int_words iw
+	WHERE w.id = iw.id ;
 
 CREATE
     TABLE associations
