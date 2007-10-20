@@ -9,7 +9,7 @@
 # Copyright(c) 2007 - bayes-swarm project.
 # Licensed under the Apache2 License.
 
-require_gem 'activerecord'
+require 'active_record'
 require 'etl/util/log'
 
 module ARHelper

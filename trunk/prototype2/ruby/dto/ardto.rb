@@ -32,7 +32,7 @@
 # Licensed under the Apache2 License.
 #
 
-require_gem 'activerecord'
+require 'active_record'
 require 'json'
 
 # The module to be mixed in with <tt>ActiveRecord::Base</tt> to enrich ActiveRecord with to-and-from JSON
@@ -43,7 +43,7 @@ module JSONMixin
   end
   
   module ClassMethods #:nodoc:
-    def json_include(entities = [])
+    def json_include(*entities)
       class_eval <<-EOV
         include JSONMixin::InstanceMethods
         
