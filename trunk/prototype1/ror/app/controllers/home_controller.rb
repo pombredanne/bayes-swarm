@@ -17,5 +17,8 @@ class HomeController < ApplicationController
         group by id,name
         order by freq desc
         limit 50;"
+
+    r = R_Config::R
+    @r_dnorm = r.dnorm(1)
     end
 end
