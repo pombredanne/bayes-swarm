@@ -35,7 +35,7 @@ module ARHelper
       open_connection(params)
       conn = ActiveRecord::Base.connection
       yield conn
-    rescue ActiveRecordError => e
+    rescue ActiveRecord::ActiveRecordError => e
       log "ActiveRecord Error: #{e}"
       raise e
     rescue Exception => e
