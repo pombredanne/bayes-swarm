@@ -1,7 +1,7 @@
 ts = read.csv("some_data_ita.csv", header=TRUE)
 ts$date = as.Date(ts$date)
 
-pdf(file="timeseries_bindi-letta.pdf", width=5, height=5)
+pdf(file="timeseries_bindi-letta.pdf", width=4, height=4)
   par(cex.axis=1, cex.lab=1, mar=c(4.1, 3.1, 2.1, 2.1))
   plot(bindi ~ date, ts,
     main="", xlab="time",
