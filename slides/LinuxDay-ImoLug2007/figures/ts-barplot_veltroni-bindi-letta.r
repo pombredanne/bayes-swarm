@@ -7,7 +7,7 @@ pdf(file="ts-barplot_veltroni-bindi-letta.pdf", width=8, height=4)
   plot(ts$veltroni ~ ts$date,
     main="", xlab="time",
     ylab="average count on selected pages", yaxt = "n",
-    mgp=c(2,1,0),
+    mgp=c(2,1,0), ylim=c(0,3),
     type="l", lwd=3, col="blue")
   lines(ts$bindi ~ ts$date,
     type="l", lwd=3, col="violet")

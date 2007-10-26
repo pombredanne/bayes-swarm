@@ -4,7 +4,7 @@
 
 DISTFILES = *~
 FIGURES = timeseries_bindi-letta.pdf timeseries-scatter_veltroni-pd.pdf \
-	ts-barplot_veltroni-bindi-letta.pdf
+	ts-barplot_veltroni-bindi-letta.pdf pie_veltroni-bindi-letta.pdf
 CLEANFILES = $(DISTFILES) $(FIGURES)
 
 # Build rules
@@ -18,7 +18,10 @@ timeseries-scatter_veltroni-pd.pdf: timeseries-scatter_veltroni-pd.r
 	cat timeseries-scatter_veltroni-pd.r | R --vanilla --slave
 
 ts-barplot_veltroni-bindi-letta.pdf: ts-barplot_veltroni-bindi-letta.r
-	cat ts-barplot_veltroni-bindi-letta.r | R --vanilla --silent
+	cat ts-barplot_veltroni-bindi-letta.r | R --vanilla --slave
+
+pie_veltroni-bindi-letta.pdf: pie_veltroni-bindi-letta.r
+	cat pie_veltroni-bindi-letta.r | R --vanilla --slave
 
 # Clean-up rules
 
