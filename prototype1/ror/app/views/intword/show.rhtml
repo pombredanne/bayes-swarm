@@ -1,0 +1,22 @@
+<html>
+ <head>
+  <title>Show Interesting word</title>
+ </head>
+ <body>
+ <h1>Show Interesting word</h1>
+
+  <p><b>Name:</b> <%= @intword.name %></p>
+  
+  <p><b>Language:</b> <%= @intword.language.language %></p>
+  
+  <p><b>Occurrences:</b> <%= @n_words %></p>
+
+ <a href="/intword/edit/<%= @intword.id %>">
+   Edit
+ </a> | 
+  <a href="/intword/list">
+  Back 
+ </a>
+
+ </body>
+</html>

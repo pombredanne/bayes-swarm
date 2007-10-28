@@ -1,0 +1,2 @@
+class KindController < ApplicationController
+end

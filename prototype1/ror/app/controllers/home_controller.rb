@@ -1,20 +1,20 @@
 class HomeController < ApplicationController
   def index
-    @n_int_words = IntWord.find(:all).length
+    @n_intwords = Intword.find(:all).length
     @n_languages = Language.find(:all).length
     @n_words = Word.find(:all).length
 
-    @int_words = IntWord.find_by_sql "
-        select id, name, count(*) as freq
+    @intwords = Intword.find_by_sql "
+        select intword_id, name, count(*) as freq
         from (
 
-        SELECT a.id, c.name, date(a.scantime)
-        FROM words a, pages b, int_words c
-        WHERE a.page_id=b.id and a.id = c.id and c.language_id=1
-        group by a.id,c.name, date(a.scantime)
+        SELECT w.intword_id, iw.name, date(w.scantime)
+        FROM words w, pages p, intwords iw
+        WHERE w.page_id=p.id and w.intword_id = iw.id and iw.language_id=1
+        group by w.intword_id, iw.name, date(w.scantime)
 
         ) as a
-        group by id,name
+        group by intword_id, name
         order by freq desc
         limit 50;"
 

@@ -1,12 +1,12 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'int_word_controller'
+require 'intword_controller'
 
 # Re-raise errors caught by the controller.
-class IntWordController; def rescue_action(e) raise e end; end
+class IntwordController; def rescue_action(e) raise e end; end
 
-class IntWordControllerTest < Test::Unit::TestCase
+class IntwordControllerTest < Test::Unit::TestCase
   def setup
-    @controller = IntWordController.new
+    @controller = IntwordController.new
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
   end
