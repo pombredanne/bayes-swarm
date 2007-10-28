@@ -10,7 +10,7 @@ class HomeController < ApplicationController
 
         SELECT a.id, c.name, date(a.scantime)
         FROM words a, pages b, int_words c
-        WHERE a.page_id=b.id and a.id = c.id and c.language='eng'
+        WHERE a.page_id=b.id and a.id = c.id and c.language_id=1
         group by a.id,c.name, date(a.scantime)
 
         ) as a

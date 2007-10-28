@@ -11,9 +11,9 @@
 
   <p><b>Language:</b><br>
   <select name="int_word[language]">
-   <% @languages.each do |language| %>
-       <option value="<%= language.language %>" >
-         <%= language.language %>
+   <% @languages.each do |l| %>
+       <option value="<%= l.id %>" >
+         <%= l.language %>
        </option>
    <% end %>
   </select></p>
