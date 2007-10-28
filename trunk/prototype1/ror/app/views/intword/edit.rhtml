@@ -1,0 +1,38 @@
+<html>
+ <head>
+  <title>Edit Interesting word</title>
+ </head>
+ <body>
+ <h1>Edit Interesting word</h1>
+
+ <form action="../update/<%= @intword.id %>" method="POST"">
+  <input id="intword_id" name="intword[id]" size="30" 
+         type="hidden" value="<%= @intword.id %>" />
+  
+  <p><b>Name</b><br>
+  <input id="intword_name" name="intword[name]" size="30" 
+         type="text" value="<%= @intword.name %>" />
+  </p>
+  
+  <p><b>Language:</b><br>
+  <select name="intword[language_id]">
+   <% @languages.each do |l| %>
+       <option value="<%= l.id %>" 
+         <%= ' selected' if l.id == @intword.language_id %>>
+         <%= l.language %>
+       </option>
+   <% end %>
+  </select></p>
+
+  <input type="submit" value="Update" />
+ </form>
+
+ <a href="/intword/show/<%= @intword.id %>">
+   Show
+ </a> | 
+  <a href="/intword/list">
+  Back 
+ </a>
+
+ </body>
+</html>
