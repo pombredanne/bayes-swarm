@@ -15,11 +15,11 @@
   </p>
   
   <p><b>Language:</b><br>
-  <select name="int_word[language]">
-   <% @languages.each do |language| %>
-       <option value="<%= language.language %>" 
-         <%= ' selected' if language.language == @int_word.language %>>
-         <%= language.language %>
+  <select name="int_word[language_id]">
+   <% @languages.each do |l| %>
+       <option value="<%= l.id %>" 
+         <%= ' selected' if l.id == @int_word.language_id %>>
+         <%= l.language %>
        </option>
    <% end %>
   </select></p>
