@@ -36,8 +36,11 @@ class RssExtractor
 
     rss_full_content = "" # collects content from all articles
     rss.items.each do |item|
+      #if (last_scantime == nil)
+      #  last_scantime = Time.parse('2000-01-01 00:00:00')
+      #end
       begin
-        last_scantime = Time.parse(rss_page.last_scantime)
+        last_scantime = rss_page.last_scantime
       rescue TypeError
         # handle rss_page.last_scantime = nil (swarm.rb)
         last_scantime = Time.parse('2000-01-01 00:00:00')

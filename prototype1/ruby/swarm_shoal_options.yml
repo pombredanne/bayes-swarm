@@ -4,4 +4,4 @@ database:
     :host:   localhost
     :user:   testuser
     :pass:   test
-    :db:     bayesswarm02
+    :db:     bayesfordev

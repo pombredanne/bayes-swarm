@@ -7,6 +7,18 @@ require 'ostruct'
 # bayes-swarm specific
 require 'swarm_support'
 
+class Page
+  attr_accessor :id, :url, :language_name, :kind_name, :last_scantime
+
+  def initialize(id, url, language_name, kind_name, last_scantime)
+    @id = id
+    @url = url
+    @language_name = language_name
+    @kind_name = kind_name
+    @last_scantime = last_scantime
+  end
+end
+
 if __FILE__ == $0
     options = OpenStruct.new
     options.sourcetype = :url
