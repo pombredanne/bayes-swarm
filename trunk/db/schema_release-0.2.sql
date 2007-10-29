@@ -92,8 +92,8 @@ CREATE
         count int(11) NOT NULL DEFAULT 0,
         titlecount int(11) NOT NULL DEFAULT 0,
         weight decimal(6,3) NOT NULL DEFAULT 0.0,
-        PRIMARY KEY USING BTREE(id, page_id, scantime),
-        constraint fk_word_intword foreign key(id) references intwords(id),
+        PRIMARY KEY USING BTREE(intword_id, page_id, scantime),
+        constraint fk_word_intword foreign key(intword_id) references intwords(id),
         constraint fk_word_page foreign key(page_id) references pages(id)
     )
     ENGINE=InnoDB;
