@@ -10,19 +10,19 @@ drop table if exists kinds;
 CREATE
     TABLE languages
     (
-		id int(11) NOT NULL AUTO_INCREMENT,
+        id int(11) NOT NULL AUTO_INCREMENT,
         language varchar(3) NOT NULL,
         PRIMARY KEY USING BTREE(id)
     )
     ENGINE=InnoDB;
 
-INSERT INTO languages (id,language) values (1,'ita'),(2,'eng');
+INSERT INTO languages (id,language) values (1,'eng'),(2,'ita');
 
 
 CREATE
     TABLE kinds
     (
-		id int(11) NOT NULL AUTO_INCREMENT,
+        id int(11) NOT NULL AUTO_INCREMENT,
         kind varchar(3) NOT NULL,
         PRIMARY KEY USING BTREE(id)
     )    
@@ -72,13 +72,13 @@ CREATE
 
 
 CREATE
-    TABLE int_words
+    TABLE intwords
     (
         id int(11) NOT NULL AUTO_INCREMENT,
         name varchar(255) NOT NULL,
         language_id int(11) NOT NULL,
         PRIMARY KEY USING BTREE(id),
-        constraint fk_int_word_lang FOREIGN key(language_id) references languages(id)
+        constraint fk_intword_lang FOREIGN key(language_id) references languages(id)
     )
     ENGINE=InnoDB;
 
@@ -86,45 +86,37 @@ CREATE
 CREATE
     TABLE words
     (
-        id int(11) NOT NULL,
+        intword_id int(11) NOT NULL,
         page_id int(11) NOT NULL,
         scantime DATETIME NOT NULL,
         count int(11) NOT NULL DEFAULT 0,
         titlecount int(11) NOT NULL DEFAULT 0,
         weight decimal(6,3) NOT NULL DEFAULT 0.0,
         PRIMARY KEY USING BTREE(id, page_id, scantime),
-        constraint fk_word_intword foreign key(id) references int_words(id),
+        constraint fk_word_intword foreign key(id) references intwords(id),
         constraint fk_word_page foreign key(page_id) references pages(id)
     )
     ENGINE=InnoDB;
 
-CREATE
-	VIEW extended_words AS
-	SELECT w.* , iw.name , iw.language_id
-	FROM words w , int_words iw
-	WHERE w.id = iw.id ;
+--CREATE
+--    VIEW extended_words AS
+--    SELECT w.* , iw.name , iw.language_id
+--    FROM words w , int_words iw
+--    WHERE w.id = iw.id ;
 
-CREATE
-    TABLE associations
-    (
-        words_from_id int(11) NOT NULL,
-        words_to_id int(11) NOT NULL,
-        cdist1 int(11) NOT NULL DEFAULT 0,
-        cdist2 int(11) NOT NULL DEFAULT 0,
-        cdist3 int(11) NOT NULL DEFAULT 0,
-        cdist4 int(11) NOT NULL DEFAULT 0,
-        cdist5 int(11) NOT NULL DEFAULT 0,
-        weight decimal(6,3) NOT NULL DEFAULT 0.0,
-        PRIMARY KEY USING BTREE(words_from_id, words_to_id),
-        constraint fk_assoc_from_word foreign key(words_from_id) references words(id),
-        constraint fK_assoc_to_word foreign key(words_to_id) references words(id)
-    )
-    ENGINE=InnoDB;
-    
-
-
-
-
-
-    
-
+--CREATE
+--    TABLE associations
+--    (
+--        words_from_id int(11) NOT NULL,
+--        words_to_id int(11) NOT NULL,
+--        cdist1 int(11) NOT NULL DEFAULT 0,
+--        cdist2 int(11) NOT NULL DEFAULT 0,
+--        cdist3 int(11) NOT NULL DEFAULT 0,
+--        cdist4 int(11) NOT NULL DEFAULT 0,
+--        cdist5 int(11) NOT NULL DEFAULT 0,
+--        weight decimal(6,3) NOT NULL DEFAULT 0.0,
+--        PRIMARY KEY USING BTREE(words_from_id, words_to_id),
+--        constraint fk_assoc_from_word foreign key(words_from_id) references words(id),
+--        constraint fK_assoc_to_word foreign key(words_to_id) references words(id)
+--    )
+--    ENGINE=InnoDB;
