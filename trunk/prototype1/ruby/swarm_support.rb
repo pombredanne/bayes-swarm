@@ -1,4 +1,3 @@
-require "mysql"
 require 'extractor'
 require 'html_tidy'
 require 'stemmer'
@@ -13,26 +12,16 @@ class Stem
   end
 end
 
-class Page
-  attr_accessor :id, :url, :language, :type, :last_scantime
-
-  def initialize(id, url, language, type, last_scantime)
-    @id = id
-    @url = url
-    @language = language
-    @type = type
-    @last_scantime = last_scantime
-  end
-end
-
 def swarm_extract(page, notidy=true, interesting_stems=nil)
     # Components setup
-    if (page.type == :url)
+    if (page.kind_name == :url)
       extractor = HttpExtractor.new
-    elsif (page.type == :file)
+    elsif (page.kind_name == :file)
       extractor = FileExtractor.new
-    elsif (page.type == :rss)
+    elsif (page.kind_name == :rss)
       extractor = RssExtractor.new
+    elsif
+      raise "unknown page kind error"
     end
     cleaner = HtmlTidy.new
     stemmer = FerretStemmer.new
@@ -46,7 +35,7 @@ def swarm_extract(page, notidy=true, interesting_stems=nil)
     end
     # puts "CLEAN_CONTENT: #{clean_content}"
 
-    stems = stemmer.stem(clean_content, page.language)
+    stems = stemmer.stem(clean_content, page.language_name)
     # puts "STEMS: #{stems.inspect}"
 
     counted_stems = count_stems(stems, interesting_stems)
@@ -92,66 +81,4 @@ def count_stems(stems, int_stems)
   end
 
   sorted_res = res.sort_by { |sc| sc.count }.reverse
-end
-
-def get_interesting_stems(language)
-  # gets the list of interesting stems from db togher with their id
-  # and returns a name=>id hash
-  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
-  query = dbh.prepare("SELECT id, name FROM int_words WHERE language = ?")
-  query.execute language.to_s
-
-  #puts "Interesting stems are:" #debug
-  res = Hash.new
-  query.each do |row|
-    id = row[0]
-    name = row[1]
-    #printf "%s, %s\n", id, name #debug
-    res[name] = id
-  end
-  query.close
-
-  res
-end
-
-def get_pages()
-  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
-  res = dbh.query("SELECT id, url, language, type, last_scantime FROM pages")
-
-  pages = Array.new
-  while row = res.fetch_row do
-    id = row[0]
-    url = row[1]
-    language = row[2]
-    type = row[3]
-    last_scantime = row[4]
-    pages << Page.new(id, url, language.intern, type.intern, last_scantime)
-#    flag = row[2]
-#    if flag == "0"
-#      #printf "%s, %s\n", id, url
-#       pages << Page.new(id, url)
-#       chk.execute id
-#    end
-  end
-
-  pages
-end
-
-def insert_stems_into_db(stems, page_id)
-  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
-
-  res = dbh.prepare "INSERT INTO words (id, page_id, scantime, count) VALUES (?, ?, ?, ?)"
-  stems.each do |stem|
-    res.execute stem.id, page_id, Time.now, stem.count
-  end
-
-  res.close
-end
-
-def update_page_last_scantime(page, time)
-  dbh = Mysql.real_connect(@db_host, @db_user, @db_pass, @db_name)
-
-  res = dbh.prepare "UPDATE pages SET last_scantime=? where id=?;"
-  res.execute time, page.id
-  res.close
 end
