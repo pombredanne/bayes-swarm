@@ -1,6 +1,12 @@
 #summary Announcements and news about the project
 #labels Featured
 
+== 2007/10/27 and 2007/11/03 - Bayes-swarm presents some data on PD primary elections ==
+
+Another Bayes-swarm presentation at linuxday organized by Imola and Faenza local group [http://www.imolug.org/ linuxday@imolug] on October 27th and November 3rd, 2007.
+
+The presentation will be in italian, presentation slides are available either in [http://www.bayesfor.eu/BayesSwarm/Progetti_files/BS-LinuxDay_Imola.pdf pdf] or tex and R source (/slides directory in svn repository). 
+
 == 2007/10/06 - Official presentation of bayes-swarm at CreativeCamp == 
 
 Bayes-swarm will be presented at the general public at [http://barcamp.org/CreativeCamp CreativeCamp] on October 6th, 2007.
