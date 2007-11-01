@@ -4,19 +4,7 @@ class HomeController < ApplicationController
     @n_languages = Language.find(:all).length
     @n_words = Word.find(:all).length
 
-    @intwords = Intword.find_by_sql "
-        select intword_id, name, count(*) as freq
-        from (
-
-        SELECT w.intword_id, iw.name, date(w.scantime)
-        FROM words w, pages p, intwords iw
-        WHERE w.page_id=p.id and w.intword_id = iw.id and iw.language_id=1
-        group by w.intword_id, iw.name, date(w.scantime)
-
-        ) as a
-        group by intword_id, name
-        order by freq desc
-        limit 50;"
+    @intwords = Intword.find_popular(1, 50, "n_hits")
 
     r = R_Config::R
     @r_dnorm = r.dnorm(1)
