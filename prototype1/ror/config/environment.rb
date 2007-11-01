@@ -60,4 +60,4 @@ end
 # Include your application configuration below
 
 # rsruby-Configuration
-require 'environments/rsruby_environment.rb'
+# require 'environments/rsruby_environment.rb'
