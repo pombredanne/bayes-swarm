@@ -1,10 +1,5 @@
-<html>
- <head>
-  <title>Interesting words cloud</title>
- </head>
- <body>
+<h1>Interesting words cloud</h1>
 
- <%= render :partial => "cloud", :locals => { :intwords => @intwords } %>
-
- </body>
-</html>
+<div id="stem_cloud">
+  <%= render :partial => "cloud", :locals => { :intwords => @intwords } %>
+</div>

@@ -1,0 +1,44 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+   "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+  <title>Bayes-swarm</title>
+  <%= stylesheet_link_tag "standard", :media => "all" %>
+  <link rel="stylesheet" type="text/css" href="stylesheets/screen.css" media="screen">  
+</head>
+<body>
+<div id="page">
+    <div id="sidebar">
+    <ul id="sidebar-items">
+      <li>
+        <h3>Browse the documentation</h3>
+        <ul class="links">
+          <li><a href="documentation">documentation</a></li>
+          <li><a href="http://bayes-swarm.googlecode.com/">development</a></li>
+        </ul>
+      </li>
+      <li>
+        <h3>Get in touch</h3>
+        <ul class="links">
+          <li><a href="http://www.bayesfor.eu">about us</a></li>
+          <li><a href="mailto:info@bayesfor.eu">email us</a></li>
+        </ul>
+      </li>
+    </ul>
+    </div>
+
+    <div id="content">
+        <div id="header">
+            <h1>Bayes-swarm</h1>
+            <h2>bayesian web spidering</h2>
+        </div>
+
+        <div id="getting-started">
+            <%= @content_for_layout %>
+        </div>
+    </div>
+    
+    <div id="footer">&nbsp;</div>
+</div>    
+</body>
+</html>
