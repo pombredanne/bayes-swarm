@@ -1,5 +1,6 @@
 class IntwordController < ApplicationController
   scaffold :intword
+  layout "standard"
   
   def show
     @intword = Intword.find(@params["id"], :include => [:language, :intword_statistic])

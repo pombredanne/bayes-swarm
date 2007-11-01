@@ -1,22 +1,8 @@
-<html>
- <head>
-  <title>Show Interesting word</title>
- </head>
- <body>
- <h1>Show Interesting word</h1>
-
-  <p><b>Name:</b> <%= @intword.name %></p>
+<h1>Show Interesting word</h1>
   
-  <p><b>Language:</b> <%= @intword.language.language %></p>
-  
-  <p><b>Occurrences:</b> <%= @intword.intword_statistic.n_hits %></p>
+<p><b>Name:</b> <%= @intword.name %></p>
+<p><b>Language:</b> <%= @intword.language.language %></p>
+<p><b>Occurrences:</b> <%= @intword.intword_statistic.n_hits %></p>
 
- <a href="/intword/edit/<%= @intword.id %>">
-   Edit
- </a> | 
-  <a href="/intword/list">
-  Back 
- </a>
-
- </body>
-</html>
+<a href="/intword/edit/<%= @intword.id %>">Edit</a> | 
+<a href="/intword/list">Back</a>

@@ -1,4 +1,6 @@
 class HomeController < ApplicationController
+  layout "standard"
+
   def index
     @n_intwords = Intword.find(:all).length
     @n_languages = Language.find(:all).length
