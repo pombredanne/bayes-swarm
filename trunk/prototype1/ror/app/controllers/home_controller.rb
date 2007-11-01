@@ -6,7 +6,7 @@ class HomeController < ApplicationController
 
     @intwords = Intword.find_popular(1, 50, "n_hits")
 
-    r = R_Config::R
-    @r_dnorm = r.dnorm(1)
+#    r = R_Config::R
+#    @r_dnorm = r.dnorm(1)
     end
 end
