@@ -23,7 +23,7 @@ class IntwordController < ApplicationController
   def ts_plot
     require 'gruff'
     iw = Intword.find(@params["id"])
-    ts = iw.get_3m_time_series
+    ts = iw.get_time_series(3)
     data = ts.values
     labels = ts.labels
 

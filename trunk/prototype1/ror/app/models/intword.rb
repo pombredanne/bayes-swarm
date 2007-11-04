@@ -15,38 +15,39 @@ class Intword < ActiveRecord::Base
   # returns last 3 month values
   # lastdate is today, firstdate is the oldest date (in the 3m scope)
   # if some days are missing (stem not seen in pages) we fill with zeros
-  def get_3m_time_series
-    tseries = intword_time_series.find(:all, :conditions=>"date>='#{Date.today()<<3}'", :order=>"date")
-    
+  def get_time_series(n_months)
+    # FIXME: add page_id parameter like so [ "category IN (?)", categories]
+    # FIXME: add /n_pages to avg_count (based on the language of the stem)
+    ws = words.find(:all,
+                    :select => "date(scantime) as date, avg(count) as count",
+                    :conditions => "scantime>='#{Date.today()<<n_months}'",
+                    :order => "date(scantime)",
+                    :group => "date(scantime)")
+
     values = Array.new()
     dates = Array.new()
     last_date = Date.today()
-    first_date = tseries[0].date
-    
-    first_date.upto(last_date) do |d|
+    first_date = Date.strptime(ws.first.date, '%Y-%m-%d')
+
+    first_date.upto(last_date) do |d|      
       dates << d
       values << 0
     end
     
-    tseries.each do |ts|
-      pos = ts.date - first_date
-      values[pos] = ts.count
+    ws.each do |w|
+      pos = Date.strptime(w.date, '%Y-%m-%d') - first_date
+      values[pos] = w.count
     end
     
-    Intword3mTimeSeries.new(dates, values)
-  end
-end
-
-
-class IntwordTimeSeries < ActiveRecord::Base
-  belongs_to :intword
+    IntwordTimeSeries.new(dates, values)
+  end  
 end
 
 class IntwordStatistic < ActiveRecord::Base
   belongs_to :intword
 end
 
-class Intword3mTimeSeries
+class IntwordTimeSeries
   attr_accessor :dates, :values
 
   def initialize(dates, values)
@@ -58,9 +59,6 @@ class Intword3mTimeSeries
   # only montly dates are returned
   def labels
     l = Hash.new()
-#    dates.each_with_index do |d, i|
-#      l[i] = d
-#    end
     3.downto(0) do |i|
       cur_date = dates.last<<i
       if ((cur_date - dates.first).to_i >= 0)
