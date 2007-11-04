@@ -8,7 +8,7 @@ class IntwordController < ApplicationController
   
   def edit
     @intword = Intword.find(@params["id"])
-    @languages = Language.find_all
+    @languages = Language.find(:all)
   end
   
   def new
@@ -19,35 +19,23 @@ class IntwordController < ApplicationController
   def cloud
     @intwords = Intword.find_popular(1)
   end
-
-  def demogruff
+  
+  def ts_plot
     require 'gruff'
     iw = Intword.find(@params["id"])
-    
+    ts = iw.get_3m_time_series
+    data = ts.values
+    labels = ts.labels
+
     g = Gruff::Line.new(480)
     g.title = iw.name
-
-    tseries = iw.intword_time_series.find(:all, :conditions=>"date>'#{Date.today()<<3}'", :order=>"date")
-    data = Array.new()
-    labels = Array.new()
-    tseries.each do |ts|
-      data << ts.count
-      #labels << ts.date
-    end
-
     g.data(iw.name, data)
-    #g.data("Oranges", [4, 8, 7, 9, 8, 9])
-    #g.data("Watermelon", [2, 3, 1, 5, 6, 8])
-    #g.data("Peaches", [9, 9, 10, 8, 7, 9])
+    g.labels = labels
 
-    #g.labels = {0 => '2003', 2 => '2004', 4 => '2005'}
-
-    filename = "tmp/cache/intword_ts_#{iw.id}.png"
-    
-    # this writes the file to the hard drive for caching
-    # and then writes it to the screen.
+    send_data(g.to_blob,
+              :disposition => 'inline', 
+              :type => 'image/png', 
+              :filename => "intword_ts.png")    
+  end  
   
-    g.write(filename)
-    send_file filename, :type => 'image/png', :disposition => 'inline'
-  end
 end
