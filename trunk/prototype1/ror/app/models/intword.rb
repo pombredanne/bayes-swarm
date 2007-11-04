@@ -7,7 +7,7 @@ class Intword < ActiveRecord::Base
   def self.find_popular(l_id, n=999999, order_column="imp")
     find(:all, 
          :include => :intword_statistic, 
-         :conditions => "language_id = #{l_id} AND imp > 0",
+         :conditions => "language_id = #{l_id} AND #{order_column} > 0",
          :limit => n,
          :order => "#{order_column} DESC")
   end
@@ -67,6 +67,9 @@ class IntwordTimeSeries
     end
     l
   end
+  
+  # FIXME: add a "kind of intersection" method to join single time series
+  # for multivariate plots
 end
 
 # Intword.find(1).intword_statistic

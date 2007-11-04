@@ -17,7 +17,9 @@ class IntwordController < ApplicationController
   end
 
   def cloud
-    @intwords = Intword.find_popular(1)
+    l_id = 1
+    @attr = 'imp'
+    @intwords = Intword.find_popular(l_id, 999999, @attr)    
   end
   
   def ts_plot
