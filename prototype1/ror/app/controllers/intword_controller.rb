@@ -1,9 +1,10 @@
 class IntwordController < ApplicationController
   scaffold :intword
-  layout "standard"
+  helper   :plot
+  layout   "standard"
   
   def show
-    @intword = Intword.find(@params["id"], :include => [:language, :intword_statistic])
+    @intword = Intword.find(@params["id"], :include => [:language])
   end
   
   def edit
@@ -21,23 +22,5 @@ class IntwordController < ApplicationController
     @attr = 'imp'
     @intwords = Intword.find_popular(l_id, 999999, @attr)    
   end
-  
-  def ts_plot
-    require 'gruff'
-    iw = Intword.find(@params["id"])
-    ts = iw.get_time_series(3)
-    data = ts.values
-    labels = ts.labels
-
-    g = Gruff::Line.new(480)
-    g.title = iw.name
-    g.data(iw.name, data)
-    g.labels = labels
-
-    send_data(g.to_blob,
-              :disposition => 'inline', 
-              :type => 'image/png', 
-              :filename => "intword_ts.png")    
-  end  
   
 end
