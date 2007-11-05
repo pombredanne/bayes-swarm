@@ -1,25 +1,26 @@
 class Intword < ActiveRecord::Base
   belongs_to :language
   has_many :words
-  has_many :intword_time_series
-  has_one :intword_statistic
 
   def self.find_popular(l_id, n=999999, order_column="imp")
-    find(:all, 
-         :include => :intword_statistic, 
-         :conditions => "language_id = #{l_id} AND #{order_column} > 0",
-         :limit => n,
-         :order => "#{order_column} DESC")
+    n_months = 3
+    find(:all,
+         :conditions => "scantime>='#{Date.today()<<n_months}' AND language_id = #{l_id}",
+         :select => "intwords.id, name, sqrt(avg(count)*count(*)) as #{order_column}",
+         :joins => "LEFT JOIN words on words.intword_id = intwords.id",
+         :group => "intwords.id, name",
+         :order => "#{order_column} desc",
+         :limit => n)
   end
   
-  # returns last 3 month values
-  # lastdate is today, firstdate is the oldest date (in the 3m scope)
+  # returns last n_month values
+  # lastdate is today, firstdate is the oldest date (in the n_months scope)
   # if some days are missing (stem not seen in pages) we fill with zeros
   def get_time_series(n_months)
     # FIXME: add page_id parameter like so [ "category IN (?)", categories]
     # FIXME: add /n_pages to avg_count (based on the language of the stem)
     ws = words.find(:all,
-                    :select => "date(scantime) as date, avg(count) as count",
+                    :select => "date(scantime) as date, sum(count) as count",
                     :conditions => "scantime>='#{Date.today()<<n_months}'",
                     :order => "date(scantime)",
                     :group => "date(scantime)")
@@ -41,10 +42,6 @@ class Intword < ActiveRecord::Base
     
     IntwordTimeSeries.new(dates, values)
   end  
-end
-
-class IntwordStatistic < ActiveRecord::Base
-  belongs_to :intword
 end
 
 class IntwordTimeSeries
@@ -71,9 +68,3 @@ class IntwordTimeSeries
   # FIXME: add a "kind of intersection" method to join single time series
   # for multivariate plots
 end
-
-# Intword.find(1).intword_statistic
-# => #<IntwordStatistic:0xb65f6764 @attributes={"imp"=>"35.23989996", "intword_id"=>"1", "avg_count"=>"0.39155444", "n_hits"=>"90"}>
-
-# l_id = 2
-# iws = Intword.find(:all, :include => :intword_statistic, :conditions => "language_id = #{l_id}", :limit => 10, :order => "imp DESC")

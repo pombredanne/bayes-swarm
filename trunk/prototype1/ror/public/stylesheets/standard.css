@@ -55,9 +55,10 @@ a:hover {
 }*/
 
 #header {
-/*    background-image: url("../images/bayes_swarm.png");
+    background-image: url("../images/bayes_logo_small.png");
     background-repeat: no-repeat;
-    background-position: top left;*/
+    background-position: top left;
+    padding-left: 60px;
     height: 64px;
 }
 #header h1, #header h2 {margin: 0}

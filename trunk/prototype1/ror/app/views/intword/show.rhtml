@@ -1,12 +1,14 @@
 <h1>Show Interesting word</h1>
 
 <center>
-  <img src="/intword/ts_plot/<%= @intword.id %>" width="480" height="360">
+  <%= iwts = @intword.get_time_series(3) 
+      plot_tag({@intword.name=>iwts.values},
+               {:title=>@intword.name, 
+                :labels=>iwts.labels}) %>
 </center>
 
 <p><b>Name:</b> <%= @intword.name %></p>
 <p><b>Language:</b> <%= @intword.language.language %></p>
-<p><b>Occurrences:</b> <%= @intword.intword_statistic.n_hits %></p>
 
 <a href="/intword/edit/<%= @intword.id %>">Edit</a> | 
 <a href="/intword/list">Back</a>
