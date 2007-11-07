@@ -11,13 +11,20 @@
             </div>
              
             <p>There are currently <%= @n_intwords %> interesting words among <%= @n_languages %>
-            languages in the database (<a href= 
-            "/intword/cloud">full cloud</a> or <a href="/intword/new">add a new one</a>!). 
-            Since project's start we found <%= @n_words %> occurrences of these words on these <a 
-            href="/page/list">pages</a> which belong to these <a href="/source/list">sources</a>.
+            languages in the database
+            (<%= link_to "full cloud", { :controller => "intword",
+                                         :action => "cloud"} %>
+            or
+            <%= link_to "add a new one", { :controller => "intword",
+                                        :action => "new"} %>!). 
+            Since project's start we found <%= @n_words %> occurrences of these words on these
+            <%= link_to "pages", { :controller => "page",
+                                   :action => "list"} %>
+            which belong to these 
+            <%= link_to "sources", { :controller => "source",
+                                     :action => "list"} %>.
 
             <h1>What next?</h1>
-
             <p>For a closer look, please have a look at <i>queries</i> and <i>graphs</i> sections.</p>
             
 <!--            <h1>Densità normale da R via rsruby</h1>
