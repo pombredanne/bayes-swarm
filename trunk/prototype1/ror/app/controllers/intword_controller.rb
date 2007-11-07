@@ -22,5 +22,21 @@ class IntwordController < ApplicationController
     @attr = 'imp'
     @intwords = Intword.find_popular(l_id, 999999, @attr)    
   end
+
+  def plot
+    iw = Intword.find(@params["id"])
+    iwts = iw.get_time_series(3) 
+    
+    g = Gruff::Line.new(480)
+    g.title = iw.name
+    g.labels = iwts.labels
+    
+    g.data(iw.name, iwts.values)
+    
+    send_data(g.to_blob, 
+              :disposition => 'inline', 
+              :type => 'image/png', 
+              :filename => "ts.png")
   
+  end  
 end

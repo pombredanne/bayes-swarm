@@ -1,11 +1,11 @@
 <h1>Show Interesting word</h1>
 
-<center>
-  <%= iwts = @intword.get_time_series(3) 
-      plot_tag({@intword.name=>iwts.values},
-               {:title=>@intword.name, 
-                :labels=>iwts.labels}) %>
-</center>
+<p align="center">
+    <img src="<%= iwid = @intword.id
+                  url_for( :controller => 'intword', 
+                           :action => 'plot', 
+                           :id => iwid) %>" />
+</p>
 
 <p><b>Name:</b> <%= @intword.name %></p>
 <p><b>Language:</b> <%= @intword.language.language %></p>
