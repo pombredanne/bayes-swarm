@@ -1,15 +1,9 @@
 class IntwordController < ApplicationController
-  scaffold :intword
   helper   :plot
   layout   "standard"
   
   def show
     @intword = Intword.find(@params["id"], :include => [:language])
-  end
-  
-  def edit
-    @intword = Intword.find(@params["id"])
-    @languages = Language.find(:all)
   end
   
   def new
@@ -27,6 +21,7 @@ class IntwordController < ApplicationController
     iw = Intword.find(@params["id"])
     iwts = iw.get_time_series(3) 
     
+    require 'gruff'
     g = Gruff::Line.new(480)
     g.title = iw.name
     g.labels = iwts.labels
