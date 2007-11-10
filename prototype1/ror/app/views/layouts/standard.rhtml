@@ -28,15 +28,6 @@
 
     <div id="content">
         <div id="header">
-            <div id="header-langs">
-                <% LOCALES.each_pair do |lang, loc| %>
-                <%= link_to(image_tag("#{lang}.gif"), {:controller => controller.controller_name, 
-                                                         :action => controller.action_name, 
-                                                         :locale => lang, 
-                                                         :id => params[:id]}) if (Locale.language.code!=lang) %>
-                    
-                <% end %>
-            </div>
             <h1>Bayes-swarm</h1>
             <h2>bayesian web spidering</h2>
         </div>

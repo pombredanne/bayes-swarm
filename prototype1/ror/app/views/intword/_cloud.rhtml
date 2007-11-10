@@ -1,10 +1,7 @@
      <% intwords.sort_by { |w| w[:name] }.each do |w| %>
-      <%= link_to w.name, { :controller => "intword",
-                            :action => "show",
-                            :id => w.id
-                          },
-                          {:style => font_size_for_tag_cloud_new( w.attributes[@attr].to_f,
-                             intwords.last.attributes[@attr].to_f,
-                             intwords.first.attributes[@attr].to_f)}
-      %>
+      <%= content_tag('a', w.name, :style =>
+        font_size_for_tag_cloud_new( w.attributes[@attr].to_f,
+          intwords.last.attributes[@attr].to_f,
+          intwords.first.attributes[@attr].to_f),
+          :href => ["../intword/show/", w.id].join ) %>
      <% end %>
