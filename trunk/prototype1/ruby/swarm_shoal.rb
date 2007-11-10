@@ -6,10 +6,15 @@ require 'swarm_ar_support'
 notidy = true
 pages = Page.find(:all)
 
+language_ids = Intword.count("language_id", :group=>"language_id", :distinct=>true).keys
+interesting_stems = Hash.new()
+language_ids.each do |l|
+  interesting_stems[l] = Intword.get_intwords_hash(l)
+end
+
 for page in pages
-  interesting_stems = get_interesting_stems(page.language_id)
   begin
-    counted_stems = swarm_extract(page, notidy, interesting_stems)
+    counted_stems = swarm_extract(page, notidy, interesting_stems[page.language_id])
     Page.update(page.id, {:last_scantime => Time.now()})    
     if ( counted_stems != nil )    
       counted_stems.each do |stem|

@@ -2,9 +2,9 @@ class HomeController < ApplicationController
   layout "standard"
 
   def index
-    @n_intwords = Intword.find(:all).length
-    @n_languages = LOCALES.length
-    @n_words = Word.find(:all).length
+    @n_intwords = Intword.count()
+    @n_languages = Intword.count("language_id", :distinct=>true)
+    @n_words = Word.count()
 
     @attr = 'imp'
     @intwords = Intword.find_popular(Locale.language.id, 50, @attr)
