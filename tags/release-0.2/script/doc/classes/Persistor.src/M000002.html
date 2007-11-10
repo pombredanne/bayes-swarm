@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html>
+<head>
+  <title>persist (Persistor)</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="../.././rdoc-style.css" type="text/css" media="screen" />
+</head>
+<body class="standalone-code">
+  <pre><span class="ruby-comment cmt"># File persist.rb, line 104</span>
+  <span class="ruby-keyword kw">def</span> <span class="ruby-identifier">persist</span>(<span class="ruby-identifier">options</span> = {})
+    
+    <span class="ruby-ivar">@generator</span> = <span class="ruby-constant">Generator</span>.<span class="ruby-identifier">new</span>
+    
+    <span class="ruby-keyword kw">if</span> <span class="ruby-identifier">options</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-comment cmt"># load options from command line</span>
+      <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">parse_options</span>(<span class="ruby-identifier">split_params</span>(<span class="ruby-constant">ARGV</span>,<span class="ruby-value str">&quot;--generator&quot;</span>,<span class="ruby-keyword kw">false</span>))
+    <span class="ruby-keyword kw">else</span>
+      <span class="ruby-comment cmt"># adjust only defaults</span>
+      <span class="ruby-ivar">@options</span> = <span class="ruby-identifier">set_options_defaults</span>(<span class="ruby-identifier">options</span>) 
+    <span class="ruby-keyword kw">end</span>
+    
+    <span class="ruby-comment cmt"># abort on parse error</span>
+    <span class="ruby-keyword kw">return</span> <span class="ruby-keyword kw">if</span> <span class="ruby-ivar">@options</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">load_dict</span>
+
+    <span class="ruby-comment cmt"># pass command line options to the generator, while preserving embedded status</span>
+    <span class="ruby-identifier">data</span> = <span class="ruby-ivar">@generator</span>.<span class="ruby-identifier">generate</span>({},<span class="ruby-keyword kw">true</span>)
+    <span class="ruby-comment cmt"># data = Generator.new.generate {:function =&gt; &quot;smooth_sin&quot; , :psigma =&gt; 0.7 , :range_lower =&gt; 0} , true</span>
+    
+    <span class="ruby-identifier">scantime</span> = <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:starttime</span>]
+    <span class="ruby-identifier">w</span> = <span class="ruby-identifier">next_word</span>
+    
+    <span class="ruby-comment cmt"># FIXME : should offer the possibility to directly insert the data into mysql.</span>
+    <span class="ruby-comment cmt"># FIXME : should offer different kinds of statistic data conversion, not only to_i .</span>
+    <span class="ruby-identifier">data</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword kw">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">v</span><span class="ruby-operator">|</span> 
+      <span class="ruby-identifier">s</span> = <span class="ruby-node">&quot;INSERT INTO words (page_id,scantime,name,#{@options[:entity]}) VALUES (&quot;</span>
+      <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-ivar">@options</span>[<span class="ruby-identifier">:page</span>].<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;,&quot;</span>
+      <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;'&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">scantime</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;',&quot;</span>
+      <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;'&quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">w</span> <span class="ruby-operator">+</span> <span class="ruby-value str">&quot;',&quot;</span>
+      <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-identifier">v</span>[<span class="ruby-value">1</span>].<span class="ruby-identifier">to_i</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-comment cmt"># y-value of the generated data</span>
+      <span class="ruby-identifier">s</span> <span class="ruby-operator">+=</span> <span class="ruby-value str">&quot;);&quot;</span>
+      <span class="ruby-identifier">puts</span> <span class="ruby-identifier">s</span>
+      <span class="ruby-identifier">scantime</span> = <span class="ruby-identifier">scantime</span>.<span class="ruby-identifier">succ</span>
+    <span class="ruby-keyword kw">end</span> <span class="ruby-keyword kw">unless</span> <span class="ruby-identifier">data</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-keyword kw">end</span></pre>
+</body>
+</html>

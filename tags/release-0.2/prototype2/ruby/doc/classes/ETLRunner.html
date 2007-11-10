@@ -1,0 +1,505 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: ETLRunner</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">ETLRunner</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/etl/runner_rb.html">
+                etl/runner.rb
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <p>
+The <a href="ETL.html">ETL</a> Runner is responsible for running <a
+href="ETL.html">ETL</a> processes.
+</p>
+<h2>Description</h2>
+<p>
+A single <a href="ETL.html">ETL</a> process is composed of three
+<b>chains</b>:
+</p>
+<ul>
+<li>Extract: this chain is responsible for extracting the data to be analyzed
+and storing them locally for further processing
+
+</li>
+<li>Transform: this chain may apply transformations to the data
+
+</li>
+<li>Load: this chain is responsible for loading the data in a persistent store,
+such as a database
+
+</li>
+</ul>
+<p>
+Each chain is composed of <b>blocks</b> , i.e. single <b><a
+href="ETL.html">ETL</a> steps</b>. A block is a subclass of <a
+href="ETL.html">ETL</a> and implements the relevant methods, depending on
+the chain it belongs to. Nothing prevents a block from working in different
+chains (see <a href="IdentityETL.html">IdentityETL</a> for example).
+</p>
+<h2>Configuration</h2>
+<p>
+All the options used at runtime by the <a href="ETL.html">ETL</a> Runner
+are declared in a configuration file. The configuration file uses the YAML
+format and is therefore human-readable and editable. The configuration file
+stores:
+</p>
+<ul>
+<li>the global options for the <a href="ETL.html">ETL</a> Runner (such as
+savepoint configuration)
+
+</li>
+<li>the enumeration of the blocks which compose the default extract,transform
+and load chains
+
+</li>
+<li>the configuration parameters for every single block
+
+</li>
+<li>the configuration of subchains, if any.
+
+</li>
+</ul>
+<p>
+What follows is a sample configuration file (etl_config.yml) :
+</p>
+<pre>
+  # This file contains the configuration for an ETL process.
+  # It is divided into various sections. The *globals* and *root* sections are mandatory
+
+  # The *globals* section contains global configuration options for the whole ETL
+  globals:
+      # Defines the folder where user custom etl blocks are stored. If unspecified, the default is
+      # a plugins/ folder under the current working directory.
+
+      #:pluginsfolder: ./plugins
+
+      # Enables or disables savepoints
+
+      :savepoint: true
+
+      # Defines if savepoints work in dump-mode (i.e. do not remove previous ones when creating a new savepoint)
+      # This may be useful for debugging purposes
+
+      :savepointdump: true
+
+      # Defines where savepoints will be stored. If omitted, the current execution directory will be used.
+
+      #:saveloc: .
+
+      # Defines an initial step for the ETL process. Use this option to restart an ETL from
+      # a middle point in execution (for example, to restore after a crash)
+      # The stepname is the name of the first block to run. If a block hasn't an explicit name
+      # the implicit can be used (or you can assign an explicit name to the block!)
+
+      #:initialstep: stepname
+
+      # Defines the savepoint-generated file to be used to restore the ETL status. This works in
+      # conjunction with the previous option.
+      # The file (which is relative to the location defined by the :saveloc option), MUST contain
+      # a valid ETLDto object serialized in JSON format.
+
+      #:recover: 317_1188338246_2.dto
+
+  # The *root* section contains the primary definition of the ETL process and defines its three
+  # basic chains. The *root* sections is a chain itself, so you can configure it in the same ways as
+  # the others.
+  #
+  # The blocks which compose a chain must be declared according to this rules:
+  # * the sequence of blocks is declared using progressi block[i] keys, as in the example here below
+  # * each block is defined by the name of the class which implements it and an optional block name
+  #   (separated by comma). If given, the name must be unique. If not given, a name is calculated on the
+  #   fly during execution. The name is also to bind a block with its properties.
+  #
+  root:
+      block0: ChainETL,extract
+      block1: ChainETL,transform
+      block2: ChainETL,load
+
+  # The definition of the *extract* chain. Add blocks here to enrich the ETL chain
+  extract:
+      block0: TestETL
+
+  # The definition of the *transform* chain. Add blocks here to enrich the ETL chain
+  transform:
+      block0: TestETL,a_block_name
+
+  # The definition of the *load* chain. Add blocks here to enrich the ETL chain
+  load:
+      block0: TestETL,another_block_name
+
+  # This section define configuration options for the block with the matching name.
+  # Every block can have its own configuration options.
+  a_block_name:
+      key:    value
+      other:  othervalue
+</pre>
+<h2>Data Recovery</h2>
+<p>
+The <a href="ETL.html">ETL</a> Runner supports savepoints. Savepoints are
+used to store execution status at a fixed point in time, so that in case of
+failure, the <a href="ETL.html">ETL</a> process can restart from the last
+valid savepoint.
+</p>
+<p>
+Savepoints are enabled from the configuration file. The restart point and
+the data to be used when resuming are defined in the configuration file
+too.
+</p>
+<h2>Plugins and User Custom <a href="ETL.html">ETL</a> Blocks</h2>
+<p>
+In addition to standard <a href="ETL.html">ETL</a> blocks, provided with
+the library, such as <a href="ChainETL.html">ChainETL</a> and <a
+href="SavepointETL.html">SavepointETL</a>, the user may want to provide its
+own custom <a href="ETL.html">ETL</a> blocks. To do so, he must collect its
+own <a href="ETL.html">ETL</a> blocks in files stored within the same
+directory and then declare that directory as the <b>plugins folder</b>. The
+<a href="ETLRunner.html">ETLRunner</a> will dinamically load all suitable
+ruby files found within such directory.
+</p>
+<h2>Verbose execution</h2>
+<p>
+<a href="ETLRunner.html">ETLRunner</a> and standard ETLs observe the hints
+for verbose execution. Use the <tt>-v</tt> command line switch or the
+<tt>$-v</tt> global variable to enable verbose execution.
+</p>
+<h2>Sample Invocation</h2>
+<p>
+A sample invocation works as follows :
+</p>
+<pre>
+  require 'etl/runner'
+  e = ETLRunner.new('my_etl_config.yml')
+  e.run
+</pre>
+<p>
+Depending on the <a href="ETL.html">ETL</a> configuration and on single
+blocks implementations, while running the <a href="ETL.html">ETL</a>
+process may produce output to <tt>stdout</tt>, or save intermediate dtos
+into a user-specified folder for debugging purposes.
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000011">add_savepoints_to</a>&nbsp;&nbsp;
+      <a href="#M000012">clean</a>&nbsp;&nbsp;
+      <a href="#M000010">enable_savepoints</a>&nbsp;&nbsp;
+      <a href="#M000009">enrich_context</a>&nbsp;&nbsp;
+      <a href="#M000013">global_opt</a>&nbsp;&nbsp;
+      <a href="#M000008">init_context</a>&nbsp;&nbsp;
+      <a href="#M000006">init_default_chains</a>&nbsp;&nbsp;
+      <a href="#M000005">init_plugins</a>&nbsp;&nbsp;
+      <a href="#M000004">new</a>&nbsp;&nbsp;
+      <a href="#M000007">run</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+    <div id="includes">
+      <h3 class="section-bar">Included Modules</h3>
+
+      <div id="includes-list">
+        <span class="include-name"><a href="Log.html">Log</a></span>
+      </div>
+    </div>
+
+    <div id="section">
+
+
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000004.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000004.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(configFile=&quot;etl_config.yml&quot;)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Creates a <a href="ETLRunner.html#M000004">new</a> instance of the class,
+using <tt>configFile</tt> as the source of configuration options
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000011" class="method-detail">
+        <a name="M000011"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000011.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000011.html');return false;">
+          <span class="method-name">add_savepoints_to</span><span class="method-args">(chain)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Duplicates the given chain and returns a <a
+href="ETLRunner.html#M000004">new</a> one with savepoints interleaved
+between each block.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000012.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000012.html');return false;">
+          <span class="method-name">clean</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Performs cleaning operations before exiting, such as clearing savepoint
+data if no errors occurred.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000010.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000010.html');return false;">
+          <span class="method-name">enable_savepoints</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Enriches the standard chains with savepoint management and stores into
+context the folder where savepoint dumps will be stored.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000009.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000009.html');return false;">
+          <span class="method-name">enrich_context</span><span class="method-args">(extra_context)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Enriches the shared <b>context</b> with extra data which may provided from
+the outside of the <a href="ETLRunner.html">ETLRunner</a> .
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000013.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000013.html');return false;">
+          <span class="method-name">global_opt</span><span class="method-args">(sym)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a global configuration option
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000008.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000008.html');return false;">
+          <span class="method-name">init_context</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Initializes the shared <b>context</b>. The <b>context</b> is a shared Hash
+among the different etl blocks which they can use to propagate data among
+each other.
+</p>
+<p>
+The shared context always contains at least the +:dto+ variable which
+points to the ETLDto which collects analysis data for the current <a
+href="ETLRunner.html#M000007">run</a>.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000006.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000006.html');return false;">
+          <span class="method-name">init_default_chains</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Initializes the root chain, which in turn defines the default etl chains:
+<b>extract</b> , <b>transform</b>, and <b>load</b>.
+</p>
+<p>
+The root chain MUST always be present in the configuration file
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000005.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000005.html');return false;">
+          <span class="method-name">init_plugins</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Initializes available plugins. Plugins are loaded from the directory
+defined by the <tt>pluginsfolder</tt> global configuration option, or from
+the <tt>plugins</tt> subdirectory of the current working one if the
+configuration option is missing.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="ETLRunner.src/M000007.html" target="Code" class="method-signature"
+            onclick="popupCode('ETLRunner.src/M000007.html');return false;">
+          <span class="method-name">run</span><span class="method-args">(extra_context = {})</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Starts the <a href="ETL.html">ETL</a> process, from the first block of the
+first chain.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>

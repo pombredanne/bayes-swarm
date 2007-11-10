@@ -1,0 +1,14 @@
+<h1>Show Interesting word</h1>
+
+<center>
+  <%= iwts = @intword.get_time_series(3) 
+      plot_tag({@intword.name=>iwts.values},
+               {:title=>@intword.name, 
+                :labels=>iwts.labels}) %>
+</center>
+
+<p><b>Name:</b> <%= @intword.name %></p>
+<p><b>Language:</b> <%= @intword.language.language %></p>
+
+<a href="/intword/edit/<%= @intword.id %>">Edit</a> | 
+<a href="/intword/list">Back</a>
