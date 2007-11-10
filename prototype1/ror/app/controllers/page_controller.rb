@@ -8,6 +8,6 @@ class PageController < ApplicationController
   end
   
   def show
-    @page = Page.find(@params["id"], :include => [:source, :language])
+    @page = Page.find(@params["id"])
   end
 end

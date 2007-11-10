@@ -20,13 +20,29 @@ ActiveRecord::Base.establish_connection(
 
 class Intword < ActiveRecord::Base
   belongs_to :language
+  
+  def self.get_intwords_hash(language_id)
+    # gets the list of interesting stems from db togher with their id
+    # and returns a name=>id hash
+    iws = find(:all, :conditions => {:language_id=>language_id})
+    
+    res = Hash.new
+    iws.each do |iw|
+      id = iw.id
+      name = iw.name
+      res[name] = id
+    end
+  res
+  end  
 end
 
 class Kind < ActiveRecord::Base
 end
 
 class Language < ActiveRecord::Base
-  has_many :intwords
+  set_table_name "globalize_languages"
+  
+  def code; iso_639_1 end
 end
 
 class Page < ActiveRecord::Base
@@ -35,10 +51,10 @@ class Page < ActiveRecord::Base
   belongs_to :language
   
   def language_name()
-    Page.find(self.id, :include=>:language).language.language.intern
+    Page.find(self.id).language.code
   end
   def kind_name()
-    Page.find(self.id, :include=>:kind).kind.kind.intern
+    Page.find(self.id).kind.kind.intern
   end
 end
 

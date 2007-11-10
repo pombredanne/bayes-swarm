@@ -3,7 +3,7 @@ class IntwordController < ApplicationController
   layout   "standard"
   
   def show
-    @intword = Intword.find(@params["id"], :include=>:language)
+    @intword = Intword.find(@params["id"])
   end
   
   def new
