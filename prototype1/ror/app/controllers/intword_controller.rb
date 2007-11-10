@@ -3,7 +3,7 @@ class IntwordController < ApplicationController
   layout   "standard"
   
   def show
-    @intword = Intword.find(@params["id"], :include => [:language])
+    @intword = Intword.find(@params["id"], :include=>:language)
   end
   
   def new
@@ -12,9 +12,8 @@ class IntwordController < ApplicationController
   end
 
   def cloud
-    l_id = 1
     @attr = 'imp'
-    @intwords = Intword.find_popular(l_id, 999999, @attr)    
+    @intwords = Intword.find_popular(Locale.language.id, 999999, @attr)    
   end
 
   def plot

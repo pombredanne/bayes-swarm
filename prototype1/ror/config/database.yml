@@ -13,7 +13,7 @@
 #   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
 development:
   adapter: mysql
-  database: bayesswarmdev
+  database: bayesswarmdev2
   username: testuser
   password: test
   socket: /var/run/mysqld/mysqld.sock
