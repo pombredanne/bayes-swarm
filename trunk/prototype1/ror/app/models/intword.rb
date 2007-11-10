@@ -68,3 +68,4 @@ class IntwordTimeSeries
   # FIXME: add a "kind of intersection" method to join single time series
   # for multivariate plots
 end
+

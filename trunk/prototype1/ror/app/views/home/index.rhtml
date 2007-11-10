@@ -1,31 +1,31 @@
-            <h1>What is Bayes-Swarm?</h1>
+<h1>What is Bayes-Swarm?</h1>
 
-            <p>Bayes-Swarm is a research project, its aim is to spider
-            web sources (news portals, blogs and online newspapers)
-            and extract correlations between such sources. <a href="documentation">Read more</a></p>
+<p>Bayes-Swarm is a research project, its aim is to spider
+web sources (news portals, blogs and online newspapers)
+and extract correlations between such sources. <a href="documentation">Read more</a></p>
 
-            <h1>What has Bayes-Swarm found so far?</h1>
+<h1>What has Bayes-Swarm found so far?</h1>
 
-            <div id="stem_cloud">
-              <%= render :partial => "intword/cloud", :locals => { :intwords => @intwords } %>
-            </div>
-             
-            <p>There are currently <%= @n_intwords %> interesting words among <%= @n_languages %>
-            languages in the database
-            (<%= link_to "full cloud", { :controller => "intword",
-                                         :action => "cloud"} %>
-            or
-            <%= link_to "add a new one", { :controller => "intword",
-                                        :action => "new"} %>!). 
-            Since project's start we found <%= @n_words %> occurrences of these words on these
-            <%= link_to "pages", { :controller => "page",
-                                   :action => "list"} %>
-            which belong to these 
-            <%= link_to "sources", { :controller => "source",
-                                     :action => "list"} %>.
+<div id="stem_cloud">
+  <%= render :partial => "intword/cloud", :locals => { :intwords => @intwords } %>
+</div>
+ 
+<p>There are currently <%= @n_intwords %> interesting words among <%= @n_languages %>
+languages in the database
+(<%= link_to "full cloud", { :controller => "intword",
+                             :action => "cloud"} %>
+or
+<%= link_to "add a new one", { :controller => "intword",
+                            :action => "new"} %>!). 
+Since project's start we found <%= @n_words %> occurrences of these words on these
+<%= link_to "pages", { :controller => "page",
+                       :action => "list"} %>
+which belong to these 
+<%= link_to "sources", { :controller => "source",
+                         :action => "list"} %>.
 
-            <h1>What next?</h1>
-            <p>For a closer look, please have a look at <i>queries</i> and <i>graphs</i> sections.</p>
-            
-<!--            <h1>Densità normale da R via rsruby</h1>
-            <p>La densità sottesa dalla curva normale (0,1) per x=1 è <%= @r_dnorm %> -->
+<h1>What next?</h1>
+<p>For a closer look, please have a look at <i>queries</i> and <i>graphs</i> sections.</p>
+
+<!-- <h1>Densità normale da R via rsruby</h1>
+<p>La densità sottesa dalla curva normale (0,1) per x=1 è <%= @r_dnorm %> -->
