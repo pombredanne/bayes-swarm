@@ -8,7 +8,9 @@ class PageController < ApplicationController
   end
   
   def list
-    @page_pages, @pages = paginate :page, :per_page => 20
+    @page_pages, @pages = paginate(:page,
+                                   :per_page => 20,
+                                   :conditions => "language_id = #{Locale.language.id}")
   end
     
   def edit

@@ -14,7 +14,7 @@
 development:
   adapter: mysql
   database: bayesswarmdev
-  username: testuser
+  username: webuser
   password: test
   socket: /var/run/mysqld/mysqld.sock
 
