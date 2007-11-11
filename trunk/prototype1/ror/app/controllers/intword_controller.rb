@@ -1,6 +1,12 @@
 class IntwordController < ApplicationController
+  #scaffold :intword
   helper   :plot
   layout   "standard"
+  
+  def index
+    cloud
+    render :action => 'cloud'
+  end
   
   def show
     @intword = Intword.find(@params["id"])
@@ -8,8 +14,18 @@ class IntwordController < ApplicationController
   
   def new
     @intword = Intword.new
-    @languages = Language.find_all
   end
+
+  def create
+    @intword = Intword.new(params[:intword])
+    
+    if @intword.save
+      flash[:notice] = 'Intword was successfully created.'
+      redirect_to :action => 'new'
+    else
+      render :action => 'new'
+    end
+  end  
 
   def cloud
     @attr = 'imp'

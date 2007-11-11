@@ -1,0 +1,15 @@
+<%= error_messages_for 'intword' %>
+
+<!--[form:intword]-->
+<p><label for="intword_name">Name</label><br/>
+<%= text_field 'intword', 'name'  %></p>
+
+<%=
+  @languages = Language.find(:all, 
+                             :conditions=>["iso_639_1 IN (?)", LOCALES.keys]
+                             ).map { |l| [l.english_name, l.id] }
+  select(:intword, :language_id, @languages)
+%>
+
+<!--[eoform:intword]-->
+

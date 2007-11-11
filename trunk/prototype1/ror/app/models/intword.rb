@@ -2,6 +2,9 @@ class Intword < ActiveRecord::Base
   belongs_to :language
   has_many :words
 
+  validates_presence_of :name, :language_id
+  validates_uniqueness_of :name, :scope => :language_id
+
   def self.find_popular(l_id, n=999999, order_column="imp")
     n_months = 3
     find(:all,
