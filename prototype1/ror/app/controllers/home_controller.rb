@@ -11,4 +11,7 @@ class HomeController < ApplicationController
 #    r = R_Config::R
 #    @r_dnorm = r.dnorm(1)
     end
+    
+  def doc
+  end
 end
