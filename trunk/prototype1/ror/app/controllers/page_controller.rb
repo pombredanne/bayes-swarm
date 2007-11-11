@@ -1,10 +1,29 @@
 class PageController < ApplicationController
-  scaffold :page
+  #scaffold :page
+  layout "standard"
+
+  def index
+    list
+    render :action => 'list'
+  end
   
+  def list
+    @page_pages, @pages = paginate :page, :per_page => 20
+  end
+    
   def edit
-    @page = Page.find(@params["id"])
-    @sources = Source.find_all
-    @languages = Language.find_all
+    @page = Page.find(params[:id])
+  end
+
+  def update
+    @page = Page.find(params[:id])    
+    
+    if @page.update_attributes(params[:page])
+      flash[:notice] = 'Page was successfully updated.'
+      redirect_to :action => 'show', :id => @page.id
+    else
+      render :action => 'edit'
+    end
   end
   
   def show

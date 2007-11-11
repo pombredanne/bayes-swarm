@@ -1,24 +1,14 @@
-<html>
- <head>
-  <title>Show Page</title>
- </head>
- <body>
- <h1>Show Page</h1>
+<h1>Show Page</h1>
 
-  <p><b>Url</b>: <%= @page.url %></p>
-  
-  <p><b>Source</b>: <%= @page.source.name %></p>
+<% if @flash[:notice] -%>
+  <div id="notice"><%= @flash[:notice] %></div>
+<% end -%>
 
-  <p><b>Kind</b>: <%= @page.kind.kind %></p>
+<p><b>Url</b>: <%= @page.url %></p>
+<p><b>Source</b>: <%= @page.source.name %></p>
+<p><b>Kind</b>: <%= @page.kind.kind %></p>
+<p><b>Language</b>: <%= @page.language %></p>
 
-  <p><b>Language</b>: <%= @page.language %></p>
-
- <a href="/page/show/<%= @page.id %>">
-   Edit
- </a> | 
-  <a href="/page/list">
-  Back 
- </a>
-
- </body>
-</html>
+<p>
+  <%= link_to "Back", :action => "index" %>
+</p>
