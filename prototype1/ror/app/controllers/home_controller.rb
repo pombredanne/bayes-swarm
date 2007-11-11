@@ -3,7 +3,7 @@ class HomeController < ApplicationController
 
   def index
     @n_intwords = Intword.count()
-    @n_languages = Intword.count("language_id", :distinct=>true)
+    @n_languages = LOCALES.length
     @n_words = Word.count()
 
     @attr = 'imp'
