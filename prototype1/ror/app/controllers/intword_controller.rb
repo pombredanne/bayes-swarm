@@ -1,5 +1,4 @@
 class IntwordController < ApplicationController
-  #scaffold :intword
   helper   :plot
   layout   "standard"
   
@@ -25,7 +24,7 @@ class IntwordController < ApplicationController
     else
       render :action => 'new'
     end
-  end  
+  end
 
   def cloud
     @attr = 'imp'
