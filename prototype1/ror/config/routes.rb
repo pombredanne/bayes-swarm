@@ -17,6 +17,14 @@ ActionController::Routing::Routes.draw do |map|
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
 
+  # redirect old website relevant links
+  map.connect 'addword', :controller=>'intword', :action=>'new'
+  map.connect 'int_words', :controller=>'intword', :action=>'index'
+  map.connect 'sources', :controller=>'source', :action=>'index'
+  map.connect 'pages', :controller=>'page', :action=>'index'
+  map.connect 'plots=plottimeseries', :controller=>'home', :action=>'index'
+  map.connect 'plots=plotmultiscatter', :controller=>'home', :action=>'index'
+
   # Install the default route as the lowest priority.
   #map.connect ':controller/:action/:id.:format'
   map.connect ':locale/:controller/:action/:id'
