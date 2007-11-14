@@ -4,7 +4,7 @@ class HomeController < ApplicationController
   def index
     @n_intwords = Intword.count()
     @n_languages = LOCALES.length
-    @n_words = Word.count()
+    @n_words = Word.count().localize
 
     @attr = 'imp'
     @intwords = Intword.find_popular(Locale.language.id, 50, @attr)

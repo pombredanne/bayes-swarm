@@ -9,9 +9,9 @@
     <div id="sidebar">
     <ul id="sidebar-items">
       <li>
-        <h3>Browse the documentation</h3>
+        <h3><%= "Browse the documentation".t -%></h3>
         <ul class="links">
-          <li><%= link_to "documentation", { :controller => "home", :action => "doc"} %></li>
+          <li><%= link_to "documentation".t, { :controller => "home", :action => "doc"} %></li>
           <li><a href="http://bayes-swarm.googlecode.com/">development</a></li>
         </ul>
       </li>
@@ -47,5 +47,6 @@
     
     <div id="footer">&nbsp;</div>
 </div>    
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script><script type="text/javascript">_uacct = "UA-2429415-1";urchinTracker();</script>
 </body>
 </html>
