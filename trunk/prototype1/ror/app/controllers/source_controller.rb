@@ -9,8 +9,8 @@ class SourceController < ApplicationController
   
   def list
     sources_with_pages_in_cur_locale = Page.find(:all,
-                                                  :conditions=>"language_id = #{Locale.language.id}",
-                                                  :select=>"source_id AS id")
+                                                 :conditions=>"language_id = #{Locale.language.id}",
+                                                 :select=>"DISTINCT source_id AS id")
     @source_pages, @sources = paginate(:source,
                                        :per_page => 20,
                                        :conditions=>["id IN (?)", sources_with_pages_in_cur_locale])
@@ -32,7 +32,7 @@ class SourceController < ApplicationController
   end
   
   def show
-    @source = Source.find(@params["id"])
+    @source = Source.find(params[:id])
   end
   
 end

@@ -8,7 +8,8 @@ class IntwordController < ApplicationController
   end
   
   def show
-    @intword = Intword.find(@params["id"])
+    #breakpoint "check"
+    @intword = Intword.find(params[:id])
   end
   
   def new
@@ -32,7 +33,7 @@ class IntwordController < ApplicationController
   end
 
   def plot
-    iw = Intword.find(@params["id"])
+    iw = Intword.find(params[:id])
     iwts = iw.get_time_series(3) 
     
     require 'gruff'
