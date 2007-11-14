@@ -9,22 +9,21 @@
   <%= render :partial => "intword/cloud", :locals => { :intwords => @intwords } %>
 </div>
  
-<p><%= "There are currently %d interesting words" / @n_intwords -%>, <%= "among %d
-languages, in the database" / @n_languages -%>
-(<%= link_to "full cloud", { :controller => "intword",
-                             :action => "cloud"} %>
-or
-<%= link_to "add a new one", { :controller => "intword",
+<p><%= "There are currently %d interesting words" / @n_intwords -%>, 
+<%= "among %d languages, in the database" / @n_languages %>
+(<%= link_to "full cloud".t, { :controller => "intword",
+                             :action => "cloud"} %> <%= "or".t %>
+<%= link_to "add a new one".t, { :controller => "intword",
                             :action => "new"} %>!). 
 Since project's start we found <%= @n_words %> occurrences of these words on these
-<%= link_to "pages", { :controller => "page",
+<%= link_to "pages".t, { :controller => "page",
                        :action => "list"} %>
 which belong to these 
-<%= link_to "sources", { :controller => "source",
+<%= link_to "sources".t, { :controller => "source",
                          :action => "list"} %>.</p>
 
-<h1>What next?</h1>
-<p>For a closer look, please have a look at <i>queries</i> and <i>graphs</i> sections.</p>
+<!-- <h1>What next?</h1>
+<p>For a closer look, please have a look at <i>queries</i> and <i>graphs</i> sections.</p> -->
 
 <!-- <h1>Densità normale da R via rsruby</h1>
 <p>La densità sottesa dalla curva normale (0,1) per x=1 è <%= @r_dnorm %> -->
