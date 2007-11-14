@@ -1,18 +1,16 @@
-<h1>What is Bayes-Swarm?</h1>
+<h1><%= "What is Bayes-Swarm?".t -%></h1>
 
-<p>Bayes-Swarm is a research project, its aim is to spider
-web sources (news portals, blogs and online newspapers)
-and extract correlations between such sources. 
-<%= link_to "Read more", { :action => "doc"} %></p>
+<p><%= "Bayes-Swarm is a research project, its aim is to spider web sources (news portals, blogs and online newspapers) and extract correlations between such sources.".t %>
+<%= link_to "Read more..".t, { :action => "doc"} -%></p>
 
-<h1>What has Bayes-Swarm found so far?</h1>
+<h1><%= "What has Bayes-Swarm found so far?".t -%></h1>
 
 <div id="stem_cloud">
   <%= render :partial => "intword/cloud", :locals => { :intwords => @intwords } %>
 </div>
  
-<p>There are currently <%= @n_intwords %> interesting words among <%= @n_languages %>
-languages in the database
+<p><%= "There are currently %d interesting words" / @n_intwords -%>, <%= "among %d
+languages, in the database" / @n_languages -%>
 (<%= link_to "full cloud", { :controller => "intword",
                              :action => "cloud"} %>
 or
