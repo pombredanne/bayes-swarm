@@ -6,6 +6,7 @@ class ApplicationController < ActionController::Base
   session :session_key => '_website_session_id'
   
   before_filter :set_locale
+  before_filter :set_charset
 
   def set_locale
     if !params[:locale].nil? && LOCALES.keys.include?(params[:locale])
@@ -13,6 +14,13 @@ class ApplicationController < ActionController::Base
     else
       redirect_to params.merge( 'locale' => Locale.base_language.code )
     end
+  end
+
+  def set_charset
+      content_type = headers["Content-Type"] || "text/html" 
+      if /^text\//.match(content_type)
+        headers["Content-Type"] = "#{content_type}; charset=utf-8" 
+      end
   end
     
 end
