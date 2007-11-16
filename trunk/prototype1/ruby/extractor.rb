@@ -10,18 +10,26 @@ class HttpExtractor
    response.body
   end
 
-  def extract_with_redirect(url, limit=10)
+  def extract_with_redirect(url, limit=10, try=1)
     fail "#{self.class.name}: http redirect too deep" if limit.zero?
-    puts "#{self.class.name}: Trying: #{url}"
-    response = Net::HTTP.get_response(URI.parse(url))
-    case response
-    when Net::HTTPSuccess
-      response
-    when Net::HTTPRedirection
-      extract_with_redirect(response['location'],limit-1)
-    else
-      response.error!
-    end
+    fail "#{self.class.name}: timeout, aborting." if (try>10)
+
+      begin
+        puts "#{self.class.name}: Trying (#{try}): #{url}"
+        response = Net::HTTP.get_response(URI.parse(url))
+        case response
+        when Net::HTTPSuccess
+          response
+        when Net::HTTPRedirection
+          puts "#{self.class.name}: Redirecting to: #{response['location']}"
+          extract_with_redirect(response['location'],limit-1)
+        else
+          response.error!
+        end
+      rescue Timeout::Error
+        puts "#{self.class.name}: Timeout error, retrying.."
+        extract_with_redirect(url, limit=limit, try=try+1)
+      end    
   end
 
 end
