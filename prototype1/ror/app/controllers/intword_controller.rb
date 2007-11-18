@@ -9,7 +9,12 @@ class IntwordController < ApplicationController
   
   def show
     #breakpoint "check"
-    @intword = Intword.find(params[:id])
+    @ids= params[:id]
+    intword_ids = @ids.split("-")
+    @iws = Array.new()
+    intword_ids.each do |iw_id|
+      @iws << Intword.find(iw_id)
+    end
   end
   
   def new
@@ -33,16 +38,25 @@ class IntwordController < ApplicationController
   end
 
   def plot
-    iw = Intword.find(params[:id])
-    iwts = iw.get_time_series(3) 
-    
     require 'gruff'
     g = Gruff::Line.new(480)
-    g.title = iw.name
-    g.labels = iwts.labels
+    g.title = "time series plot"
+
+    intword_ids = params[:id].split("-")
+    iwtses = ActiveSupport::OrderedHash.new()
+    intword_ids.each do |iw_id|
+      iw = Intword.find(iw_id)
+      iwts = iw.get_time_series(3) 
+      iwtses[iw] = iwts
+    end
     
-    g.data(iw.name, iwts.values)
+    armonized_iwtses = IntwordTimeSeries.armonize(iwtses.values)
     
+    iwtses.each_with_index do |iw, i|
+      g.data(iw[0].name, armonized_iwtses[i].values)
+    end
+
+    g.labels = armonized_iwtses[0].labels
     send_data(g.to_blob, 
               :disposition => 'inline', 
               :type => 'image/png', 

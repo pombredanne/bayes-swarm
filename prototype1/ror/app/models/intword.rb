@@ -68,7 +68,38 @@ class IntwordTimeSeries
     l
   end
   
-  # FIXME: add a "kind of intersection" method to join single time series
-  # for multivariate plots
+  # shifts dates and values arrays and returns a new IntwordTimeSeries
+  def shift(n)
+    n.times {
+      self.dates.insert(0, 0)
+      self.values.insert(0, 0)
+    }
+ 
+    IntwordTimeSeries.new(self.dates,
+                          self.values)
+  end
+ 
+  def self.armonize(others)
+    # find oldest one
+    oldest = 0
+    oldest_date = Date.today()
+    others.each_with_index do |o, i|
+      if (o.dates.first < oldest_date)
+        oldest = i
+        oldest_date = o.dates.first
+      end
+    end
+
+    res = Array.new()
+    # find gap and shift
+    others.each do |o|
+      gap = others[oldest].dates.length - o.dates.length
+      shifted_o = o.shift(gap)
+      shifted_o.dates = others[oldest].dates
+      res << shifted_o
+    end
+    res
+  end
+
 end
 
