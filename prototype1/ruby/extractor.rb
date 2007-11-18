@@ -45,19 +45,8 @@ class RssExtractor
 
     rss_full_content = "" # collects content from all articles
     rss.items.each do |item|
-      #if (last_scantime == nil)
-      #  last_scantime = Time.parse('2000-01-01 00:00:00')
-      #end
-      if (rss_page.last_scantime != nil)
-        last_scantime = rss_page.last_scantime
-      else
-        # handle rss_page.last_scantime = nil (swarm.rb)
-        # in this case we scan only articles one day old
-        last_scantime = Time.now - (60*60*24)
-      end
-      
       begin
-        if (item.date > last_scantime)
+        if (item.date > rss_page.last_scantime)
           article_url = item.link
           extractor = HttpExtractor.new
           rss_full_content += extractor.extract_with_redirect(article_url).body
@@ -65,8 +54,8 @@ class RssExtractor
       rescue URI::InvalidURIError
         # article_url is invalid
         nil
-      rescue TypeError, ArgumentError
-        # item.date might is nil
+      rescue TypeError, ArgumentError, NoMethodError
+        # item.date might be nil
         puts "warning, rss feed contains articles with no date, consider it for remuval"
       end
     end
