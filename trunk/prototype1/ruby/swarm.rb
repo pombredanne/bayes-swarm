@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'time'
+
 # Option parsing
 require 'optparse'
 require 'ostruct'
@@ -55,7 +57,7 @@ Usage: example.rb [options] URL"
     if ARGV[0] != nil
         source = ARGV[0]
 
-        page = Page.new(nil, source, options.language, options.sourcetype, nil)
+        page = Page.new(nil, source, options.language, options.sourcetype, Time.now - (60*60*24))
 
         stems = swarm_extract(page, options.notidy)
     else
