@@ -1,6 +1,12 @@
 #summary The starting point to learn more about the project
 #labels Phase-Deploy,Featured
 
+Bayes-Swarm's aim is to spider web sources (news portals, blogs and online newspapers) and extract correlations between such sources.
+
+The engine will search correlations both in space (correlation among different sources) and time (correlation between the contents of a same source in different instant of times). Probabilistic theory and bayesian model will be used to extract such correlations.
+
+The engine will extract relevant informations from correlation analysis, such as quantitative measurement of difference in opinions among sources which deal with the same argument. 
+
 == Environment Setup ==
 The first thing you need to do is to setup your pc to properly work with the project sources. You can follow the instructions described in EnvironmentSetup . 
 
@@ -13,7 +19,7 @@ Once your pc is ready, you can start trying some of our prototypes. Here follows
 == Data Simulation ==
 The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
 
-== Live demos ==
+== Live demo ==
 You can try a live demo at http://kate.homeunix.net/bayesfor/
 
-A note of *warning* : the demo is still rough and almost for internal-use only.
+Please note: the demo is still rough and almost for internal-use only.
