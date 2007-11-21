@@ -56,14 +56,15 @@ class IntwordTimeSeries
   end
 
   # returns a n=>date hash to be used with Gruff.labels()
-  # only montly dates are returned
+  # only monthly dates are returned
   def labels
     l = Hash.new()
-    3.downto(0) do |i|
+    i = 0
+    cur_date = dates.last<<i
+    while ((cur_date - dates.first).to_i >= 0)
+      l[(cur_date - dates.first).to_i] = cur_date.strftime("%b %d")
+      i += 1
       cur_date = dates.last<<i
-      if ((cur_date - dates.first).to_i >= 0)
-        l[(cur_date - dates.first).to_i] = cur_date.strftime("%b %d")
-      end
     end
     l
   end
@@ -78,7 +79,9 @@ class IntwordTimeSeries
     IntwordTimeSeries.new(self.dates,
                           self.values)
   end
- 
+  
+  # given an array of IntwordTimeSeries, armonizes each dates series
+  # so that they can be plotted together
   def self.armonize(others)
     # find oldest one
     oldest = 0

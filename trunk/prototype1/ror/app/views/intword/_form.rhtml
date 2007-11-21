@@ -12,7 +12,9 @@
     @languages = Language.find(:all, 
                                :conditions=>["iso_639_1 IN (?)", LOCALES.keys]
                                ).map { |l| [l.english_name, l.id] }
-    select(:intword, :language_id, @languages)
+    @cur_lang_id = Language.find(:first,
+                                 :conditions=>["iso_639_1 IN (?)", params[:locale]]).id
+    select(:intword, :language_id, @languages, {:selected=>@cur_lang_id})
   %>
 </p>
 <!--[eoform:intword]-->

@@ -30,5 +30,5 @@ ActionController::Routing::Routes.draw do |map|
   map.connect 'plots=plotmultiscatter', :controller=>'home', :action=>'index'
   map.connect 'hits_per_word', :controller=>'intword', :action=>'cloud'
   map.connect 'most_5_words', :controller=>'intword', :action=>'cloud'
-
+  map.connect 'own_query', :controller=>'home', :action=>'index'
 end
