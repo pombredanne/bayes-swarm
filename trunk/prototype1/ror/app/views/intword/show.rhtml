@@ -3,23 +3,42 @@
 <p align="center">
     <img src="<%= url_for( :controller => 'intword', 
                            :action => 'plot',
-                           :id => @ids) %>" 
+                           :id => @ids,
+                           :period => params[:period]) %>" 
          alt="time series plot loading.."
          width="480" height="360"/>
 </p>
 
-
-<table>
-  <tr>
-    <td>Name</td><td>Language</td>
-  </tr>
-<% @iws.each do |iw| %>
-  <tr>
-    <td><%= iw.name %></td>
-    <td><%= iw.language %></td>
-  </tr>
-<% end %>
-</table>
+<% if (@iws.length>1) -%>
+    <table>
+      <tr>
+        <td>Name</td><td>Language</td>
+      </tr>
+    <% @iws.each do |iw| %>
+      <tr>
+        <td><%= iw.name %></td>
+        <td><%= iw.language %></td>
+      </tr>
+    <% end %>
+    </table>
+<% else -%>
+  <% corr_iws = @iws[0].find_most_correlated(params[:period].to_i)
+     if (corr_iws != nil) -%>
+    <table>
+      <tr>
+        <td>Name</td><td>Correlation</td><td>Time series plot</td>
+      </tr>
+    <% corr_iws.each do |iw, corr| %>
+      <tr>
+        <td><%= iw.name %></td>
+        <td><%= [(corr.to_f*100).round, '%'].join %></td>
+        <td><%= link_to "show", {:id => [@iws[0].id, '-', iw.id].join,
+                                 :period => params[:period] } %></td>
+      </tr>
+    <% end %>
+    </table>
+  <% end -%>
+<% end -%>
 
 <p>
   <%= link_to "Back", :action => "index" %>

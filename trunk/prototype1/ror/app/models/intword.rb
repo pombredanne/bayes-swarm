@@ -5,8 +5,7 @@ class Intword < ActiveRecord::Base
   validates_presence_of :name, :language_id
   validates_uniqueness_of :name, :scope => :language_id
 
-  def self.find_popular(l_id, n=999999, order_column="imp")
-    n_months = 3
+  def self.find_popular(l_id, n_months=1, n=999999, order_column="imp")
     find(:all,
          :conditions => "scantime>='#{Date.today()<<n_months}' AND language_id = #{l_id}",
          :select => "intwords.id, name, sqrt(avg(count)*count(*)) as #{order_column}",
@@ -27,7 +26,8 @@ class Intword < ActiveRecord::Base
                     :conditions => "scantime>='#{Date.today()<<n_months}'",
                     :order => "date(scantime)",
                     :group => "date(scantime)")
-
+    fail "Stem has no words" if (ws.size == 0)
+    
     values = Array.new()
     dates = Array.new()
     last_date = Date.today()
@@ -44,7 +44,66 @@ class Intword < ActiveRecord::Base
     end
     
     IntwordTimeSeries.new(dates, values)
-  end  
+  end
+  
+  def find_most_correlated(period)
+    iws = Intword.find(:all,
+                       :conditions => ["language_id IN (?) AND id NOT IN (?)", 
+                                       self.language_id, self.id])
+ 
+    begin
+      self_iwts = self.get_time_series(period)
+    rescue RuntimeError
+      return nil
+    end
+ 
+    iwtses = Array.new()
+    iws2 = Array.new()
+    # FIXME: there is no point in extracting the full time series if the independent
+    # variable has a shorter history, get_time_series should accept a Date
+    # parameter so that we can pass the independent variable's first date
+    iws.each_with_index do |iw, i|
+      begin
+        iwtses << iw.get_time_series(period)
+        iws2 << iw
+      rescue RuntimeError
+        # current stem has no words, skipping
+        nil
+      end
+    end
+    iws = iws2
+
+    # FIXME: this armonizes to the oldest one in the array, add a new parameter to armonize so that
+    # it can be armonized to a specified one (ie the independent variable).
+    # Useless if previous FIXME gets fixed
+    armonized_iwtses = IntwordTimeSeries.armonize(iwtses)
+    corr_iwtses = ActiveSupport::OrderedHash.new()
+ 
+    iws.each_with_index do |iw, i|
+      begin
+        corr_iwtses[iw] = self_iwts.correlation(armonized_iwtses[i])
+      rescue RuntimeError
+        # stem has not enough data for calculating correlation, skipping
+        nil
+      end
+    end
+
+    if (corr_iwtses == [])
+      return nil
+    else
+      # sort by correlation ascending
+      res = corr_iwtses.sort {|x,y| x[1] <=> y[1]}
+      # keep only 3 records
+      res2 = ActiveSupport::OrderedHash.new()
+      2.downto(0) do
+        e = res.pop
+        res2[e[0]] = e[1]
+      end
+    
+      return res2
+    end
+  end
+
 end
 
 class IntwordTimeSeries
@@ -104,5 +163,8 @@ class IntwordTimeSeries
     res
   end
 
+  def correlation(other)
+    self.values.correlation(other.values)
+  end
 end
 

@@ -7,10 +7,10 @@ class HomeController < ApplicationController
     @n_words = Word.count().localize
 
     @attr = 'imp'
-    @intwords = Intword.find_popular(Locale.language.id, 50, @attr)
+    @intwords = Intword.find_popular(Locale.language.id, 1, 50, @attr)
 #    r = R_Config::R
 #    @r_dnorm = r.dnorm(1)
-    end
+  end
     
   def doc
   end

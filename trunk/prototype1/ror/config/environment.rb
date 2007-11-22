@@ -67,3 +67,6 @@ include Globalize
 Locale.set_base_language 'en-US'
 LOCALES = {'en' => 'en-US',
            'it' => 'it-IT'}.freeze
+
+# array stats
+require 'environments/array_stats.rb'
