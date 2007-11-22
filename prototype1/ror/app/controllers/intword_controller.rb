@@ -34,7 +34,7 @@ class IntwordController < ApplicationController
 
   def cloud
     @attr = 'imp'
-    @intwords = Intword.find_popular(Locale.language.id, 999999, @attr)    
+    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr)    
   end
 
   def plot
@@ -46,7 +46,7 @@ class IntwordController < ApplicationController
     iwtses = ActiveSupport::OrderedHash.new()
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
-      iwts = iw.get_time_series(3) 
+      iwts = iw.get_time_series(params[:period].to_i) 
       iwtses[iw] = iwts
     end
     
