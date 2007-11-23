@@ -7,16 +7,19 @@ The engine will search correlations both in space (correlation among different s
 
 The engine will extract relevant informations from correlation analysis, such as quantitative measurement of difference in opinions among sources which deal with the same argument. 
 
-== Environment Setup ==
+http://bayes-swarm.googlecode.com/svn/images/fed.png
+http://bayes-swarm.googlecode.com/svn/images/primarie.png
+
+=== Environment Setup ===
 The first thing you need to do is to setup your pc to properly work with the project sources. You can follow the instructions described in EnvironmentSetup . 
 
-== Prototypes ==
+=== Prototypes ===
 Once your pc is ready, you can start trying some of our prototypes. Here follows the list of available ones : 
 
   * PrototypeOne : the very first approach to page data extraction
   * PrototypeTwo : an ETL structured way to data extraction. Browser-guidance techniques are involved in page content analysis.
 
-== Data Simulation ==
+=== Data Simulation ===
 The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
 
 == Live demo ==
