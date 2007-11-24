@@ -21,47 +21,44 @@ class Intword < ActiveRecord::Base
   def get_time_series(n_months)
     # FIXME: add page_id parameter like so [ "category IN (?)", categories]
     # FIXME: add /n_pages to avg_count (based on the language of the stem)
-    ws = words.find(:all,
-                    :select => "date(scantime) as date, sum(count) as count",
-                    :conditions => "scantime>='#{Date.today()<<n_months}'",
-                    :order => "date(scantime)",
-                    :group => "date(scantime)")
-    fail "Stem has no words" if (ws.size == 0)
-    
-    values = Array.new()
-    dates = Array.new()
-    last_date = Date.today()
-    first_date = Date.strptime(ws.first.date, '%Y-%m-%d')
+    very_first_date = Date.today()<<n_months
+    ws = words.sum(:count, 
+                   :conditions=>"scantime>='#{very_first_date}'",
+                   :order => "date(scantime)",
+                   :group=>"date(scantime)")
 
-    first_date.upto(last_date) do |d|      
-      dates << d
-      values << 0
-    end
-    
-    ws.each do |w|
-      pos = Date.strptime(w.date, '%Y-%m-%d') - first_date
-      values[pos] = w.count
-    end
-    
-    IntwordTimeSeries.new(dates, values)
+    fail "Stem has no words" if (ws.size == 0)
+    IntwordTimeSeries.new(ws, n_months)
   end
   
   def find_most_correlated(period)
-    iws = Intword.find(:all,
-                       :conditions => ["language_id IN (?) AND id NOT IN (?)", 
-                                       self.language_id, self.id])
- 
     begin
       self_iwts = self.get_time_series(period)
     rescue RuntimeError
       return nil
     end
- 
+    
+    # correlations are shown only for stems which are old enough
+    # (ie the ones which have a complete time series)
+    return nil if !self_iwts.complete 
+
+    last_date = Date.today()
+    first_date = last_date<<period
+    n_hits = last_date - first_date
+    # find only intwords which have at least 2/3 of the words in the chosen period
+    iws = Intword.find_by_sql("select intword_id as id, name, language_id
+                               from (select intword_id, date(scantime) 
+                                     from words where scantime>'#{first_date}' 
+                                     group by intword_id, date(scantime)) a, 
+                                    intwords iw 
+                               where a.intword_id=iw.id 
+                                     and iw.language_id=#{self.language_id} 
+                                     and id not in (#{self.id})
+                               group by intword_id 
+                               having count(intword_id)>=#{n_hits*2/3.0}")
+
     iwtses = Array.new()
     iws2 = Array.new()
-    # FIXME: there is no point in extracting the full time series if the independent
-    # variable has a shorter history, get_time_series should accept a Date
-    # parameter so that we can pass the independent variable's first date
     iws.each_with_index do |iw, i|
       begin
         iwtses << iw.get_time_series(period)
@@ -109,7 +106,37 @@ end
 class IntwordTimeSeries
   attr_accessor :dates, :values
 
-  def initialize(dates, values)
+  # this attribute shows if the first date is actuall Today<<1
+  # or not, so that we know if the stem is old enough for plotting
+  # correlations or not
+  def complete
+    @complete
+  end
+  
+  def initialize(words, n_months)
+    last_date = Date.today()
+    very_first_date = last_date<<n_months
+    
+    values = words.values
+    dates = words.keys.map {|x| Date.strptime(x, '%Y-%m-%d')}
+
+    first_date = dates[0]
+    # check if ts si complete
+    if (first_date == very_first_date)
+      @complete = true
+    else
+      @complete = false
+    end
+    
+    if (values.size != last_date - very_first_date+1)
+      # loop on missing dates and fill with zeros
+      ((first_date..last_date).to_a - dates).each do |d|
+        pos = d - first_date
+        values.insert(pos, 0)
+        dates.insert(pos, d)
+      end
+    end
+  
     @dates = dates
     @values = values
   end
@@ -134,9 +161,7 @@ class IntwordTimeSeries
       self.dates.insert(0, 0)
       self.values.insert(0, 0)
     }
- 
-    IntwordTimeSeries.new(self.dates,
-                          self.values)
+    self
   end
   
   # given an array of IntwordTimeSeries, armonizes each dates series

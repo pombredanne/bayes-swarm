@@ -46,17 +46,24 @@ class IntwordController < ApplicationController
     iwtses = ActiveSupport::OrderedHash.new()
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
-      iwts = iw.get_time_series(params[:period].to_i) 
-      iwtses[iw] = iwts
+      begin
+        iwts = iw.get_time_series(params[:period].to_i) 
+        iwtses[iw] = iwts
+      rescue RuntimeError
+        #return nil
+      end
     end
     
-    armonized_iwtses = IntwordTimeSeries.armonize(iwtses.values)
-    
-    iwtses.each_with_index do |iw, i|
-      g.data(iw[0].name, armonized_iwtses[i].values)
+    if (iwtses != [])
+      armonized_iwtses = IntwordTimeSeries.armonize(iwtses.values)
+      iwtses.each_with_index do |iw, i|
+        g.data(iw[0].name, armonized_iwtses[i].values)
+      end
+      g.labels = armonized_iwtses[0].labels
+    else
+      nil
     end
-
-    g.labels = armonized_iwtses[0].labels
+      
     send_data(g.to_blob, 
               :disposition => 'inline', 
               :type => 'image/png', 
