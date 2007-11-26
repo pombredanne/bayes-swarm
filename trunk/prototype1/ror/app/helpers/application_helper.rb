@@ -61,5 +61,29 @@ module ApplicationHelper
         size_txt = "font-size:#{ sizes[rank].to_s }%;"
         return size_txt
     end
+  
+  def path_builder()
+    path = "Your are here: ".t
+    case params[:controller]
+    when 'home'
+      case params[:action]
+      when 'index'
+        path = ""
+      when 'doc'
+        path += link_to("home", { :locale => params[:locale], :controller => "home"})
+        path += " | doc"
+      end
+    else
+      path += link_to("home", { :locale => params[:locale], :controller => "home"})
+      case params[:action]
+      when 'index'
+        path += [" | ", params[:controller]].join
+      else
+        path += [" | ", link_to(params[:controller], { :locale => params[:locale], :controller => params[:controller]})].join
+        path += [" | ", params[:action]].join
+      end
+    end
+    path
+  end
 
 end
