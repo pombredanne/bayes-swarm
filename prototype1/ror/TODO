@@ -1,6 +1,12 @@
 layout
 
-* mettere lo stesso layout a tutte le pagine
+* scrivere testi più intellingenti degli attuali (tradotti anche in
+  italiano)
+* completare la pagina di documentazione
+* aggiungere sotto al grafico in show intword dei link per modificare
+  il periodo su cui è graficato
+* 'somma di stem'
+* accetta period pari a 1w, 3m, 1y, etc
 * hardening: mostrare le funzioni di edit solo agli associati, mostrare
   agli utenti solo quello che possono vedere
 * aggiungere cose alla side-bar in funzione della pagina in cui si è
@@ -10,10 +16,6 @@ layout
 * quando l'utente si posiziona su una parola della cloud, sarebbe carino
   colorare lo sfondo delle parole che sono maggiormente correlate (verde
   maggiore correlazione, rosso correlaz negativa o simili)
-* show di int_word dovrebbe mostrare il grafico, avere link/pulsanti per 
-  graficare la parola corrente con altre, fare scatter con altra/e
-* multilingua: bandierina italiana/inglese in cima? Se uno sceglie italiano
-  gli facciamo vedere solo gli stem/pagine in italiano?
   
 back-end
 * usare rsruby per reciclare più codice R possibile (possibilmente tutto tranne i grafici)
