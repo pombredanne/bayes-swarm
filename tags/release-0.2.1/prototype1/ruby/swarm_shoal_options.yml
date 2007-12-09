@@ -1,0 +1,7 @@
+# options for swarm_shoal.rb
+
+database:
+    :host:   localhost
+    :user:   testuser
+    :pass:   test
+    :db:     bayesswarm021
