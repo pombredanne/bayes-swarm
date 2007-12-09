@@ -14,10 +14,10 @@ end
 
 for page in pages
   begin
-    counted_stems = swarm_extract(page, notidy, interesting_stems[page.language_id])
+    counted_intstems, pop_stems = swarm_extract(page, notidy, interesting_stems[page.language_id], 5)
     Page.update(page.id, {:last_scantime => Time.now()})    
-    if ( counted_stems != nil )    
-      counted_stems.each do |stem|
+    if ( counted_intstems != nil )    
+      counted_intstems.each do |stem|
         Word.create(:intword_id=>stem.id, 
           :page_id=>page.id, 
           :scantime=>Time.now(), 
