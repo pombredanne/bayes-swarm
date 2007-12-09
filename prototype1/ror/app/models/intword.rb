@@ -7,7 +7,7 @@ class Intword < ActiveRecord::Base
 
   def self.find_popular(l_id, n_months=1, n=999999, order_column="imp")
     find(:all,
-         :conditions => "scantime>='#{Date.today()<<n_months}' AND language_id = #{l_id} AND visible=1",
+         :conditions => "scantime>='#{Date.today()<<n_months}' AND language_id = #{l_id}",
          :select => "intwords.id, name, sqrt(avg(count)*count(*)) as #{order_column}",
          :joins => "LEFT JOIN words on words.intword_id = intwords.id",
          :group => "intwords.id, name",

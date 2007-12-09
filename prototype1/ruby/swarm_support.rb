@@ -12,7 +12,7 @@ class Stem
   end
 end
 
-def swarm_extract(page, notidy=true, interesting_stems=nil, pop_stems_threshold=5)
+def swarm_extract(page, notidy=true, interesting_stems=nil)
     # Components setup
     if (page.kind_name == :url)
       extractor = HttpExtractor.new
@@ -38,63 +38,47 @@ def swarm_extract(page, notidy=true, interesting_stems=nil, pop_stems_threshold=
     stems = stemmer.stem(clean_content, page.language_name)
     # puts "STEMS: #{stems.inspect}"
 
-    counted_int_stems, pop_stems = count_stems(stems, interesting_stems, pop_stems_threshold)
+    counted_stems = count_stems(stems, interesting_stems)
+    puts "No stems found" if counted_stems.empty?
 
     i = 0
-    unless counted_int_stems.empty?
-      puts "Results for interesting stems:"
-      counted_int_stems.each do |stem|
+    unless counted_stems.empty?
+      puts "Results:"
+      counted_stems.each do |stem|
         puts "#{i}: #{stem.stem} (#{stem.count} occurrence(s) )"
         i += 1
       end
-    else
-      puts "No interesting stems found"
+
+      # puts "Talks about ? "
+      # found = false
+      # counted_stems.each do |stemcount|
+      #   found |= stemcount.stem =~ /terror/
+      # end
+      # puts "YES!" if found
+      # puts "NO!" unless found
     end
 
-    i = 0
-    unless pop_stems.empty?
-      puts "Results for popular stems (threshold=#{pop_stems_threshold}):"
-      pop_stems.each do |stem|
-        puts "#{i}: #{stem.stem} (#{stem.count} occurrence(s) )"
-        i += 1
-      end
-    else
-      puts "No popular stems found (threshold=#{pop_stems_threshold})"
-    end
-    
-    return counted_int_stems, pop_stems
 end
 
-def count_stems(stems, int_stems, pop_stems_threshold)
+def count_stems(stems, int_stems)
   stem_count = Hash.new
   stems.each do |stem|
     stem_count[stem] ||= 0
     stem_count[stem] += 1
   end
   
-  int_stems_found = Array.new
-  # only if a list of int stems is supplied do
-  if int_stems != nil
-    stem_count.each do |s,c|
-      # check if it is among interesting stems
+  res = Array.new
+  stem_count.each do |s,c|
+    # check if it is among interesting stems
+    # only if int_stems is provided
+    if int_stems == nil
+      res << Stem.new(s, c, nil) unless s.length <= 2 || s =~ /\d+/
+    else
       if (int_stems.has_key?(s))
-        int_stems_found << Stem.new(s, c, int_stems[s])
-        # delete current stem from list
-        stem_count.delete(s)
+        res << Stem.new(s, c, int_stems[s])
       end
     end
   end
-  int_stems_found = int_stems_found.sort_by { |sc| sc.count }.reverse
 
-  # find other popular stems
-  popular_stems_found = Array.new  
-  stem_count.each do |s,c|
-    # check if it is among interesting stems
-    popular_stems_found << Stem.new(s, c, nil) unless s.length <= 2 || s =~ /\d+/
-  end
-  popular_stems_found = popular_stems_found.select { |sc| sc.count > pop_stems_threshold}
-  popular_stems_found = popular_stems_found.sort_by { |sc| sc.count }.reverse
-  
-  # return int_stems and other stems
-  return int_stems_found, popular_stems_found
+  sorted_res = res.sort_by { |sc| sc.count }.reverse
 end

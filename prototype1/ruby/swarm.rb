@@ -25,9 +25,7 @@ if __FILE__ == $0
     options = OpenStruct.new
     options.sourcetype = :url
     options.verbose = false
-    options.notidy = true
-    options.pop_stems_threshold = 5
-    
+
     opts = OptionParser.new do |opts|
       opts.banner = "Usage: example.rb [options] FILE
 Usage: example.rb [options] URL"
@@ -37,12 +35,9 @@ Usage: example.rb [options] URL"
       end
       opts.on("-l", "--language LANGUAGE", [:en, :it], "Language of the source") do |l|
         options.language = l
-      end
-      opts.on("-t", "--pop-stems-threshold THRESHOLD", "Threshold for popular stems filtering") do |t|
-        options.pop_stems_threshold = t
       end      
-      opts.on("--tidy") do |s|
-        options.notidy = false
+      opts.on("--no-tidy") do |s|
+        options.notidy = true
       end
       opts.on("-v", "--verbose", "Display verbose output.") do |v|
         options.verbose = v
@@ -64,7 +59,7 @@ Usage: example.rb [options] URL"
 
         page = Page.new(nil, source, options.language, options.sourcetype, Time.now - (60*60*24))
 
-        stems = swarm_extract(page, options.notidy, nil, options.pop_stems_threshold.to_i)
+        stems = swarm_extract(page, options.notidy)
     else
       puts "Error: no source specified", "Example: ./swarm.rb --no-tidy http://news.google.com", "", opts
       exit

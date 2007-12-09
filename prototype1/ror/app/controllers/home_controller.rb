@@ -2,7 +2,7 @@ class HomeController < ApplicationController
   layout "standard"
 
   def index
-    @n_intwords = Intword.count(:conditions => "visible=1")
+    @n_intwords = Intword.count()
     @n_languages = LOCALES.length
     @n_words = Word.count().localize
 
