@@ -1,0 +1,10 @@
+<h1>Edit Interesting word</h1>
+
+<% if flash[:notice] -%>
+  <div id="notice"><%= flash[:notice] %></div>
+<% end -%>
+
+<% form_tag :action => 'update', :id => @intword.id do %>
+  <%= render :partial => 'form_edit' %>
+  <%= submit_tag "Update" %>
+<% end %>
