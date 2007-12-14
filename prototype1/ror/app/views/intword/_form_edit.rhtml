@@ -1,0 +1,16 @@
+<%= error_messages_for 'intword' %>
+
+<!--[form:intword]-->
+<p><label for="intword_name"><b>Name</b></label>: <%= @intword.name %></p>
+<p><label for="intword_language_id"><b>Language</b></label>: <%= @intword.language %></p>
+
+<p>
+  <label for="intword_language_id"><b>Visible</b></label><br/>
+  <%=
+    @true_false = {0 => "false", 1 => "true"}
+    @cur_lang_id = Language.find(:first,
+                                 :conditions=>["iso_639_1 IN (?)", params[:locale]]).id
+    select(:intword, :visible, @true_false, {:selected=>@intword.visible})
+  %>
+</p>
+<!--[eoform:intword]-->

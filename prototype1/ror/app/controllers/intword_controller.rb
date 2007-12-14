@@ -8,7 +8,6 @@ class IntwordController < ApplicationController
   end
   
   def show
-    #breakpoint "check"
     @ids= params[:id]
     intword_ids = @ids.split("-")
     @iws = Array.new()
@@ -32,11 +31,33 @@ class IntwordController < ApplicationController
     end
   end
 
-  def cloud
-    @attr = 'imp'
-    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr)    
+  def edit
+    @intword = Intword.find(params[:id])
   end
 
+  def update
+    @intword = Intword.find(params[:id])    
+    
+    if @intword.update_attributes(params[:intword])
+      flash[:notice] = 'Intword was successfully updated.'
+      redirect_to :action => 'show', :id => @intword.id
+    else
+      render :action => 'edit'
+    end
+  end
+  
+  def cloud
+    @attr = 'imp'
+    @action = 'show'
+    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 1)
+  end
+  
+  def notvisible_cloud
+    @attr = 'imp'
+    @action = 'edit'
+    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 0)
+  end
+  
   def plot
     require 'gruff'
     g = Gruff::Line.new(480)
