@@ -91,4 +91,33 @@ class IntwordController < ApplicationController
               :filename => "ts.png")
   
   end  
+  
+  def pie
+    require 'gruff'
+    g = Gruff::Pie.new(480)
+    g.title = "News Pie"
+
+    intword_ids = params[:id].split("-")
+    #intword_ids = "1-2".split("-")
+    iwtses = ActiveSupport::OrderedHash.new()
+    intword_ids.each do |iw_id|
+      iw = Intword.find(iw_id)
+      begin
+        iwts = iw.get_time_series(params[:period].to_i).values.sum
+      rescue RuntimeError
+        #return nil
+      end
+        
+      if (iwts != [])
+        g.data(iw.name, iwts)
+      else
+        nil
+      end
+    end  
+    send_data(g.to_blob, 
+              :disposition => 'inline', 
+              :type => 'image/png', 
+              :filename => "ts.png")
+  
+  end
 end
