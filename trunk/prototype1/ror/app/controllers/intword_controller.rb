@@ -68,7 +68,7 @@ class IntwordController < ApplicationController
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
       begin
-        iwts = iw.get_time_series(params[:period].to_i) 
+        iwts = iw.get_time_series(params[:period]) 
         iwtses[iw] = iwts
       rescue RuntimeError
         #return nil
@@ -103,7 +103,7 @@ class IntwordController < ApplicationController
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
       begin
-        iwts = iw.get_time_series(params[:period].to_i).values.sum
+        iwts = iw.get_time_series(params[:period]).values.sum
       rescue RuntimeError
         #return nil
       end

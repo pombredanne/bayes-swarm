@@ -20,7 +20,7 @@ ActionController::Routing::Routes.draw do |map|
   # Install the default route as the lowest priority.
   #map.connect ':controller/:action/:id.:format'
   map.connect(':locale/:controller/:action/:id/:period')
-  map.connect ':locale/:controller/:action/:id', :period=>'1'
+  map.connect ':locale/:controller/:action/:id', :period=>'1m'
   map.connect ':locale/:controller/:action/:id'
 
   # redirect old website relevant links

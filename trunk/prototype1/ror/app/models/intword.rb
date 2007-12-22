@@ -18,22 +18,22 @@ class Intword < ActiveRecord::Base
   # returns last n_month values
   # lastdate is today, firstdate is the oldest date (in the n_months scope)
   # if some days are missing (stem not seen in pages) we fill with zeros
-  def get_time_series(n_months)
+  def get_time_series(interval)
     # FIXME: add page_id parameter like so [ "category IN (?)", categories]
     # FIXME: add /n_pages to avg_count (based on the language of the stem)
-    very_first_date = Date.today()<<n_months
+    very_first_date = Date.today().subtract_interval(interval)
     ws = words.sum(:count, 
                    :conditions=>"scantime>='#{very_first_date}'",
                    :order => "date(scantime)",
                    :group=>"date(scantime)")
 
     fail "Stem has no words" if (ws.size == 0)
-    IntwordTimeSeries.new(ws, n_months)
+    IntwordTimeSeries.new(ws, interval)
   end
   
-  def find_most_correlated(period)
+  def find_most_correlated(interval)
     begin
-      self_iwts = self.get_time_series(period)
+      self_iwts = self.get_time_series(interval)
     rescue RuntimeError
       return nil
     end
@@ -43,7 +43,7 @@ class Intword < ActiveRecord::Base
     return nil if !self_iwts.complete 
 
     last_date = Date.today()
-    first_date = last_date<<period
+    first_date = last_date.subtract_interval(interval)
     n_hits = last_date - first_date
     # find only intwords which have at least 2/3 of the words in the chosen period
     iws = Intword.find_by_sql("select intword_id as id, name, language_id
@@ -61,7 +61,7 @@ class Intword < ActiveRecord::Base
     iws2 = Array.new()
     iws.each_with_index do |iw, i|
       begin
-        iwtses << iw.get_time_series(period)
+        iwtses << iw.get_time_series(interval)
         iws2 << iw
       rescue RuntimeError
         # current stem has no words, skipping
@@ -113,9 +113,9 @@ class IntwordTimeSeries
     @complete
   end
   
-  def initialize(words, n_months)
+  def initialize(words, interval)
     last_date = Date.today()
-    very_first_date = last_date<<n_months
+    very_first_date = last_date.subtract_interval(interval)
     
     values = words.values
     dates = words.keys.map {|x| Date.strptime(x, '%Y-%m-%d')}
