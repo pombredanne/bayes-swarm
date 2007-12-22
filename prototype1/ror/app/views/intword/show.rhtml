@@ -22,7 +22,7 @@
     <% end %>
     </table>
 <% else -%>
-  <% corr_iws = @iws[0].find_most_correlated(params[:period].to_i)
+  <% corr_iws = @iws[0].find_most_correlated(params[:period])
      if (corr_iws != nil) -%>
     <table>
       <tr>
