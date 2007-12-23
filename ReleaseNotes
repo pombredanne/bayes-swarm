@@ -1,0 +1,22 @@
+Bayes-Swarm 0.2.2 (Not release yet)
+        * Added notvisible_cloud view and upgraded ETL so that also
+          possible intereting words are loaded
+
+Bayes-Swarm 0.2.1 (2007-12-09)
+        * Added most correlated stem in show view
+        * Added multi-id support for show and plot intword view
+        * Added Globalize support for multi-language ROR website
+
+Bayes-Swarm 0.2 (2007-11-10)
+        * Added ActiveRecord support in ETL process
+        * First draft of new ROR website
+        * Added support for RSS pages
+        * First release of prototype2
+        * Added support for other languages other than english
+
+Bayes-Swarm 0.1 (2007-09-08)
+        * Added very basic website written with webpy
+        * Added interesting words concept
+        
+Bayes-Swarm 0.0.1 (2007-07-20)
+        * Initial release
