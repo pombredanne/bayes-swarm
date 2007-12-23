@@ -15,6 +15,15 @@ class Intword < ActiveRecord::Base
          :limit => n)
   end
   
+  # returns the first date ever this intword was found
+  def oldest_scandate()
+    if (result = words.find(:first, :order=>"scantime"))
+      result.scantime.to_date
+    else
+      nil
+    end
+  end
+  
   # returns last n_month values
   # lastdate is today, firstdate is the oldest date (in the n_months scope)
   # if some days are missing (stem not seen in pages) we fill with zeros
@@ -106,7 +115,12 @@ end
 class IntwordTimeSeries
   attr_accessor :dates, :values
 
-  # this attribute shows if the first date is actuall Today<<1
+  # here we save the interval on which the time series is extracted
+  def interval
+    @interval
+  end
+
+  # this attribute shows if the first date is actually Today - interval
   # or not, so that we know if the stem is old enough for plotting
   # correlations or not
   def complete
@@ -114,6 +128,7 @@ class IntwordTimeSeries
   end
   
   def initialize(words, interval)
+    @interval = interval
     last_date = Date.today()
     very_first_date = last_date.subtract_interval(interval)
     
