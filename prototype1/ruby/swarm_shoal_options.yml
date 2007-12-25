@@ -1,5 +1,9 @@
 # options for swarm_shoal.rb
 
+storage:
+    :filesaver: active
+    :base:  /Users/battlehorse/Downloads/store/
+
 database:
     :host:   localhost
     :user:   testuser

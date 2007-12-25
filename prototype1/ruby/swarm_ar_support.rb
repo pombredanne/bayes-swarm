@@ -1,10 +1,6 @@
-require 'rubygems'
 require 'active_record'
-require 'yaml'
 
-configFile = "swarm_shoal_options.yml"
-opts = YAML.load(File.open(configFile))
-db_opts = opts['database']
+db_opts = $opts['database']
 @db_host = db_opts[:host]
 @db_user = db_opts[:user]
 @db_pass = db_opts[:pass]

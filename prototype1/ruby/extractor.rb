@@ -49,7 +49,19 @@ class RssExtractor
         if (item.date > rss_page.last_scantime)
           article_url = item.link
           extractor = HttpExtractor.new
-          rss_full_content += extractor.extract_with_redirect(article_url).body
+          
+          if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
+            extractor.base_folder = store_folder
+            extractor.url = article_url
+            extractor.scantime = nil  # the same as RssPage, we don't need to save it
+          end          
+          
+          cur_content = extractor.extract_with_redirect(article_url).body
+          rss_full_content += cur_content
+          
+          if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
+            extractor.persist(cur_content)
+          end          
         end
       rescue URI::InvalidURIError
         # article_url is invalid

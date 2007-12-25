@@ -1,5 +1,7 @@
 #!/usr/bin/env ruby
 
+require 'rubygems'
+require 'swarm_init'
 require 'swarm_support'
 require 'swarm_ar_support'
 

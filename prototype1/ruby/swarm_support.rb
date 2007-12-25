@@ -23,11 +23,26 @@ def swarm_extract(page, notidy=true, interesting_stems=nil, pop_stems_threshold=
     elsif
       raise "unknown page kind error"
     end
+        
     cleaner = HtmlTidy.new
     stemmer = FerretStemmer.new
+    
+    # Save extracted data if needed
+    if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
+      extractor.base_folder = $opts['storage'][:base]
+      extractor.url = page.url
+      extractor.scantime = Time.now
+    end    
 
     # Get the work done
     content = extractor.extract(page)
+    
+    # Save extracted data if needed
+    if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
+      extractor.persist(content)
+    end
+    
+    
     if (notidy == true)
       clean_content = cleaner.strip_tags_and_entities(content)
     else
