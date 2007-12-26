@@ -3,7 +3,37 @@
 <p align="center">
     <img src="<%= url_for( :controller => 'intword', 
                            :action => 'pie',
-                           :id => "330-333-321-332-335") %>" 
+                           :id => @candidate_id,
+                           :period => "1d") %>" 
          alt="time series plot loading.."
          width="480" height="360"/>
 </p>
+
+<p></p>
+<table>
+  <% 5.times do |iw| %>
+  <tr>
+    <td> <h3> <%= @candidate_names[iw] %> </h3></td>
+  <td> <%= sparkline_tag @candidate_series[iw], :type => 'area', :height => 20,
+          :upper => 20, :above_color => 'red'%> </td>
+  </tr>
+  <% iws = Intword.find(@candidate_id.split("-")[iw]) %>
+	<% corr_iws = iws.find_most_correlated("1m")
+    if (corr_iws != nil) -%>
+	<tr>
+      <td>Correlated</td><td>Stems</td>
+    </tr>
+  <% corr_iws.each do |iw, corr| %>
+    <tr>
+      <td><%= iw.name %></td>
+      <td><%= [(corr.to_f*100).round, '%'].join %></td>
+      <td><%= link_to "show", {:id => [iws.id, '-', iw.id].join,
+                               :period => "1m" } %></td>
+    </tr>
+  <% end %>
+ <% end -%>
+<% end %>
+</table>
+
+
+	
