@@ -1,0 +1,38 @@
+#summary Describes how PrototypeOne stores web page contents for future use
+#labels Phase-Prototype
+
+= Introduction =
+
+Starting from revision 239 ( see issue #8 for further info ) PrototypeOne has the added feature of optionally storing the webpages analyzed in each extraction cycle. 
+
+= Details for HTML pages =
+
+The `yml` options file defines :
+  * if file storage is active
+  * the base folder where webpages will be stored.
+
+If active, file storage archives webpages using the following folder structure : 
+{{{
+base_folder/yyyy/mm/dd/url_md5/contents.html
+}}}
+where :
+  * `yyyy/mm/dd` refer to the extraction date
+  * `url_md5` is the MD5-hash of the page URL
+
+An additional file 
+{{{
+base_folder/yyyy/mm/dd/META
+}}}
+is created and contains the mapping between all the URLs and their respective MD5 hashes.
+
+= Details for RSS pages =
+
+When parsing RSS feeds, some additional considerations apply :
+  * `url_md5` refers to the URL of the RSS feed
+  * each `yyyy/mm/dd/url_md5` contains all the *new* articles published on the feed between last scan time and current extraction date
+  * `yyyy/mm/dd/url_md5/contents.html` contains the HTML code for *all* the articles parsed in the extraction cycle
+  * for each article, the file `yyyy/mm/dd/url_md5/article_md5/contents.html` contains the HTML code for the specific article. `article_md5` is the MD5-hash of the article URL ( extracted from the RSS feed )
+  * a META file `yyyy/mm/dd/url_md5/META` is created to store the mapping between all the article URLs for the given feed and their respective MD5 hashes.
+
+= Example File Storage Folder Structure =
+Section to be completed.
