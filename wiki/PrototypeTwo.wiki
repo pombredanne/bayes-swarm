@@ -1,6 +1,10 @@
 #summary Usage instructions and informations for Prototype 2
 #labels Phase-Prototype
 
+= Warning =
+
+Prototype2 is still under active development and it is *not* in active use for daily extractions. See PrototypeOne for further info. Ideas which are currently being tested in prototype2 will eventually be merged into PrototypeOne into a sort of _stable_ extractor. 
+
 = Introduction =
 
 Prototype 2 is a structured approach to page data extraction. It models the extraction approach as a standard [http://en.wikipedia.org/wiki/Extract%2C_transform%2C_load ETL] process . 
