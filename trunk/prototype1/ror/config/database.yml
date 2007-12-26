@@ -13,10 +13,10 @@
 #   http://dev.mysql.com/doc/refman/5.0/en/old-client.html
 development:
   adapter: mysql
-  database: bayesswarm022
+  database: bayesswarmdev
   username: webuser
   password: test
-  socket: /var/run/mysqld/mysqld.sock
+  socket: /tmp/mysql.sock
 
 # Warning: The database defined as 'test' will be erased and
 # re-generated from your development database when you run 'rake'.
