@@ -16,13 +16,13 @@ The first thing you need to do is to setup your pc to properly work with the pro
 === Prototypes ===
 Once your pc is ready, you can start trying some of our prototypes. Here follows the list of available ones : 
 
-  * PrototypeOne : the very first approach to page data extraction
-  * PrototypeTwo : an ETL structured way to data extraction. Browser-guidance techniques are involved in page content analysis.
+  * PrototypeOne : the very first approach to page data extraction. Currently being used for day-to-day extractions.
+  * PrototypeTwo : an ETL structured way to data extraction. Still not in active use.
 
 === Data Simulation ===
 The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
 
 == Live demo ==
-You can try a live demo at http://kate.homeunix.net/bayesfor/
+You can try a live demo at http://www.bayes-swarm.com/
 
 Please note: the demo is still rough and almost for internal-use only.
