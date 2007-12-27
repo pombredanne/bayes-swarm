@@ -69,9 +69,9 @@ module ApplicationHelper
       case params[:action]
       when 'index'
         path = ""
-      when 'doc'
+      else
         path += link_to("home", { :locale => params[:locale], :controller => "home"})
-        path += " | doc"
+        path += [" | ", params[:action]].join
       end
     else
       path += link_to("home", { :locale => params[:locale], :controller => "home"})
