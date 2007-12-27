@@ -52,7 +52,7 @@ module Storage
 
         write_meta(folder.join("META"),@store_url)
       rescue SystemCallError => sce
-        puts "WARNING: Unable to persist url #{url} due to error #{sce}"
+        puts "WARNING: Unable to persist url #{@store_url} due to error #{sce}"
       end
     end
   
