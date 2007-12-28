@@ -8,12 +8,12 @@ class IntwordController < ApplicationController
   end
   
   def show
-    @ids= params[:id]
+    @ids = params[:id]
     intword_ids = @ids.split("-")
-    @iws = Array.new()
-    intword_ids.each do |iw_id|
-      @iws << Intword.find(iw_id)
-    end
+    
+    @iws = intword_ids.map { |id| Intword.find(id)}
+    
+    @intervals = ['1y', '6m', '3m', '1m', '2w']
   end
   
   def new

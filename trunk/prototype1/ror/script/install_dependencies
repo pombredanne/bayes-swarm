@@ -4,3 +4,4 @@ script/plugin install http://svn.globalize-rails.org/svn/globalize/branches/for-
 mv vendor/plugins/for-1.2 vendor/plugins/globalize
 #rake globalize:setup
 
+script/plugin install http://topfunky.net/svn/plugins/sparklines

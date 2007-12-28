@@ -7,8 +7,11 @@
                            :period => params[:period]) %>" 
          alt="time series plot loading.."
          width="480" height="360"/>
+    <%= render :partial => "show_intervals", :locals => { :iws => @iws,
+                                                          :intervals => @intervals } %>
 </p>
 
+<p>
 <% if (@iws.length>1) -%>
     <table>
       <tr>
@@ -39,3 +42,4 @@
     </table>
   <% end -%>
 <% end -%>
+</p>

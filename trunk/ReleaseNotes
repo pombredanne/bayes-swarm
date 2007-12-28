@@ -1,7 +1,7 @@
-Bayes-Swarm 0.2.2 (Not release yet)
+Bayes-Swarm 0.2.2 (Not released yet)
         * Added notvisible_cloud view and upgraded ETL so that also
-          possible intereting words are loaded
-	* Added file storage capabilities to prototype1 ETL
+          possible interesting words are loaded
+        * Added file storage capabilities to prototype1 ETL
 
 Bayes-Swarm 0.2.1 (2007-12-09)
         * Added most correlated stem in show view
