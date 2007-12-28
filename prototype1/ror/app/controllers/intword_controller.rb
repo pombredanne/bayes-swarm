@@ -96,7 +96,7 @@ class IntwordController < ApplicationController
     require 'gruff'
     g = Gruff::Pie.new(480)
     g.title = "News Pie"
-
+    # check empty stems
     intword_ids = params[:id].split("-")
     #intword_ids = "1-2".split("-")
     iwtses = ActiveSupport::OrderedHash.new()
@@ -107,7 +107,9 @@ class IntwordController < ApplicationController
       rescue RuntimeError
         #return nil
       end
-        
+      if (iwts == nil ) 
+        iwts = 0
+      end  
       if (iwts != [])
         g.data(iw.name, iwts)
       else
