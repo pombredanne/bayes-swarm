@@ -14,16 +14,25 @@ class Intword < ActiveRecord::Base
          :order => "#{order_column} desc",
          :limit => n)
   end
-  
+
+#  def after_initialize
+#  end
+
   # returns the first date ever this intword was found
   def oldest_scandate()
-    if (result = words.find(:first, :order=>"scantime"))
-      result.scantime.to_date
+    # do not fetch db every time, check if we already fetched it
+    if (@oldest_scandate)
+      @oldest_scandate
     else
-      nil
+      if (result = words.find(:first, :order=>"scantime"))
+        @oldest_scandate = result.scantime.to_date
+      else
+        # FIXME: protect oldest_scandate with something like ever_seen?
+        @oldest_scandate = Date.today + 10000
+      end    
     end
   end
-  
+ 
   # returns last n_month values
   # lastdate is today, firstdate is the oldest date (in the n_months scope)
   # if some days are missing (stem not seen in pages) we fill with zeros

@@ -1,0 +1,19 @@
+<table width=100% border=0>
+  <tr>
+    <% intervals.each do |int| %>
+      <td align="center">
+        <%= aval = iws.select { |iw| iw unless (iw.oldest_scandate>Date.today.subtract_interval(int)) }
+            if (int == params[:period])
+              ["<b>", int, "</b>"].join
+            elsif (aval.length == 0)
+              int
+            else
+              link_to int, { :controller => 'intword', 
+                             :action => 'show',
+                             :id => @ids,
+                             :period => int }
+            end %>
+      </td>
+    <% end %>
+  </tr>
+</table>
