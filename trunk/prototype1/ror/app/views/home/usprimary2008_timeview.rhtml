@@ -4,21 +4,21 @@
 	<td>
 		 <% if ( params[:id] != @candidate["all"]) %>  
 	     <%= link_to "All", { :controller => "home",
-	                               :action => "usprimary2008",
+	                               :action => "usprimary2008_timeview",
 	                               :id => @candidate["all"] } %>
 	     <% else %>  All  <% end %>
     </td>
 	<td> 
 		 <% if ( params[:id] != @candidate["dem"]) %> 
 		 <%= link_to "Democrats", { :controller => "home",
-							       :action => "usprimary2008",
+							       :action => "usprimary2008_timeview",
 		                           :id => @candidate["dem"] } %>
 		  <% else %>  Democrats  <% end %>
 		 </td>
 	<td>  
 	     <% if ( params[:id] != @candidate["rep"]) %>
 	     <%= link_to "Republicans", { :controller => "home",
-								   :action => "usprimary2008",
+								   :action => "usprimary2008_timeview",
 							       :id => @candidate["rep"] } %>
 		 <% else %>  Republicans  <% end %>					
 		 </td>	
@@ -26,20 +26,25 @@
 </table>
 	
 
+
 <p align="center">
     <img src="<%= url_for( :controller => 'intword', 
-                           :action => 'pie',
+                           :action => 'plot',
                            :id => params[:id],
-                           :period => "1d") %>" 
+                           :period => params[:period]) %>" 
          alt="time series plot loading.."
          width="480" height="360"/>
 </p>
 
+
+
+
 <table>
-	<tr> <td> Today </td> <td> <%= link_to "Time Series",
-	                            { :controller => "home",
-						          :action => "usprimary2008_timeview",
-						          :id => params[:id] } %> </td>  
+	<tr> <td> <%= link_to "Today",
+	                { :controller => "home",
+				      :action => "usprimary2008",
+				      :id => params[:id] } %> </td>  
+	     <td> Time Series </td>	 
 	</tr>
 </table>
 <p></p>
