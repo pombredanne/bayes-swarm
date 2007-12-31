@@ -31,7 +31,13 @@ class Date
           month -= 12
           year += 1
         end
-        result = Date.new(year, month, self.day)
+
+        day = self.day
+        while (Date.valid_civil?(year, month, day).nil?)
+          day -= 1
+        end
+      
+        result = Date.new(year, month, day)
       when 'y'
         result = Date.new(self.year - n, self.month, self.day)
       end

@@ -63,7 +63,7 @@ module ApplicationHelper
     end
   
   def path_builder()
-    path = "Your are here: ".t
+    path = ["Your are here".t, ": "].join
     case params[:controller]
     when 'home'
       case params[:action]
