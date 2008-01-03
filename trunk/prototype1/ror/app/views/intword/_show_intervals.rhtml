@@ -1,7 +1,8 @@
-<table width=100% border=0>
-  <tr>
+<div style="text-align: center;">
+<ul style="text-align: center; width: 480px; margin: 0 auto; padding-left: 0px; list-style-type: none;">
+    Choose time range
     <% intervals.each do |int| %>
-      <td align="center">
+      <li style="float: left; width: 96px;">
         <%= aval = iws.select { |iw| iw unless (iw.oldest_scandate>Date.today.subtract_interval(int)) }
             if (int == params[:period])
               ["<b>", int, "</b>"].join
@@ -13,7 +14,8 @@
                              :id => @ids,
                              :period => int }
             end %>
-      </td>
+     </li>
     <% end %>
-  </tr>
-</table>
+</ul>
+</div>
+<br>

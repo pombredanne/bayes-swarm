@@ -1,18 +1,18 @@
 <h1>Show Interesting word</h1>
 
-<p align="center">
+<div style="text-align: center;">
     <img src="<%= url_for( :controller => 'intword', 
                            :action => 'plot',
                            :id => @ids,
                            :period => params[:period]) %>" 
          alt="time series plot loading.."
          width="480" height="360"/>
+</div>
     <%= render :partial => "show_intervals", :locals => { :iws => @iws,
                                                           :intervals => @intervals } %>
-</p>
 
-<p>
 <% if (@iws.length>1) -%>
+    <h2>Words currently displayed</h2>
     <table>
       <tr>
         <td>Name</td><td>Language</td>
@@ -24,9 +24,10 @@
       </tr>
     <% end %>
     </table>
-<% else -%>
+<% else -%>  
   <% corr_iws = @iws[0].find_most_correlated(params[:period])
      if (corr_iws != nil) -%>
+    <h2>Most correlated words</h2>
     <table>
       <tr>
         <td>Name</td><td>Correlation</td><td>Time series plot</td>
@@ -42,4 +43,3 @@
     </table>
   <% end -%>
 <% end -%>
-</p>
