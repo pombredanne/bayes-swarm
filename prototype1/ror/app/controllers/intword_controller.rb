@@ -60,8 +60,9 @@ class IntwordController < ApplicationController
   
   def plot
     require 'gruff'
-    g = Gruff::Line.new(480)
-    g.title = "time series plot"
+    g = Gruff::Line.new(500)
+#    g.title = "time series plot"
+    g.hide_title = true
 
     intword_ids = params[:id].split("-")
     iwtses = ActiveSupport::OrderedHash.new()
@@ -94,7 +95,7 @@ class IntwordController < ApplicationController
   
   def pie
     require 'gruff'
-    g = Gruff::Pie.new(480)
+    g = Gruff::Pie.new(500)
     g.title = "News Pie"
     # check empty stems
     intword_ids = params[:id].split("-")

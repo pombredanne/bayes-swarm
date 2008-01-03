@@ -1,18 +1,12 @@
 layout
 
-* scrivere testi più intellingenti degli attuali (tradotti anche in
-  italiano)
+* arricchire gli attuali testi sulle pagine con brevi descrizioni su quanto
+  mostrato (sia in italiano che in inglese)
 * completare la pagina di documentazione
-* aggiungere sotto al grafico in show intword dei link per modificare
-  il periodo su cui è graficato
 * 'somma di stem'
-* accetta period pari a 1w, 3m, 1y, etc
 * hardening: mostrare le funzioni di edit solo agli associati, mostrare
   agli utenti solo quello che possono vedere
 * aggiungere cose alla side-bar in funzione della pagina in cui si è
-* la cloud potrebbe rimanere anche quando toglieremo le int_words, in
-  quanto è meglio indirizzare gli utenti verso le parole "più significative"
-  (oltre che proporre un box per la ricerca libera).
 * quando l'utente si posiziona su una parola della cloud, sarebbe carino
   colorare lo sfondo delle parole che sono maggiormente correlate (verde
   maggiore correlazione, rosso correlaz negativa o simili)
