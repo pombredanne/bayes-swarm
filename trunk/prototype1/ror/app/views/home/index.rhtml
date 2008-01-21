@@ -5,8 +5,20 @@
 
 <h1><%= "What has Bayes-Swarm found so far?".t -%></h1>
 
+<h2>Search for a word</h2>
 <div id="stem_cloud">
-  <%= render :partial => "intword/cloud", :locals => { :intwords => @intwords } %>
+<% form_tag :controller => 'intword', :action => 'find' do %>
+  <%= render :partial => 'intword/form_search', :locals => {:advanced => false} %>
+  <%= submit_tag "Search" %>
+<% end %>
+</div>
+<p><%= link_to "Advanced search".t, { :controller => "intword",
+                                      :action => "search"}%></p>
+
+<h2>Cloud</h2>
+<div id="stem_cloud">
+  <%= render :partial => "intword/cloud", :locals => { :intwords => @intwords,
+                                                       :action => 'show' } %>
 </div>
  
 <p><%= "There are currently %d interesting words" / @n_intwords -%>, 
