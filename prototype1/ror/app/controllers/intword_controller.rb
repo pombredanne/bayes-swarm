@@ -2,9 +2,11 @@ class IntwordController < ApplicationController
   helper   :plot
   layout   "standard"
   
-  def index
-    cloud
-    render :action => 'cloud'
+  def index  
+    # cloud
+    @attr = 'imp'
+    @action = 'show'
+    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 1)
   end
   
   def show
@@ -43,6 +45,35 @@ class IntwordController < ApplicationController
       redirect_to :action => 'show', :id => @intword.id
     else
       render :action => 'edit'
+    end
+  end
+  
+  def search
+  end
+  
+  def find
+    iw = params[:intword]
+    @intwords = Intword.find_by_sql("select * 
+                                     from intwords 
+                                     where name like '#{iw[:name]}%'
+                                       and language_id = #{iw[:language_id]};")
+    
+    if (@intwords.empty?)
+      flash[:notice] = "No words matched your search, try a shorter one, ie 'chin' instead of 'china'"
+      redirect_to :action => 'search'
+    elsif (@intwords.length == 1)
+      # exact match => turn visibility on and show directly
+      iw = @intwords.first
+      if (iw.visible == 0)
+        iw.visible = 1
+        iw.save
+      end
+      redirect_to :action => 'show', :id => iw.id
+      
+    else
+      # not exact match => show cloud
+      @action = 'show'
+      render :action => 'cloud'
     end
   end
   

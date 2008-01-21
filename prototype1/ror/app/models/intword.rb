@@ -72,6 +72,7 @@ class Intword < ActiveRecord::Base
                                where a.intword_id=iw.id 
                                      and iw.language_id=#{self.language_id} 
                                      and id not in (#{self.id})
+                                     and visible=1
                                group by intword_id 
                                having count(intword_id)>=#{n_hits*2/3.0}")
 
