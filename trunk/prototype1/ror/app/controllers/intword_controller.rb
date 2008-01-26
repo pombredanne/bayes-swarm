@@ -52,20 +52,20 @@ class IntwordController < ApplicationController
   end
   
   def find
-    iw = params[:intword]
+    iw_search = params[:intword]
     @intwords = Intword.find_by_sql("select * 
                                      from intwords 
-                                     where name like '#{iw[:name]}%'
-                                       and language_id = #{iw[:language_id]};")
+                                     where name like '#{iw_search[:name]}%'
+                                       and language_id = #{iw_search[:language_id]};")
     
     if (@intwords.empty?)
       flash[:notice] = "No words matched your search, try a shorter one, ie 'chin' instead of 'china'"
       redirect_to :action => 'search'
-    elsif (@intwords.length == 1)
-      # exact match => turn visibility on and show directly
+    elsif (@intwords.length == 1)      
       iw = @intwords.first
-      if (iw.visible == 0)
-        iw.visible = 1
+      # exact match => turn visibility on and show directly
+      if (iw.name == iw_search[:name] && iw.visible == false)
+        iw.visible = true
         iw.save
       end
       redirect_to :action => 'show', :id => iw.id
