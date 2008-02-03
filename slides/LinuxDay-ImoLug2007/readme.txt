@@ -1,8 +1,8 @@
 Presentazione per il Linux day di Imolug a Imola il 27/10/2007 e Faenza il del 3/11/2007.
 
 Assicurati di aver installato:
-* pdflatex + pacchetto foils
-* R
+* pdflatex + pacchetto foils (texlive-latex-extra, texlive-latex-reccomended + foiltex)
+* R (r-base)
 
 Su Ubuntu:
 $ sudo apt-get install texlive-latex-base texlive-latex-extra texlive-fonts-recommended foiltex
