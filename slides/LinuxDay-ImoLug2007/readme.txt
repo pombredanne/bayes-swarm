@@ -1,11 +1,11 @@
 Presentazione per il Linux day di Imolug a Imola il 27/10/2007 e Faenza il del 3/11/2007.
 
 Assicurati di aver installato:
-* pdflatex + pacchetto foils (texlive-latex-extra, texlive-latex-reccomended + foiltex)
-* R (r-base)
+* pdflatex + pacchetto foils
+* R
 
 Su Ubuntu:
-$ sudo apt-get install texlive-latex-base texlive-latex-extra texlive-fonts-recommended foiltex
+$ sudo apt-get install texlive-latex-base texlive-latex-extra texlive-fonts-recommended foiltex texlive-lang-italian
 $ sudo apt-get install r-base
 
 some_data_ita.csv contiene le serie storiche dal 17/9/2007 al 23/10/2007 di bayes-swarm degli stem:
