@@ -5,9 +5,16 @@ class Intword < ActiveRecord::Base
   validates_presence_of :name, :language_id
   validates_uniqueness_of :name, :scope => :language_id
 
-  def self.find_popular(l_id, n_months=1, n=999999, order_column="imp", visible=1)
+  def self.find_popular(l_id, n_months=1, n=999999, order_column="imp", visible=1, like=nil)
+    condi = "scantime>='#{Date.today()<<n_months}' AND language_id = #{l_id}"
+    if (!visible.nil?)
+      condi = [condi, "visible=#{visible}"].join(' AND ')
+    end     
+    if (!like.nil?)
+      condi = [condi, "name like '#{like}%'"].join(' AND ')
+    end
     find(:all,
-         :conditions => "scantime>='#{Date.today()<<n_months}' AND language_id = #{l_id} AND visible=#{visible}",
+         :conditions => condi,
          :select => "intwords.id, name, sqrt(avg(count)*count(*)) as #{order_column}",
          :joins => "LEFT JOIN words on words.intword_id = intwords.id",
          :group => "intwords.id, name",
