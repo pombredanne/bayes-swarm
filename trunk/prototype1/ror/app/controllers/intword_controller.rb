@@ -53,11 +53,9 @@ class IntwordController < ApplicationController
   
   def find
     iw_search = params[:intword]
-    @intwords = Intword.find_by_sql("select * 
-                                     from intwords 
-                                     where name like '#{iw_search[:name]}%'
-                                       and language_id = #{iw_search[:language_id]};")
-    
+    @attr = 'imp'
+    @intwords = Intword.find_popular(iw_search['language_id'], 1, 999999, @attr, nil, iw_search['name'])
+
     if (@intwords.empty?)
       flash[:notice] = "No words matched your search, try a shorter one, ie 'chin' instead of 'china'"
       redirect_to :action => 'search'
