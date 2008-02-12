@@ -3,7 +3,7 @@
 </div> 
 
     <% intervals.each do |int| %>
-      <div style="float: left; text-align: center; width: 100px; background-color: rgb(73, 69, 89); color: white;">
+      <div class="intervals" >
         <%= aval = iws.select { |iw| iw unless (iw.oldest_scandate>Date.today.subtract_interval(int)) }
             if (int == params[:period])
               ["<b>", int, "</b>"].join

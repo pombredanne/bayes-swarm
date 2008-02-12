@@ -121,11 +121,19 @@ a:hover {
     padding-top: 10px;
 }
 
-#getting-started DIV A, #getting-started DIV A:visited {
+DIV.intervals {
+	float: left;
+	text-align: center;
+	width: 100px;
+	background-color: rgb(73, 69, 89); 
+	color: white;
+}
+
+DIV.intervals A, DIV.intervals A:visited {
     color: #fff;
 }
 
-#getting-started DIV A:hover {
+DIV.intervals A:hover {
     color: #ddd;
 }
 
