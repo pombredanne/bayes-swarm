@@ -121,6 +121,15 @@ a:hover {
     padding-top: 10px;
 }
 
+#getting-started DIV A, #getting-started DIV A:visited {
+    color: #fff;
+}
+
+#getting-started DIV A:hover {
+    color: #ddd;
+}
+
+
 table.pages { font-size: 10px }
 
 #stem_cloud {
