@@ -152,4 +152,44 @@ class IntwordController < ApplicationController
               :filename => "ts.png")
   
   end
+  
+  def csv
+    def generate_line(row)
+      row_sep = $INPUT_RECORD_SEPARATOR
+      [row, row_sep].join()
+    end
+    
+    iw_ids = params[:id].split("-")
+    filename = "tmp/some_data.csv"
+    iw_tss = Hash.new()
+    
+    dates = nil
+    iw_ids.each do |iw_id|
+      iw = Intword.find(iw_id)
+      iw_ts = iw.get_time_series(params[:period])
+      iw_tss[iw] = iw_ts
+      dates = iw_ts.dates
+    end
+
+    header = "date"
+    iw_tss.each_key do |iw|
+      header = [header, iw.name].join(',')
+    end
+    header = generate_line(header)
+    
+    rows = nil
+    dates.each_with_index do |d, i|
+      row = "#{d.strftime('%Y/%m/%d')}"
+      iw_tss.each_pair do |k, v|
+        row = [row, v.values[i]].join(',')
+      end
+      rows = [rows, generate_line(row)].join()
+    end
+    csv = [header, rows].join
+    
+    send_data(csv, 
+              :type => 'text/csv; charset=iso-8859-1; header=present', 
+              :disposition => "attachment; filename=some_data.csv")
+  end
+  
 end
