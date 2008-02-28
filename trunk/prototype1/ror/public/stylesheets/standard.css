@@ -122,11 +122,11 @@ a:hover {
 }
 
 DIV.intervals {
-	float: left;
-	text-align: center;
-	width: 100px;
-	background-color: rgb(73, 69, 89); 
-	color: white;
+    float: left;
+    text-align: center;
+    width: 100px;
+    background-color: rgb(73, 69, 89); 
+    color: white;
 }
 
 DIV.intervals A, DIV.intervals A:visited {
