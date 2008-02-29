@@ -78,7 +78,7 @@ module ApplicationHelper
       
       if params[:controller].include?('/')
         splitted = params[:controller].split('/')
-        path += [" | ", link_to(splitted[0], {:controller => "/"+splitted[0]})].join
+        path += [" | ", link_to(splitted[0], {:controller => "/"+splitted[0]+"/home"})].join
         params[:controller] = splitted[1]
       end
       
