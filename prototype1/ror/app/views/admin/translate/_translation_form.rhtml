@@ -1,7 +1,7 @@
 
 <!--[form:translate]-->
 <p>
-<label for="tr_<%= tr.id %>"><%=tr.tr_key%></label>
+<label for="tr_<%= tr.id %>"><%="#{tr.tr_key} [#{tr.pluralization_index}]"%></label>
 <br />
 <span id="tr_<%= tr.id %>">
 <%= tr.text || '[no translation]' %>

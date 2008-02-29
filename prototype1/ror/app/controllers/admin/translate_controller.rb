@@ -7,6 +7,10 @@ class Admin::TranslateController < ApplicationController
     @view_translations = ViewTranslation.find(:all, :conditions => [ 'text is NULL AND language_id = ?', Locale.language.id ], :order => 'tr_key')
   end
 
+  def old
+    @view_translations = ViewTranslation.find(:all, :conditions => [ 'built_in = 1 AND text is NOT NULL AND language_id = ?', Locale.language.id ], :order => 'tr_key')
+  end
+
   def translation_text
     @translation = ViewTranslation.find(params[:id])
     render :text => @translation.text || ""  
