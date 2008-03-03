@@ -15,7 +15,7 @@ class Intword < ActiveRecord::Base
     end
     find(:all,
          :conditions => condi,
-         :select => "intwords.id, name, sqrt(avg(count)*count(*)) as #{order_column}",
+         :select => "intwords.id, name, visible, language_id, sqrt(avg(count)*count(*)) as #{order_column}",
          :joins => "LEFT JOIN words on words.intword_id = intwords.id",
          :group => "intwords.id, name",
          :order => "#{order_column} desc",
