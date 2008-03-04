@@ -13,8 +13,7 @@ class IntwordController < ApplicationController
     @ids = params[:id]
     intword_ids = @ids.split("-")
     
-    @iws = intword_ids.map { |id| Intword.find(id)}
-    
+    @iws = intword_ids.map { |id| Intword.find(id)}    
     @intervals = ['1y', '6m', '3m', '1m', '2w']
   end
   
@@ -90,30 +89,22 @@ class IntwordController < ApplicationController
   def plot
     require 'gruff'
     g = Gruff::Line.new(500)
-#    g.title = "time series plot"
     g.hide_title = true
 
     intword_ids = params[:id].split("-")
-    iwtses = ActiveSupport::OrderedHash.new()
+    labels = nil
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
       begin
-        iwts = iw.get_time_series(params[:period]) 
-        iwtses[iw] = iwts
+        iwts = iw.get_time_series(params[:period], true)
+        g.data(iw.name, iwts.values)
+        labels = iwts.labels
       rescue RuntimeError
         #return nil
       end
     end
     
-    if (iwtses != [])
-      armonized_iwtses = IntwordTimeSeries.armonize(iwtses.values)
-      iwtses.each_with_index do |iw, i|
-        g.data(iw[0].name, armonized_iwtses[i].values)
-      end
-      g.labels = armonized_iwtses[0].labels
-    else
-      nil
-    end
+    g.labels = labels
       
     send_data(g.to_blob, 
               :disposition => 'inline', 
@@ -128,8 +119,6 @@ class IntwordController < ApplicationController
     g.title = "News Pie"
     # check empty stems
     intword_ids = params[:id].split("-")
-    #intword_ids = "1-2".split("-")
-    iwtses = ActiveSupport::OrderedHash.new()
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
       begin
@@ -166,7 +155,7 @@ class IntwordController < ApplicationController
     dates = nil
     iw_ids.each do |iw_id|
       iw = Intword.find(iw_id)
-      iw_ts = iw.get_time_series(params[:period])
+      iw_ts = iw.get_time_series(params[:period], force_complete=true)
       iw_tss[iw] = iw_ts
       dates = iw_ts.dates
     end
