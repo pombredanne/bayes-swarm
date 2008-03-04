@@ -96,7 +96,11 @@ class IntwordController < ApplicationController
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
       begin
-        iwts = iw.get_time_series(params[:period], true)
+        if intword_ids.length > 1
+          iwts = iw.get_time_series(params[:period], true)
+        else
+          iwts = iw.get_time_series(params[:period], false)
+        end
         g.data(iw.name, iwts.values)
         labels = iwts.labels
       rescue RuntimeError

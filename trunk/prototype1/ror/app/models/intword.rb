@@ -191,39 +191,6 @@ class IntwordTimeSeries
     end
     l
   end
-  
-  # shifts dates and values arrays and returns a new IntwordTimeSeries
-  def shift(n)
-    n.times {
-      self.dates.insert(0, 0)
-      self.values.insert(0, 0)
-    }
-    self
-  end
-  
-  # given an array of IntwordTimeSeries, armonizes each dates series
-  # so that they can be plotted together
-  def self.armonize(others)
-    # find oldest one
-    oldest = 0
-    oldest_date = Date.today()
-    others.each_with_index do |o, i|
-      if (o.dates.first < oldest_date)
-        oldest = i
-        oldest_date = o.dates.first
-      end
-    end
-
-    res = Array.new()
-    # find gap and shift
-    others.each do |o|
-      gap = others[oldest].dates.length - o.dates.length
-      shifted_o = o.shift(gap)
-      shifted_o.dates = others[oldest].dates
-      res << shifted_o
-    end
-    res
-  end
 
   def correlation(other)
     self.values.correlation(other.values)
