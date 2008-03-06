@@ -11,7 +11,7 @@
       <li>
         <h3><%= "Browse the documentation".t -%></h3>
         <ul class="links">
-          <li><%= link_to "documentation".t, { :controller => "home", :action => "doc"} %></li>
+          <li><%= link_to "documentation".t, { :controller => "/home", :action => "doc"} %></li>
           <li><a href="http://bayes-swarm.googlecode.com/"><%= "development".t -%></a></li>
         </ul>
       </li>
@@ -20,6 +20,12 @@
         <ul class="links">
           <li><a href="http://www.bayesfor.eu"><%= "about us".t -%></a></li>
           <li><a href="mailto:info@bayesfor.eu"><%= "email us".t -%></a></li>
+        </ul>
+      </li>
+      <li>
+        <h3><%= "Members Area".t -%></h3>
+        <ul class="links">
+          <%= render :partial => '/login/login_logout' %>
         </ul>
       </li>
     </ul>
@@ -44,6 +50,9 @@
         </div>
 
         <div id="getting-started">
+            <% if flash[:notice] -%>
+                <div id="notice"><%= flash[:notice] %></div>
+            <% end -%>
             <%= @content_for_layout %>
         </div>
     </div>

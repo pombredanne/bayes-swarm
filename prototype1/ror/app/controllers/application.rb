@@ -22,5 +22,15 @@ class ApplicationController < ActionController::Base
         headers["Content-Type"] = "#{content_type}; charset=utf-8" 
       end
   end
-    
+  
+  def authorize
+    unless session[:user_id]
+      flash[:notice] = "Please log in"
+      # save the URL the user requested so we can hop back to it
+      # after login
+      session[:jumpto] = request.parameters
+      redirect_to(:controller => "/login", :action => "login")
+    end
+  end  
+  
 end

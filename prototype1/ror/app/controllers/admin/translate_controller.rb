@@ -1,5 +1,6 @@
 class Admin::TranslateController < ApplicationController
-  layout "admin"
+  layout "standard"
+  before_filter :authorize  
   
   def index    
     #@view_translations = ViewTranslation.find(:all, :conditions => [ 'built_in = 1 AND language_id = ?', Locale.language.id ], :order => 'text')

@@ -23,6 +23,12 @@
           <li><a href="mailto:info@bayesfor.eu"><%= "email us".t -%></a></li>
         </ul>
       </li>
+      <li>
+        <h3><%= "Members Area".t -%></h3>
+        <ul class="links">
+          <li><%= link_to "login".t, { :controller => "/login", :action => "login"} %></li>
+        </ul>
+      </li>
     </ul>
     </div>
 
@@ -45,6 +51,9 @@
         </div>
 
         <div id="getting-started">
+            <% if flash[:notice] -%>
+                <div id="notice"><%= flash[:notice] %></div>
+            <% end -%>
             <%= @content_for_layout %>
         </div>
     </div>
