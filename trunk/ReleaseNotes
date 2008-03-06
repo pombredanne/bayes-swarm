@@ -1,4 +1,6 @@
 Bayes-Swarm 0.2.2 (Not released yet)
+        * Added admin section with translation page (inline edit)
+        * Added csv extraction method
         * Added notvisible_cloud view and upgraded ETL so that also
           possible interesting words are loaded
         * Added file storage capabilities to prototype1 ETL
