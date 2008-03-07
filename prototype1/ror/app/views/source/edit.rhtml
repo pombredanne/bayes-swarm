@@ -1,9 +1,5 @@
 <h1>Edit Source</h1>
 
-<% if flash[:notice] -%>
-  <div id="notice"><%= flash[:notice] %></div>
-<% end -%>
-
 <% form_tag :action => 'update', :id => @source.id do %>
   <%= render :partial => 'form' %>
   <%= submit_tag "Update" %>

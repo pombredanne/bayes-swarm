@@ -12,7 +12,7 @@ class LoginController < ApplicationController
       logged_in_user = @user.try_to_login
       if logged_in_user
          session[:user_id] = logged_in_user.id         
-         jumpto = session[:jumpto] || { :controller => "/admin", :action => "home" }
+         jumpto = session[:jumpto] || { :controller => "/admin", :action => "index" }
          session[:jumpto] = nil
          redirect_to(jumpto)
       else

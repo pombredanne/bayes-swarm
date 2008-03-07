@@ -1,8 +1,8 @@
 <% if session[:user_id] %>
   <li><% logged_in_user = User.find(:first, :conditions => "id = #{session[:user_id]}") %>
   logged in as <%= logged_in_user.name %>, 
-  <%= link_to "logout".t, { :controller => "/login", :action => "logout"} %></li>
-  <li><%= link_to "admin".t, { :controller => "/admin", :action => "home"} %></li>
+  <%= link_to "logout".t, { :controller => "login", :action => "logout"} %></li>
+  <li><%= link_to "admin".t, { :controller => "admin", :action => "index"} %></li>
 <% else %>
-  <li><%= link_to "login".t, { :controller => "/login", :action => "login"} %></li>
+  <li><%= link_to "login".t, { :controller => "login", :action => "login"} %></li>
 <% end %>
