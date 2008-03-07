@@ -5,13 +5,14 @@
   <%= stylesheet_link_tag "standard", :media => "all" %>
 </head>
 <body>
+<%= javascript_include_tag :defaults %>
 <div id="page">
     <div id="sidebar">
     <ul id="sidebar-items">
       <li>
         <h3><%= "Browse the documentation".t -%></h3>
         <ul class="links">
-          <li><%= link_to "documentation".t, { :controller => "/home", :action => "doc"} %></li>
+          <li><%= link_to "documentation".t, { :controller => "home", :action => "doc"} %></li>
           <li><a href="http://bayes-swarm.googlecode.com/"><%= "development".t -%></a></li>
         </ul>
       </li>

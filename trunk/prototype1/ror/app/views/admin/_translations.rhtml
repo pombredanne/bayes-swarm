@@ -1,0 +1,35 @@
+<% base_language_only do -%>
+<div id="language"><h1>Please choose a language for translation</h1></div>
+
+<ul>
+    <% LOCALES.each_pair do |lang, loc| %>
+      <% if (lang!=Locale.language.code) %>
+          <li>
+              <% lang_item = Language.find(:first, 
+                                           :conditions=>{:iso_639_1 => lang}) %>
+              <%= link_to(lang_item,
+                          {:controller => controller.controller_name, 
+                           :action => controller.action_name, 
+                           :locale => lang, 
+                           :id => params[:id]}) %>
+          </li>
+       <% end %>
+    <% end %>
+</ul>
+<% end -%>
+
+<% not_base_language do -%>
+<div id="language"><h1><%= "Language: " + Locale.language.native_name %></h1></div>
+
+<p>Note: the number in square brackets is the pluralization index. It is
+used for those phrases which contain %d (ie a number) and can be different
+for different numbers (0, 1, 2)</p>
+
+<h2>Strings</h2>
+
+<div>
+<% view_translations.each do |tr| -%>
+  <%= render :partial => 'translation_form', :locals => {:tr => tr}%>
+<% end -%>
+</div>
+<% end -%>

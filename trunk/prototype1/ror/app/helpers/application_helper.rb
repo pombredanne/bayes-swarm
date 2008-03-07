@@ -74,13 +74,7 @@ module ApplicationHelper
         path += [" | ", params[:action]].join
       end
     else
-      path += link_to("home", { :locale => params[:locale], :controller => "/home", :action => "index" })
-      
-      if params[:controller].include?('/')
-        splitted = params[:controller].split('/')
-        path += [" | ", link_to(splitted[0], {:controller => "/"+splitted[0]+"/home"})].join
-        params[:controller] = splitted[1]
-      end
+      path += link_to("home", { :locale => params[:locale], :controller => "home", :action => "index" })
       
       case params[:action]
       when 'index'
