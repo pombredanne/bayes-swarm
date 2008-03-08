@@ -15,7 +15,6 @@ class User < ActiveRecord::Base
     find(:first,
          :conditions => ["name = ? and hashed_password = ?",
                           name, hashed_password])
-    #User.new({:name=>"matteo", :password=>"ciao"})
   end
   
   def try_to_login
