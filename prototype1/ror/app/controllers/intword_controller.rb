@@ -83,7 +83,7 @@ class IntwordController < ApplicationController
   def notvisible_cloud
     @attr = 'imp'
     @action = 'edit'
-    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 0)
+    @intwords = Intword.find_popular(Locale.language.id, 1, 499, @attr, 0)
   end
   
   def plot

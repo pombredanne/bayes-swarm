@@ -1,4 +1,5 @@
 require 'active_record'
+require 'swarm_init.rb'
 
 db_opts = $opts['database']
 @db_host = db_opts[:host]
