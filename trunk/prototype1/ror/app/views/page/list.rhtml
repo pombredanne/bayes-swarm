@@ -14,6 +14,6 @@
 <%= link_to 'Previous page', { :page => @page_pages.current.previous } if @page_pages.current.previous %>
 <%= link_to 'Next page', { :page => @page_pages.current.next } if @page_pages.current.next %> 
 
-<br />
-
-<%= link_to 'New page', :action => 'new' %>
+<p>
+  <%= link_to 'New page', :action => 'new' %>
+</p>
