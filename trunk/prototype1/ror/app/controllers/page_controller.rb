@@ -1,7 +1,8 @@
 class PageController < ApplicationController
-  #scaffold :page
   layout "standard"
-
+  # FIXME: add destroy
+  before_filter :authorize, :only => [:edit]
+  
   def index
     list
     render :action => 'list'
