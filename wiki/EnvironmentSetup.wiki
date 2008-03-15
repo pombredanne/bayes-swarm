@@ -31,15 +31,6 @@ Install mysql with apt-get:
 sudo apt-get install mysql-server-5.0 mysql-client-5.0
 }}}
 
-if you want to have locally the full database, just download [http://kate.homeunix.net/~matteo/bayesfor/bayes-swarm_r-0.1.sql bayes-swarm_r-0.1.sql] and execute:
-
-{{{
-$ sudo mysql -p
-mysql> create database bayesfortest;
-mysql> use bayesfortest;
-mysql> source /home/matteo/Desktop/bayes-swarm_r-0.1.sql
-}}}
-
 === Ruby ===
 Install ruby, rubygems and the required gems (the list shown below is incomplete):
  
@@ -79,18 +70,6 @@ To install R, just use the official dmg provided at http://www.r-project.org/ .
 
 *warning*: add info on how to install python (is the default version available with macosx sufficient?)
 == Windows ==
-
-=== MySql ===
-After installing MySQL Server 5.0, to get the full database, just download [http://kate.homeunix.net/~matteo/bayesfor/bayes-swarm_r-0.1.sql bayes-swarm_r-0.1.sql] and save it in C:\Programmi\MySQL. Then open MySQL Command Line Client and execute:
-
-{{{
-$ sudo mysql -p
-mysql> create database bayesfortest;
-mysql> use bayesfortest;
-mysql> source C:\Programmi\MySQL\bayes-swarm_r-0.1.sql
-}}}
-
-=== R ===
 *warning* : this section is still missing. 
  
  
