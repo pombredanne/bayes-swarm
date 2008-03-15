@@ -1,8 +1,4 @@
 Bayes-Swarm 0.2.2 (Not released yet)
-        * Added users table with login/logout views
-        * Added admin section with translation page (inline edit)
-        * Added intword controller 'csv' for retrieving time series in csv 
-          format
         * Added notvisible_cloud view and upgraded ETL so that also
           possible interesting words are loaded
         * Added file storage capabilities to prototype1 ETL

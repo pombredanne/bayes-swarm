@@ -5,7 +5,6 @@
   <%= stylesheet_link_tag "standard", :media => "all" %>
 </head>
 <body>
-<%= javascript_include_tag :defaults %>
 <div id="page">
     <div id="sidebar">
     <ul id="sidebar-items">
@@ -23,12 +22,6 @@
           <li><a href="mailto:info@bayesfor.eu"><%= "email us".t -%></a></li>
         </ul>
       </li>
-      <li>
-        <h3><%= "Members Area".t -%></h3>
-        <ul class="links">
-          <%= render :partial => '/login/login_logout' %>
-        </ul>
-      </li>
     </ul>
     </div>
 
@@ -43,7 +36,7 @@
                     
                 <% end %>
             </div>
-            <h1>Bayes-Swarm <font color="#aaa"><b>beta</b></font></h1>
+            <h1>Bayes-Swarm</h1>
             <h2>bayesian web spidering</h2>
         </div>
         <div>
@@ -51,9 +44,6 @@
         </div>
 
         <div id="getting-started">
-            <% if flash[:notice] -%>
-                <div id="notice"><%= flash[:notice] %></div>
-            <% end -%>
             <%= @content_for_layout %>
         </div>
     </div>

@@ -74,8 +74,7 @@ module ApplicationHelper
         path += [" | ", params[:action]].join
       end
     else
-      path += link_to("home", { :locale => params[:locale], :controller => "home", :action => "index" })
-      
+      path += link_to("home", { :locale => params[:locale], :controller => "home"})
       case params[:action]
       when 'index'
         path += [" | ", params[:controller]].join
@@ -85,14 +84,6 @@ module ApplicationHelper
       end
     end
     path
-  end
-
-  def base_language_only
-    yield if Locale.base?
-  end
-
-  def not_base_language
-    yield unless Locale.base?
   end
 
 end

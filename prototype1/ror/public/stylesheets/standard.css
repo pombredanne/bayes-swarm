@@ -122,11 +122,11 @@ a:hover {
 }
 
 DIV.intervals {
-    float: left;
-    text-align: center;
-    width: 100px;
-    background-color: rgb(73, 69, 89); 
-    color: white;
+	float: left;
+	text-align: center;
+	width: 100px;
+	background-color: rgb(73, 69, 89); 
+	color: white;
 }
 
 DIV.intervals A, DIV.intervals A:visited {
@@ -177,13 +177,4 @@ table.pages { font-size: 10px }
 }
 #sidebar ul.links li {
     margin-bottom: 5px;
-}
-
-#notice {
-    background: #FFF6BF;
-    border-top: 2px solid #FFD324;
-    border-bottom: 2px solid #FFD324;
-    text-align: center;
-    margin: 10px auto;
-    padding: 5px 20px;
 }

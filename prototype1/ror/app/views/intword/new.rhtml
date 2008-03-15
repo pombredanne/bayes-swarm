@@ -1,5 +1,9 @@
 <h1>New Interesting word</h1>
 
+<% if flash[:notice] -%>
+<div id="notice"><%= flash[:notice] %></div>
+<% end -%>
+
 <% form_tag :action => 'create' do %>
   <%= render :partial => 'form' %>
   <%= submit_tag "Create" %>

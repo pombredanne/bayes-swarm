@@ -1,5 +1,9 @@
 <h1>Show Page</h1>
 
+<% if flash[:notice] -%>
+  <div id="notice"><%= flash[:notice] %></div>
+<% end -%>
+
 <p><b>Url</b>: <%= @page.url %></p>
 <p><b>Source</b>: <%= @page.source.name %></p>
 <p><b>Kind</b>: <%= @page.kind.kind %></p>

@@ -1,7 +1,6 @@
 class SourceController < ApplicationController
+  #scaffold :source
   layout "standard"
-  # FIXME: add destroy
-  before_filter :authorize, :only => [:edit]
 
   def index
     list

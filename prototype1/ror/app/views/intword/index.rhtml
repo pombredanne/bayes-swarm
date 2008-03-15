@@ -1,6 +1,10 @@
 <h1>Interesting words</h1>
 
 <h2>Search for a word</h2>
+<% if flash[:notice] -%>
+  <div id="notice"><%= flash[:notice] %></div>
+<% end -%>
+
 <div id="stem_cloud">
 <% form_tag :action => 'find' do %>
   <%= render :partial => 'form_search', :locals => {:advanced => false} %>

@@ -8,7 +8,7 @@ class HomeController < ApplicationController
 
     @attr = 'imp'
     @action = 'show'
-    @intwords = Intword.find_popular(Locale.language.id, '1m', 50, @attr, 1)
+    @intwords = Intword.find_popular(Locale.language.id, 1, 50, @attr, 1)
 #    r = R_Config::R
 #    @r_dnorm = r.dnorm(1)
   end

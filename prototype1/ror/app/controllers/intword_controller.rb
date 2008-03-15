@@ -1,21 +1,20 @@
 class IntwordController < ApplicationController
   helper   :plot
   layout   "standard"
-  # FIXME: add delete
-  before_filter :authorize, :only => [:edit, :notvisible_cloud, :csv]
-
+  
   def index  
     # cloud
     @attr = 'imp'
     @action = 'show'
-    @intwords = Intword.find_popular(Locale.language.id, '1m', 999999, @attr, 1)
+    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 1)
   end
   
   def show
     @ids = params[:id]
     intword_ids = @ids.split("-")
     
-    @iws = intword_ids.map { |id| Intword.find(id)}    
+    @iws = intword_ids.map { |id| Intword.find(id)}
+    
     @intervals = ['1y', '6m', '3m', '1m', '2w']
   end
   
@@ -55,7 +54,7 @@ class IntwordController < ApplicationController
   def find
     iw_search = params[:intword]
     @attr = 'imp'
-    @intwords = Intword.find_popular(iw_search['language_id'], '1m', 999999, @attr, nil, iw_search['name'])
+    @intwords = Intword.find_popular(iw_search['language_id'], 1, 999999, @attr, nil, iw_search['name'])
 
     if (@intwords.empty?)
       flash[:notice] = "No words matched your search, try a shorter one, ie 'chin' instead of 'china'"
@@ -79,42 +78,42 @@ class IntwordController < ApplicationController
   def cloud
     @attr = 'imp'
     @action = 'show'
-    @intwords = Intword.find_popular(Locale.language.id, '1m', 999999, @attr, 1)
+    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 1)
   end
   
   def notvisible_cloud
     @attr = 'imp'
     @action = 'edit'
-    @intwords = Intword.find_popular(Locale.language.id, '2w', 499, @attr, 0)
-  end
-  
-  def corr_matrix
-    @iws, @iws_corr = Intword.find_correlation_matrix(Locale.language.id, '1m', 9)
+    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 0)
   end
   
   def plot
     require 'gruff'
     g = Gruff::Line.new(500)
+#    g.title = "time series plot"
     g.hide_title = true
 
     intword_ids = params[:id].split("-")
-    labels = nil
+    iwtses = ActiveSupport::OrderedHash.new()
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
       begin
-        if intword_ids.length > 1
-          iwts = iw.get_time_series(params[:period], true)
-        else
-          iwts = iw.get_time_series(params[:period], false)
-        end
-        g.data(iw.name, iwts.values)
-        labels = iwts.labels
+        iwts = iw.get_time_series(params[:period]) 
+        iwtses[iw] = iwts
       rescue RuntimeError
         #return nil
       end
     end
     
-    g.labels = labels
+    if (iwtses != [])
+      armonized_iwtses = IntwordTimeSeries.armonize(iwtses.values)
+      iwtses.each_with_index do |iw, i|
+        g.data(iw[0].name, armonized_iwtses[i].values)
+      end
+      g.labels = armonized_iwtses[0].labels
+    else
+      nil
+    end
       
     send_data(g.to_blob, 
               :disposition => 'inline', 
@@ -129,6 +128,8 @@ class IntwordController < ApplicationController
     g.title = "News Pie"
     # check empty stems
     intword_ids = params[:id].split("-")
+    #intword_ids = "1-2".split("-")
+    iwtses = ActiveSupport::OrderedHash.new()
     intword_ids.each do |iw_id|
       iw = Intword.find(iw_id)
       begin
@@ -165,7 +166,7 @@ class IntwordController < ApplicationController
     dates = nil
     iw_ids.each do |iw_id|
       iw = Intword.find(iw_id)
-      iw_ts = iw.get_time_series(params[:period], force_complete=true)
+      iw_ts = iw.get_time_series(params[:period])
       iw_tss[iw] = iw_ts
       dates = iw_ts.dates
     end

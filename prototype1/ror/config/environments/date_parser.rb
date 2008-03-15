@@ -39,12 +39,7 @@ class Date
       
         result = Date.new(year, month, day)
       when 'y'
-        # make sure the date is valid Date.new(2008, 2, 29).subtract_interval('1y') => 2008/02/28
-        day = self.day
-        while (Date.valid_civil?(self.year - n, self.month, day).nil?)
-          day -= 1
-        end
-        result = Date.new(self.year - n, self.month, day)
+        result = Date.new(self.year - n, self.month, self.day)
       end
     else
       raise ArgumentError
