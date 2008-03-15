@@ -1,0 +1,28 @@
+<h1>Interesting words</h1>
+
+<h2>Search for a word</h2>
+<% if flash[:notice] -%>
+  <div id="notice"><%= flash[:notice] %></div>
+<% end -%>
+
+<div id="stem_cloud">
+<% form_tag :action => 'find' do %>
+  <%= render :partial => 'form_search', :locals => {:advanced => false} %>
+  <%= submit_tag "Search" %>
+<% end %>
+</div>
+<p><%= link_to "Advanced search".t, { :controller => "intword",
+                                      :action => "search"}%></p>
+                                      
+<h2>Cloud</h2>
+<div id="stem_cloud">
+  <%= render :partial => "cloud", :locals => { :intwords => @intwords,
+                                               :action => @action } %>
+</div>
+
+<h2>Other</h2>
+<p>
+  <%= link_to "New intword", { :controller => "intword",
+                               :action => "new",
+                             } %>
+</p>

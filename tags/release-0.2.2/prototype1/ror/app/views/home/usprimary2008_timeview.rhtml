@@ -1,0 +1,53 @@
+<h1>US Primary 2008 </h1>
+
+<table> <tr> 
+	<td>
+		 <% if ( params[:id] != @candidate["all"]) %>  
+	     <%= link_to "All", { :controller => "home",
+	                               :action => "usprimary2008_timeview",
+	                               :id => @candidate["all"] } %>
+	     <% else %>  All  <% end %>
+    </td>
+	<td> 
+		 <% if ( params[:id] != @candidate["dem"]) %> 
+		 <%= link_to "Democrats", { :controller => "home",
+							       :action => "usprimary2008_timeview",
+		                           :id => @candidate["dem"] } %>
+		  <% else %>  Democrats  <% end %>
+		 </td>
+	<td>  
+	     <% if ( params[:id] != @candidate["rep"]) %>
+	     <%= link_to "Republicans", { :controller => "home",
+								   :action => "usprimary2008_timeview",
+							       :id => @candidate["rep"] } %>
+		 <% else %>  Republicans  <% end %>					
+		 </td>	
+	</tr>	
+</table>
+	
+
+
+<p align="center">
+    <img src="<%= url_for( :controller => 'intword', 
+                           :action => 'plot',
+                           :id => params[:id],
+                           :period => params[:period]) %>" 
+         alt="time series plot loading.."
+         width="500" height="375"/>
+</p>
+
+
+
+
+<table>
+	<tr> <td> <%= link_to "Today",
+	                { :controller => "home",
+				      :action => "usprimary2008",
+				      :id => params[:id] } %> </td>  
+	     <td> Time Series </td>	 
+	</tr>
+</table>
+<p></p>
+
+
+	
