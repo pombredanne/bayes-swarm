@@ -14,6 +14,13 @@
 <%= link_to 'Previous page', { :page => @source_pages.current.previous } if @source_pages.current.previous %>
 <%= link_to 'Next page', { :page => @source_pages.current.next } if @source_pages.current.next %> 
 
-<br />
+<% if !(params[:action] == 'listall' ) %>
+<p>
+  Note: only sources with pages are displayed,
+  <%= link_to 'full list', :action => 'listall' %>.
+</p>
+<% end %>
 
-<%= link_to 'New source', :action => 'new' %>
+<p>
+  <%= link_to 'New source', :action => 'new' %>
+</p>

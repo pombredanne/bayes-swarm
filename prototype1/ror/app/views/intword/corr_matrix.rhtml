@@ -1,0 +1,27 @@
+<h1>correlation matrix</h1>
+
+<table width=100% style="text-align: center;">
+  <tr>
+    <td></td>
+    <% @iws.each_with_index do |iw_b, i_b| %>
+      <td>
+        <%= iw_b.name %>
+      </td>
+    <% end %>
+  </tr>
+<% @iws.each_with_index do |iw_a, i_a| %>
+  <tr>
+    <td>
+      <%= iw_a.name %>
+    </td>
+    <% @iws.each_with_index do |iw_b, i_b| %>
+      <td>
+        <%= link_to [(@iws_corr[i_a][i_b].to_f*100).round, '%'].join,
+                    {:action=>'show',
+                     :id=>[iw_a.id, iw_b.id].join('-'),
+                     :period=>'1m'} unless (iw_a.id==iw_b.id)%>
+      </td>
+    <% end %>
+  </tr>
+<% end %>
+</table>

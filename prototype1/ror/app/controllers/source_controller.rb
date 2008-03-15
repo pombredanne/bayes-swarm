@@ -1,7 +1,6 @@
 class SourceController < ApplicationController
   layout "standard"
-  # FIXME: add destroy
-  before_filter :authorize, :only => [:edit]
+  before_filter :authorize, :only => [:edit, :new, :destroy]
 
   def index
     list
@@ -16,7 +15,28 @@ class SourceController < ApplicationController
                                        :per_page => 20,
                                        :conditions=>["id IN (?)", sources_with_pages_in_cur_locale])
   end
+  
+  def listall
+    @source_pages, @sources = paginate(:source,
+                                       :per_page => 20)
+    render :action => 'list'
+  end
+
+  def new
+    @source = Source.new
+  end
+
+  def create
+    @source = Source.new(params[:source])
     
+    if @source.save
+      flash[:notice] = 'Source was successfully created.'
+      redirect_to :action => 'new'
+    else
+      render :action => 'new'
+    end
+  end
+
   def edit
     @source = Source.find(params[:id])
   end
@@ -36,4 +56,15 @@ class SourceController < ApplicationController
     @source = Source.find(params[:id])
   end
   
+  def destroy
+    @source = Source.find(params[:id])
+    
+    if @source.destroy()
+      flash[:notice] = 'Source was successfully destroyed.'
+      redirect_to :action => 'list'
+    else
+      flash[:notice] = 'Source was not successfully destroyed.'    
+      redirect_to :action => 'list'
+    end
+  end
 end
