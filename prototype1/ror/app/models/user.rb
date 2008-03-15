@@ -6,6 +6,10 @@ class User < ActiveRecord::Base
     self.hashed_password = User.hash_password(self.password)
   end
   
+  def after_create
+    @password = nil
+  end
+  
   def self.hash_password(password)
     Digest::SHA1.hexdigest(password)
   end

@@ -1,12 +1,14 @@
 class Intword < ActiveRecord::Base
   belongs_to :language
   has_many :words
+  attr_accessor :corr
 
   validates_presence_of :name, :language_id
   validates_uniqueness_of :name, :scope => :language_id
 
-  def self.find_popular(l_id, n_months=1, n=999999, order_column="imp", visible=1, like=nil)
-    condi = "scantime>='#{Date.today()<<n_months}' AND language_id = #{l_id}"
+  def self.find_popular(l_id, interval='1m', n=999999, order_column="imp", visible=1, like=nil)
+    first_date = Date.today.subtract_interval(interval)
+    condi = "scantime>='#{first_date}' AND language_id = #{l_id}"
     if (!visible.nil?)
       condi = [condi, "visible=#{visible}"].join(' AND ')
     end     
@@ -99,30 +101,40 @@ class Intword < ActiveRecord::Base
                                group by intword_id 
                                having count(intword_id)>=#{n_hits*2/3.0}")
 
-    corr_iwtses = ActiveSupport::OrderedHash.new()
-    iws.each_with_index do |iw, i|
+    iws.each do |iw|
         iwts = iw.get_time_series(interval, true)
         if iwts.complete
-          corr_iwtses[iw] = self_iwts.correlation(iwts)
+          iw.corr = self_iwts.correlation(iwts)
         else
-          iws.delete(iw)
+          iw.corr = nil
         end
     end
     
-    if (corr_iwtses == [])
+    if (iws == [])
       return nil
     else
       # sort by correlation ascending
-      res = corr_iwtses.sort {|x,y| x[1] <=> y[1]}
-      # keep only 3 records
-      res2 = ActiveSupport::OrderedHash.new()
-      2.downto(0) do
-        e = res.pop
-        res2[e[0]] = e[1]
-      end
-     
-      return res2
+      res = iws.select {|iw| !iw.corr.nil?}
+      res = res.sort_by {|iw| iw.corr}
+      res = res.slice!(-3, res.length)
+      return res.reverse
     end
+  end
+
+  # computes the correlation matrix on the n most popular intwords
+  # for a given language
+  def self.find_correlation_matrix(language_id, interval, n)
+    popiws = find_popular(language_id, interval, n)
+    corr_popiws = []
+    
+    popiws.each_with_index do |iw_a, i_a|
+      corr_popiws[i_a] = []
+      iwts_a = iw_a.get_time_series(interval)
+      popiws.each_with_index do |iw_b, i_b|
+        corr_popiws[i_a][i_b] = iwts_a.correlation(iw_b.get_time_series(interval))
+      end
+    end
+    return popiws, corr_popiws
   end
 
 end

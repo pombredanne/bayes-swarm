@@ -1,12 +1,14 @@
 class IntwordController < ApplicationController
   helper   :plot
   layout   "standard"
-  
+  # FIXME: add delete
+  before_filter :authorize, :only => [:edit, :notvisible_cloud, :csv]
+
   def index  
     # cloud
     @attr = 'imp'
     @action = 'show'
-    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 1)
+    @intwords = Intword.find_popular(Locale.language.id, '1m', 999999, @attr, 1)
   end
   
   def show
@@ -53,7 +55,7 @@ class IntwordController < ApplicationController
   def find
     iw_search = params[:intword]
     @attr = 'imp'
-    @intwords = Intword.find_popular(iw_search['language_id'], 1, 999999, @attr, nil, iw_search['name'])
+    @intwords = Intword.find_popular(iw_search['language_id'], '1m', 999999, @attr, nil, iw_search['name'])
 
     if (@intwords.empty?)
       flash[:notice] = "No words matched your search, try a shorter one, ie 'chin' instead of 'china'"
@@ -77,13 +79,17 @@ class IntwordController < ApplicationController
   def cloud
     @attr = 'imp'
     @action = 'show'
-    @intwords = Intword.find_popular(Locale.language.id, 1, 999999, @attr, 1)
+    @intwords = Intword.find_popular(Locale.language.id, '1m', 999999, @attr, 1)
   end
   
   def notvisible_cloud
     @attr = 'imp'
     @action = 'edit'
-    @intwords = Intword.find_popular(Locale.language.id, 1, 499, @attr, 0)
+    @intwords = Intword.find_popular(Locale.language.id, '2w', 499, @attr, 0)
+  end
+  
+  def corr_matrix
+    @iws, @iws_corr = Intword.find_correlation_matrix(Locale.language.id, '1m', 9)
   end
   
   def plot
