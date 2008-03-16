@@ -1,4 +1,6 @@
 Bayes-Swarm 0.2.3 (Not released yet)
+        * Added new/edit/destroy for pages and sources, restricted
+          to registered users only
         * Added users table with login/logout views
         * Added admin section with translation page (inline edit)
 

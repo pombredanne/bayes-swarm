@@ -121,6 +121,7 @@ class Intword < ActiveRecord::Base
     end
   end
 
+
   # computes the correlation matrix on the n most popular intwords
   # for a given language
   def self.find_correlation_matrix(language_id, interval, n)
