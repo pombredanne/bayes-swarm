@@ -1,4 +1,4 @@
--- add id column to intwords
+-- add id column to words
 alter table words drop foreign key `fk_word_page`;
 alter table words drop foreign key `fk_word_intword`;
 alter table words drop key `fk_word_page`;
