@@ -13,6 +13,7 @@
         <h3><%= "Browse the documentation".t -%></h3>
         <ul class="links">
           <li><%= link_to "documentation".t, { :controller => "home", :action => "doc"} %></li>
+		  <li><%= link_to "wiki".t, { :controller => "wiki", :action => "view" , :path => ""} %></li>	
           <li><a href="http://bayes-swarm.googlecode.com/"><%= "development".t -%></a></li>
         </ul>
       </li>
