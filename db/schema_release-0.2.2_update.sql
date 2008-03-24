@@ -3,7 +3,7 @@
 ALTER TABLE intwords ADD column visible TINYINT(1) NOT NULL DEFAULT 0;
 UPDATE intwords SET visible = 1;
 
--- add id column to intwords
+-- add id column to words
 alter table words drop foreign key `fk_word_page`;
 alter table words drop foreign key `fk_word_intword`;
 alter table words drop key `fk_word_page`;
