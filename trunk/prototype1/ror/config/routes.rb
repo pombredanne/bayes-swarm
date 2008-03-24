@@ -12,17 +12,22 @@ ActionController::Routing::Routes.draw do |map|
   # You can have the root of your site routed by hooking up '' 
   # -- just remember to delete public/index.html.
   map.connect '', :controller => "home"
+  
+  # wiki proxy
+  map.wiki ':locale/wiki/*path' ,
+    :controller => "wiki",
+    :action => "view"  
 
   # Allow downloading Web Service WSDL as a file with an extension
   # instead of a file named 'wsdl'
   map.connect ':controller/service.wsdl', :action => 'wsdl'
-
+  
   # Install the default route as the lowest priority.
   #map.connect ':controller/:action/:id.:format'
   map.connect(':locale/:controller/:action/:id/:period')
   map.connect ':locale/:controller/:action/:id', :period=>'3m'
   map.connect ':locale/:controller/:action/:id'
-
+  
   # redirect old website relevant links
   map.connect 'addword', :controller=>'intword', :action=>'new'
   map.connect 'int_words', :controller=>'intword', :action=>'index'
