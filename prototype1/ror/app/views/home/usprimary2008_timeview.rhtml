@@ -28,12 +28,7 @@
 
 
 <p align="center">
-    <img src="<%= url_for( :controller => 'intword', 
-                           :action => 'plot',
-                           :id => params[:id],
-                           :period => params[:period]) %>" 
-         alt="time series plot loading.."
-         width="500" height="375"/>
+    <%= @ofcgraph %>
 </p>
 
 

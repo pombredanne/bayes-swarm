@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+	<ModulePrefs 
+		title="BayesFor 2008 Primary Monitor ( __UP_party__ )" 
+		directory_title="U.S.2008 Primaries: BayesFor Monitor"
+		title_url="http://www.bayes-swarm.com"
+		description="Shows the latest projections for U.S. Primaries using data from the BayesFor analysis group"
+		author="Riccardo Govoni"
+		screenshot="http://www.bayes-swarm.com/ig/ig_us_primary.png"
+		thumbnail="http://www.bayes-swarm.com/ig/ig_us_primary_thumb.png"
+		author_email="battlehorse@gmail.com"
+		author_affiliation="BayesFor Association" >
+	<MayRequire type="plugin" value="flash"/>
+	<Require feature="settitle" />
+	</ModulePrefs>
+	<UserPref name="party" display_name="Party" default_value="All" datatype="enum">
+    	<EnumValue value="All"/>
+    	<EnumValue value="Democrats" />
+    	<EnumValue value="Republicans"/>
+  </UserPref>
+  <Content type="url" href="http://www.bayes-swarm.com/en/ig/elections?party=__UP_party__" /> 
+</Module>

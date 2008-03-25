@@ -1,5 +1,4 @@
 class IntwordController < ApplicationController
-  helper   :plot
   layout   "standard"
   # FIXME: add delete
   before_filter :authorize, :only => [:edit, :notvisible_cloud, :csv]
@@ -17,6 +16,8 @@ class IntwordController < ApplicationController
     
     @iws = intword_ids.map { |id| Intword.find(id)}    
     @intervals = ['1y', '6m', '3m', '1m', '2w']
+    
+    @ofcgraph = open_flash_chart_object(500,375, "/#{params[:locale]}/ofc/line/#{params[:id]}/#{params[:period]}", false, '/')     
   end
   
   def new
@@ -91,67 +92,7 @@ class IntwordController < ApplicationController
   def corr_matrix
     @iws, @iws_corr = Intword.find_correlation_matrix(Locale.language.id, '1m', 9)
   end
-  
-  def plot
-    require 'gruff'
-    g = Gruff::Line.new(500)
-    g.hide_title = true
-
-    intword_ids = params[:id].split("-")
-    labels = nil
-    intword_ids.each do |iw_id|
-      iw = Intword.find(iw_id)
-      begin
-        if intword_ids.length > 1
-          iwts = iw.get_time_series(params[:period], true)
-        else
-          iwts = iw.get_time_series(params[:period], false)
-        end
-        g.data(iw.name, iwts.values)
-        labels = iwts.labels
-      rescue RuntimeError
-        #return nil
-      end
-    end
-    
-    g.labels = labels
       
-    send_data(g.to_blob, 
-              :disposition => 'inline', 
-              :type => 'image/png', 
-              :filename => "ts.png")
-  
-  end  
-  
-  def pie
-    require 'gruff'
-    g = Gruff::Pie.new(500)
-    g.title = "News Pie"
-    # check empty stems
-    intword_ids = params[:id].split("-")
-    intword_ids.each do |iw_id|
-      iw = Intword.find(iw_id)
-      begin
-        iwts = iw.get_time_series(params[:period]).values.sum
-      rescue RuntimeError
-        #return nil
-      end
-      if (iwts == nil ) 
-        iwts = 0
-      end  
-      if (iwts != [])
-        g.data(iw.name, iwts)
-      else
-        nil
-      end
-    end  
-    send_data(g.to_blob, 
-              :disposition => 'inline', 
-              :type => 'image/png', 
-              :filename => "ts.png")
-  
-  end
-  
   def csv
     def generate_line(row)
       row_sep = $INPUT_RECORD_SEPARATOR

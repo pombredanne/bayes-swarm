@@ -74,5 +74,3 @@ require 'environments/array_stats.rb'
 # Date#subtract_interval()
 require 'environments/date_parser.rb'
 
-# Sparklines
-require 'sparklines'

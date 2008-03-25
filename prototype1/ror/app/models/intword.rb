@@ -191,20 +191,6 @@ class IntwordTimeSeries
     @values = values
   end
 
-  # returns a n=>date hash to be used with Gruff.labels()
-  # only monthly dates are returned
-  def labels
-    l = Hash.new()
-    i = 0
-    cur_date = dates.last<<i
-    while ((cur_date - dates.first).to_i >= 0)
-      l[(cur_date - dates.first).to_i] = cur_date.strftime("%b %d")
-      i += 1
-      cur_date = dates.last<<i
-    end
-    l
-  end
-
   def correlation(other)
     self.values.correlation(other.values)
   end
