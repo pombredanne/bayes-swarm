@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?> 
+<Module>
+	<ModulePrefs title="BayesFor 2008 Monitor Elezioni" 
+		directory_title="Elezioni Italiane 2008: Monitoraggio BayesFor"
+		title_url="http://www.bayes-swarm.com"
+		description="Mostra le ultime proiezioni per le elezioni italiani attraverso le analisi del gruppo BayesFor"
+		author="Riccardo Govoni"
+		screenshot="http://www.bayes-swarm.com/ig/ig_ita_elezioni.png"
+		thumbnail="http://www.bayes-swarm.com/ig/ig_ita_elezioni_thumb.png"
+		author_email="battlehorse@gmail.com"
+		author_affiliation="Associazione BayesFor" >
+		<MayRequire type="plugin" value="flash"/>
+	</ModulePrefs> 
+  <Content type="url" href="http://www.bayes-swarm.com/en/ig/elections?party=ita" /> 
+</Module>

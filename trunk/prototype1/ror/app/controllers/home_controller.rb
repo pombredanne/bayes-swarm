@@ -33,6 +33,8 @@ class HomeController < ApplicationController
    
     @intword_ids = params[:id].split("-")
     
+    @ofcgraph = open_flash_chart_object(500,375, "/#{params[:locale]}/ofc/pie/#{params[:id]}", false, '/')    
+    
 #    @candidate_series = Array.new() 
 #    @candidate_names  = Array.new()
 #    count = 0
@@ -62,12 +64,7 @@ class HomeController < ApplicationController
         params[:id] = @candidate["rep"]
       end
 
-
+    @ofcgraph = open_flash_chart_object(500,375, "/#{params[:locale]}/ofc/line/#{params[:id]}/#{params[:period]}", false, '/')
 
     end 
-end
-
-class SpecialReportController < ApplicationController
-  helper :sparklines
-
 end
