@@ -74,3 +74,6 @@ require 'environments/array_stats.rb'
 # Date#subtract_interval()
 require 'environments/date_parser.rb'
 
+#Pagestore location
+PAGESTORE_LOCATION = "/Users/battlehorse/Downloads/"
+

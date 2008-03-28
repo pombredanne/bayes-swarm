@@ -3,9 +3,11 @@
 <head>
   <title>Bayes-Swarm - bayesian web spidering by BayesFor</title>
   <%= stylesheet_link_tag "standard", :media => "all" %>
+  <%= stylesheet_link_tag "lytebox", :media => "all" %>
+  <%= javascript_include_tag :defaults %>
+  <%= javascript_include_tag "bayes" , "lytebox" %>
 </head>
 <body>
-<%= javascript_include_tag :defaults %>
 <div id="page">
     <div id="sidebar">
     <ul id="sidebar-items">

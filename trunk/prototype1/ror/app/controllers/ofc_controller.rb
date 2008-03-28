@@ -85,6 +85,10 @@ class OfcController < ApplicationController
         dates ||= iwts.dates
 
         g.set_data(iwts.values.map{|x| x.nil? ? 0 : x })
+        lcount = -1;
+        unless igoogle?
+          g.set_links(iwts.values.map{|x| lcount += 1; "javascript:breakdown('" + url_for(:controller => "pagestore" , :action => "show" , :date => dates[lcount] , :id => params[:id]) + "')" })
+        end
         g.line_dot(2, 4, colors[ col_count % colors.size] , iw.name, 10)
         
         col_count += 1
@@ -110,7 +114,7 @@ class OfcController < ApplicationController
       g.set_title(options[:title], "{font-size: 18px; font-weight: bolder; color: #{options[:title_color]}}")
     end
       
-    g.set_tool_tip("#key#: #val#")
+    g.set_tool_tip("#key#<br>#x_label# (#val# occurrences)")
 
     render :text => g.render
   end

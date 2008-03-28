@@ -187,3 +187,34 @@ table.pages { font-size: 10px }
     margin: 10px auto;
     padding: 5px 20px;
 }
+
+table.pagestore td {
+	border-bottom: 1px solid #999;
+}
+
+table.pagestore .url {
+	font-size: 80%;
+}
+
+table.pagestore .rss {
+	background: transparent url(../images/feed-icon-14x14.png) no-repeat ;
+	padding-left: 16px;
+}
+
+table.pagestore A.timemachine, table.pagestore A.timemachine:visited {
+	color: #000;
+	text-decoration: none;
+	background-color: transparent;
+}
+
+table.pagestore A.timemachine:hover {
+	color: #000;
+	text-decoration: underline;	
+	background-color: #fffc23;
+}
+
+
+.new {
+	font-size: 80%;
+	color: #ff0000;
+}
