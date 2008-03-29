@@ -31,6 +31,9 @@ class WikiController < ApplicationController
       end
     end    
     
+    # Remove the comment section, since it doesn't work
+    (doc/"div.comment_wrapper").remove
+    
     @wiki = (doc/"div.page")
     
   end
