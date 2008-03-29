@@ -19,6 +19,17 @@
           <li><a href="http://bayes-swarm.googlecode.com/"><%= "development".t -%></a></li>
         </ul>
       </li>
+	  <li>
+		<h3><%= "Featured".t -%></h3>
+		<ul class="links">
+			<li><%= link_to "US Primary 2008" , :controller => "featured" , :action => "usprimary2008" %>
+				<sup class="new">new</sup>
+			</li>
+			<li><%= link_to "Italian Elections 2008" , :controller => "featured" , :action => "ita2008" %>
+				<sup class="new">new</sup>
+			</li>
+		</ul>
+	  </li>
       <li>
         <h3><%= "Get in touch".t -%></h3>
         <ul class="links">
