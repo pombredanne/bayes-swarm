@@ -5,22 +5,19 @@
 <table> <tr> 
 	<td>
 		 <% if ( params[:id] != @candidate["all"]) %>  
-	     <%= link_to "All", { :controller => "home",
-	                               :action => "usprimary2008",
+	     <%= link_to "All", { :action => "usprimary2008",
 	                               :id => @candidate["all"] } %>
 	     <% else %>  All  <% end %>
     </td>
 	<td> 
 		 <% if ( params[:id] != @candidate["dem"]) %> 
-		 <%= link_to "Democrats", { :controller => "home",
-							       :action => "usprimary2008",
+		 <%= link_to "Democrats", { :action => "usprimary2008",
 		                           :id => @candidate["dem"] } %>
 		  <% else %>  Democrats  <% end %>
 		 </td>
 	<td>  
 	     <% if ( params[:id] != @candidate["rep"]) %>
-	     <%= link_to "Republicans", { :controller => "home",
-								   :action => "usprimary2008",
+	     <%= link_to "Republicans", { :action => "usprimary2008",
 							       :id => @candidate["rep"] } %>
 		 <% else %>  Republicans  <% end %>					
 		 </td>	
@@ -35,8 +32,7 @@
 
 <table>
 	<tr> <td> Popularity Pie </td> <td> <%= link_to "Time Series",
-	                            { :controller => "home",
-						          :action => "usprimary2008_timeview",
+	                            { :action => "usprimary2008_timeview",
 						          :id => params[:id] } %> </td>  
 	</tr>
 </table>
