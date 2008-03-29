@@ -1,6 +1,9 @@
 class FeaturedController < ApplicationController
   layout "standard"
   
+  def index
+  end
+  
   def usprimary2008
     # def interesting words for usprimary2008
     @candidate={"all" => "330-331-333-321-332", 
