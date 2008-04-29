@@ -1,5 +1,9 @@
-Bayes-Swarm 0.2.3 (Not released yet)
-        * Added new/edit/destroy for pages and sources, restricted
+Bayes-Swarm 0.2.3 (2008-04-29), svn 289
+	* Added wiki link (show bayesfor.eu wiki pages in bayes-swarm.com domain)
+	* Added TimeMachine (browse, show, highlight saved pages)
+	* Added igoogle support for u.s.primaries and italian elections pie charts
+	* Removed gruff and sparklines, introduced openflashchart
+        * Added new/edit/destroy/csv for pages and sources, restricted
           to registered users only
         * Added users table with login/logout views
         * Added admin section with translation page (inline edit)
