@@ -1,6 +1,6 @@
 class PageController < ApplicationController
   layout "standard"
-  before_filter :authorize, :only => [:edit, :new, :destroy]
+  before_filter :authorize, :only => [:edit, :new, :destroy, :csv]
   
   def index
     list
@@ -58,5 +58,30 @@ class PageController < ApplicationController
       flash[:notice] = 'Page was not successfully destroyed.'    
       redirect_to :action => 'list'
     end
-  end  
+  end
+
+  def csv
+    def generate_line(row)
+      row_sep = $INPUT_RECORD_SEPARATOR
+      [row, row_sep].join()
+    end
+
+    rows = nil
+    header = nil
+    Page.find(:all).each_with_index do |p, i|
+      if i == 0
+        header = generate_line(p.attributes.keys.join(','))
+      end
+      
+      row = generate_line(p.attributes.values.join(','))
+      rows = [rows, row].join()
+    end
+    
+    csv = [header, rows].join
+
+    send_data(csv,
+              :type => 'text/csv; charset=iso-8859-1; header=present',
+              :disposition => "attachment; filename=pages.csv")
+  end
+
 end

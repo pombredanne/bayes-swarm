@@ -1,6 +1,6 @@
 class SourceController < ApplicationController
   layout "standard"
-  before_filter :authorize, :only => [:edit, :new, :destroy]
+  before_filter :authorize, :only => [:edit, :new, :destroy, :csv]
 
   def index
     list
@@ -67,4 +67,29 @@ class SourceController < ApplicationController
       redirect_to :action => 'list'
     end
   end
+
+  def csv
+    def generate_line(row)
+      row_sep = $INPUT_RECORD_SEPARATOR
+      [row, row_sep].join()
+    end
+
+    rows = nil
+    header = nil
+    Source.find(:all).each_with_index do |s, i|
+      if i == 0
+        header = generate_line(s.attributes.keys.join(','))
+      end
+
+      row = generate_line(s.attributes.values.join(','))
+      rows = [rows, row].join()
+    end
+
+    csv = [header, rows].join
+
+    send_data(csv,
+              :type => 'text/csv; charset=iso-8859-1; header=present',
+              :disposition => "attachment; filename=sources.csv")
+  end
+
 end
