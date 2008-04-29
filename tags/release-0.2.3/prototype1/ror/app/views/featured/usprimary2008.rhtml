@@ -1,0 +1,45 @@
+<h1>US Primary 2008 </h1>
+<p>We are currently monitoring the US Primaries 2008. Here you can see our updated data on candidates media coverage.</p>
+<p>Click on slices of the pie to access coverage data for every candidate.</p>
+
+<table> <tr> 
+	<td>
+		 <% if ( params[:id] != @candidate["all"]) %>  
+	     <%= link_to "All", { :action => "usprimary2008",
+	                               :id => @candidate["all"] } %>
+	     <% else %>  All  <% end %>
+    </td>
+	<td> 
+		 <% if ( params[:id] != @candidate["dem"]) %> 
+		 <%= link_to "Democrats", { :action => "usprimary2008",
+		                           :id => @candidate["dem"] } %>
+		  <% else %>  Democrats  <% end %>
+		 </td>
+	<td>  
+	     <% if ( params[:id] != @candidate["rep"]) %>
+	     <%= link_to "Republicans", { :action => "usprimary2008",
+							       :id => @candidate["rep"] } %>
+		 <% else %>  Republicans  <% end %>					
+		 </td>	
+	</tr>	
+</table>
+	
+
+<p align="center">
+	<%= @ofcgraph %>
+
+</p>
+
+<table>
+	<tr> <td> Popularity Pie </td> <td> <%= link_to "Time Series",
+	                            { :action => "usprimary2008_timeview",
+						          :id => params[:id] } %> </td>  
+	</tr>
+</table>
+
+<h3>Add it to your iGoogle</h3>
+<p>By clicking this button, you can add this graph to your <a href="http://www.google.com/ig">iGoogle</a> homepage!</p>
+<a href="http://fusion.google.com/add?source=atgs&moduleurl=http%3A//www.bayes-swarm.com/ig/ig_us_primary.xml"><img src="http://buttons.googlesyndication.com/fusion/add.gif" border="0" alt="Add to Google"></a>
+
+
+	

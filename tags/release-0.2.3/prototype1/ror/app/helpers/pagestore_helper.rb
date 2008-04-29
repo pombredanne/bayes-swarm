@@ -1,0 +1,2 @@
+module PagestoreHelper
+end

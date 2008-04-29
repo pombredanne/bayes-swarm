@@ -1,0 +1,35 @@
+Bayes-Swarm 0.2.3 (2008-04-29), svn 289
+	* Added wiki link (show bayesfor.eu wiki pages in bayes-swarm.com domain)
+	* Added TimeMachine (browse, show, highlight saved pages)
+	* Added igoogle support for u.s.primaries and italian elections pie charts
+	* Removed gruff and sparklines, introduced openflashchart
+        * Added new/edit/destroy/csv for pages and sources, restricted
+          to registered users only
+        * Added users table with login/logout views
+        * Added admin section with translation page (inline edit)
+
+Bayes-Swarm 0.2.2 (2008-03-15), svn 259
+        * Added intword controller 'csv' for retrieving time series in csv 
+          format
+        * Added notvisible_cloud view and upgraded ETL so that also
+          possible interesting words are loaded
+        * Added file storage capabilities to prototype1 ETL
+
+Bayes-Swarm 0.2.1 (2007-12-09), svn 225
+        * Added most correlated stem in show view
+        * Added multi-id support for show and plot intword view
+        * Added Globalize support for multi-language ROR website
+
+Bayes-Swarm 0.2 (2007-11-10), svn 191
+        * Added ActiveRecord support in ETL process
+        * First draft of new ROR website
+        * Added support for RSS pages
+        * First release of prototype2
+        * Added support for other languages other than english
+
+Bayes-Swarm 0.1 (2007-09-08), svn 92
+        * Added very basic website written with webpy
+        * Added interesting words concept
+        
+Bayes-Swarm 0.0.1 (2007-07-20)
+        * Initial release

@@ -1,0 +1,110 @@
+
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<!--
+
+    Methods
+
+  -->
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Methods</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <link rel="stylesheet" href="rdoc-style.css" type="text/css" />
+  <base target="docwin" />
+</head>
+<body>
+<div id="index">
+  <h1 class="section-bar">Methods</h1>
+  <div id="index-entries">
+    <a href="classes/ETLRunner.html#M000011">add_savepoints_to (ETLRunner)</a><br />
+    <a href="classes/ChainETL.html#M000054">b_send (ChainETL)</a><br />
+    <a href="classes/ChainETL.html#M000045">chain? (ChainETL)</a><br />
+    <a href="classes/ETLRunner.html#M000012">clean (ETLRunner)</a><br />
+    <a href="classes/ARHelper.html#M000073">close_connection (ARHelper)</a><br />
+    <a href="classes/DatabaseHelper.html#M000083">close_connection (DatabaseHelper)</a><br />
+    <a href="classes/MultiplexDTO.html#M000040">cur (MultiplexDTO)</a><br />
+    <a href="classes/MultiplexETL.html#M000078">deep_copy (MultiplexETL)</a><br />
+    <a href="classes/ETLRunner.html#M000010">enable_savepoints (ETLRunner)</a><br />
+    <a href="classes/ETLRunner.html#M000009">enrich_context (ETLRunner)</a><br />
+    <a href="classes/ETL.html#M000062">extract (ETL)</a><br />
+    <a href="classes/SavepointETL.html#M000028">extract (SavepointETL)</a><br />
+    <a href="classes/ChainETL.html#M000049">extract (ChainETL)</a><br />
+    <a href="classes/MultiplexETL.html#M000075">extract (MultiplexETL)</a><br />
+    <a href="classes/IdentityETL.html#M000001">extract (IdentityETL)</a><br />
+    <a href="classes/DatabaseLoader.html#M000025">get_page_id (DatabaseLoader)</a><br />
+    <a href="classes/DatabaseLoader.html#M000023">get_source_id (DatabaseLoader)</a><br />
+    <a href="classes/DatabaseLoader.html#M000021">get_strategy (DatabaseLoader)</a><br />
+    <a href="classes/ETLRunner.html#M000013">global_opt (ETLRunner)</a><br />
+    <a href="classes/ChainETL.html#M000046">global_opts= (ChainETL)</a><br />
+    <a href="classes/ChainETL.html#M000058">handle_block_exception (ChainETL)</a><br />
+    <a href="classes/MultiplexDTO.html#M000038">increment_exec (MultiplexDTO)</a><br />
+    <a href="classes/ETLRunner.html#M000008">init_context (ETLRunner)</a><br />
+    <a href="classes/ETLRunner.html#M000006">init_default_chains (ETLRunner)</a><br />
+    <a href="classes/ETLRunner.html#M000005">init_plugins (ETLRunner)</a><br />
+    <a href="classes/SimpleWordStrategy.html#M000068">insert (SimpleWordStrategy)</a><br />
+    <a href="classes/DatabaseLoader.html#M000020">insert_word (DatabaseLoader)</a><br />
+    <a href="classes/DatabaseLoader.html#M000019">insert_words (DatabaseLoader)</a><br />
+    <a href="classes/ChainETL.html#M000060">is_chain? (ChainETL)</a><br />
+    <a href="classes/ChainETL.html#M000061">is_mplex? (ChainETL)</a><br />
+    <a href="classes/ChainETL.html#M000059">is_savepoint? (ChainETL)</a><br />
+    <a href="classes/ETLDTO.html#M000017">json_create (ETLDTO)</a><br />
+    <a href="classes/WordDTO.html#M000033">json_create (WordDTO)</a><br />
+    <a href="classes/SourceDTO.html#M000071">json_create (SourceDTO)</a><br />
+    <a href="classes/PageDTO.html#M000043">json_create (PageDTO)</a><br />
+    <a href="classes/LanguageDTO.html#M000067">json_create (LanguageDTO)</a><br />
+    <a href="classes/MultiplexDTO.html#M000037">json_create (MultiplexDTO)</a><br />
+    <a href="classes/ChainETL.html#M000051">load (ChainETL)</a><br />
+    <a href="classes/DatabaseLoader.html#M000018">load (DatabaseLoader)</a><br />
+    <a href="classes/IdentityETL.html#M000003">load (IdentityETL)</a><br />
+    <a href="classes/MultiplexETL.html#M000077">load (MultiplexETL)</a><br />
+    <a href="classes/SavepointETL.html#M000030">load (SavepointETL)</a><br />
+    <a href="classes/ETL.html#M000064">load (ETL)</a><br />
+    <a href="classes/Log.html#M000079">log (Log)</a><br />
+    <a href="classes/MultiplexDTO.html#M000035">mplex? (MultiplexDTO)</a><br />
+    <a href="classes/SourceDTO.html#M000069">new (SourceDTO)</a><br />
+    <a href="classes/ETLRunner.html#M000004">new (ETLRunner)</a><br />
+    <a href="classes/ETLDTO.html#M000015">new (ETLDTO)</a><br />
+    <a href="classes/PageDTO.html#M000041">new (PageDTO)</a><br />
+    <a href="classes/LanguageDTO.html#M000065">new (LanguageDTO)</a><br />
+    <a href="classes/ChainETL.html#M000044">new (ChainETL)</a><br />
+    <a href="classes/WordDTO.html#M000031">new (WordDTO)</a><br />
+    <a href="classes/MultiplexDTO.html#M000034">new (MultiplexDTO)</a><br />
+    <a href="classes/SavepointETL.html#M000026">new (SavepointETL)</a><br />
+    <a href="classes/ARHelper.html#M000072">open_connection (ARHelper)</a><br />
+    <a href="classes/DatabaseHelper.html#M000082">open_connection (DatabaseHelper)</a><br />
+    <a href="classes/ChainETL.html#M000047">props= (ChainETL)</a><br />
+    <a href="classes/MultiplexDTO.html#M000039">reset_exec (MultiplexDTO)</a><br />
+    <a href="classes/ChainETL.html#M000048">resolve_props (ChainETL)</a><br />
+    <a href="classes/ETLRunner.html#M000007">run (ETLRunner)</a><br />
+    <a href="classes/ConditionETL.html#M000014">run? (ConditionETL)</a><br />
+    <a href="classes/ChainETL.html#M000053">run_block (ChainETL)</a><br />
+    <a href="classes/ChainETL.html#M000052">run_chain (ChainETL)</a><br />
+    <a href="classes/SavepointETL.html#M000027">savepoint? (SavepointETL)</a><br />
+    <a href="classes/ChainETL.html#M000057">set_step (ChainETL)</a><br />
+    <a href="classes/LanguageDTO.html#M000066">to_json (LanguageDTO)</a><br />
+    <a href="classes/ETLDTO.html#M000016">to_json (ETLDTO)</a><br />
+    <a href="classes/WordDTO.html#M000032">to_json (WordDTO)</a><br />
+    <a href="classes/MultiplexDTO.html#M000036">to_json (MultiplexDTO)</a><br />
+    <a href="classes/SourceDTO.html#M000070">to_json (SourceDTO)</a><br />
+    <a href="classes/PageDTO.html#M000042">to_json (PageDTO)</a><br />
+    <a href="classes/IdentityETL.html#M000002">transform (IdentityETL)</a><br />
+    <a href="classes/ChainETL.html#M000050">transform (ChainETL)</a><br />
+    <a href="classes/SavepointETL.html#M000029">transform (SavepointETL)</a><br />
+    <a href="classes/ETL.html#M000063">transform (ETL)</a><br />
+    <a href="classes/MultiplexETL.html#M000076">transform (MultiplexETL)</a><br />
+    <a href="classes/ChainETL.html#M000056">unless_step_over (ChainETL)</a><br />
+    <a href="classes/Log.html#M000081">verbose? (Log)</a><br />
+    <a href="classes/Log.html#M000080">verbose_log (Log)</a><br />
+    <a href="classes/ChainETL.html#M000055">while_mplexing (ChainETL)</a><br />
+    <a href="classes/ARHelper.html#M000074">with_connection (ARHelper)</a><br />
+    <a href="classes/DatabaseHelper.html#M000084">with_connection (DatabaseHelper)</a><br />
+    <a href="classes/DatabaseLoader.html#M000024">with_page (DatabaseLoader)</a><br />
+    <a href="classes/DatabaseLoader.html#M000022">with_source (DatabaseLoader)</a><br />
+  </div>
+</div>
+</body>
+</html>

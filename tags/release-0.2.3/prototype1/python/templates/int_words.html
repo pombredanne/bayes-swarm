@@ -1,0 +1,13 @@
+$def with (words)
+    <h2>list of interesting words</h2>
+    <table class="list">
+        <tr>
+            <td>id</td>
+            <td>name</td>
+        </tr>
+    $for word in words:
+        <tr>
+            <td>$word.id</td>
+            <td>$word.name</td>
+        </tr>
+    </table>
