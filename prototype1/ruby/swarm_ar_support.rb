@@ -48,7 +48,7 @@ class Page < ActiveRecord::Base
   belongs_to :language
   
   def language_name()
-    Page.find(self.id).language.code
+    Page.find(self.id).language.code.intern
   end
   def kind_name()
     Page.find(self.id).kind.kind.intern

@@ -1,15 +1,17 @@
 require 'rubygems'
-gem 'ferret'
 require 'ferret'
+require 'swarm_normalization'
+
+include Customlists
 
 class FerretStemmer
+  def initialize    
+    @langs = Customlists.bayesfor_stopwords
+  end
   
   def stem(content, lang)
-    langs = {:it => Ferret::Analysis::FULL_ITALIAN_STOP_WORDS,
-             :en => Ferret::Analysis::EXTENDED_ENGLISH_STOP_WORDS}
-  
     analyzer = StopAndStemAnalyzer.new
-    stream = analyzer.token_stream(nil, content, langs[lang])
+    stream = analyzer.token_stream(nil, content, @langs[lang])
     token = stream.next
     res = []
     until token.nil?
