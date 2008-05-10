@@ -28,6 +28,10 @@ class StopAndStemAnalyzer < Ferret::Analysis::Analyzer
   include Ferret::Analysis
   
   def token_stream(field, str, lang)
-    return StemFilter.new(StopFilter.new(LowerCaseFilter.new(StandardTokenizer.new(str)), lang))
+    if lang == :en
+      return StemFilter.new(StopFilter.new(LowerCaseFilter.new(StandardTokenizer.new(str)), lang))
+    else
+      return StopFilter.new(LowerCaseFilter.new(StandardTokenizer.new(str)), lang)
+    end
   end
 end
