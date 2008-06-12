@@ -1,0 +1,42 @@
+.bayes-side-popup-blue {
+	float: right;
+	width: 150px;
+	padding: 0.5em;
+	margin: 0 0.5em 0 0.5em;
+	font-size: 90%;	
+	border: 2px solid #265ED8;
+	background-color: #a0b9ef;	
+}
+
+
+.bayes-side-popup-yellow {
+	float: right;
+	width: 150px;
+	padding: 0.5em;
+	margin: 0 0.5em 0 0.5em;
+	font-size: 90%;	
+	border: 2px solid #F9790B;
+	background-color: #ffff8d;	
+}
+
+.bayes-side-popup-green {
+	float: right;
+	width: 150px;
+	padding: 0.5em;
+	margin: 0 0.5em 0 0.5em;
+	font-size: 90%;	
+	border: 2px solid #299831;
+	background-color: #7df883;	
+}
+
+.bayes-spacer {
+	height: 3.5em;
+}
+
+.bayes-main-contents TABLE.bayes-multicol,
+.bayes-main-contents TD.bayes-multicol {
+	border: 0;
+	padding: 0;
+	margin: 0;
+	background-color: transparent;
+}
