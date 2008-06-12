@@ -1,0 +1,134 @@
+BODY {
+	padding: 0;
+	margin: 0;
+	font-family: Verdana, sans-serif;
+	background-color: rgb(250,250,250);
+	font-size: 85%;
+}
+
+/* Headers */
+.bayes-header {
+	margin: 0;
+	padding: 0;
+	background: transparent url("./images/header_gradient_2.png") repeat-x bottom left;
+	height: 64px;
+	border-bottom: 2px solid #666;			
+}
+
+.bayes-header-logo-bar {
+	padding-top: 10px;
+	height: 50px;
+	float: left;
+}
+
+.bayes-header-logo {
+	width: 56px;
+	height: 64px;
+	filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='lib/tpl/bayes/images/bayes_logo_small.png', sizingMethod='scale');
+	float: left;
+}
+
+html>body .bayes-header-logo {
+  	width: 56px;
+  	height: 64px;
+  	background: transparent url("./images/bayes_logo_small.png") no-repeat top left;
+  	float: left;
+}
+      
+.bayes-header-tab-bar {
+	float: right;
+	text-align: right;
+	padding: 0 1em 0 0;
+	margin: 0;
+}
+
+/* Breadcrumbs */
+.bayes-breadcrumbs {
+	border-bottom: 1px solid #181818;			
+	color: #eee;
+	background: #181818 url("./images/gradient_footer.jpeg") repeat-x top left;
+	padding: 0;
+	margin: 0;
+	font-size: 80%;			
+}
+
+/* Main area and sidebar */
+.bayes-main {
+	padding: 0;
+	margin: 0;
+	clear: both;
+}
+
+.bayes-sidebar {
+	border-right: 1px solid #aaa;
+	border-bottom: 1px solid #aaa;			
+	width: 200px;
+	float: left;
+	padding: 0.2em 0.5em;
+	margin: 0;
+	background: rgb(240,240,240) url("./images/gradient_left.png") no-repeat top right;
+	min-height: 500px;
+	font-size: 80%;
+}
+
+.bayes-main-contents {
+	font-size: 85%;
+	padding: 0 0.5em;
+	margin-left: 215px;
+}
+
+.bayes-userinfo {
+	font-size: 90%;
+	text-align: right;
+	padding-bottom: 0.5em;
+}
+
+/* Footer */
+.bayes-footer {
+	border-top: 1px solid #181818;
+	border-bottom: 1px solid #181818;			
+	clear: both;
+	color: #eee;
+	background: #181818 url("./images/gradient_footer.jpeg") repeat-x top left;
+	padding: 0.5em;
+	font-size: 80%;
+}
+
+/* Section editing (disabled), Actions and search */
+.bayes-main .secedit {
+	display: none;
+}
+
+.bayes-actions {
+	clear:both;
+	font-size: 75%;
+	text-align: left;	
+	color: #aaa;
+	padding: 0.5em 0 0.2em 0.2em;
+}
+
+
+.bayes-search {
+	padding: 0;
+	margin: 0;
+	font-size: 85%;
+	white-space: nowrap;
+}
+
+/* Discussion */
+.bayes-main .bayes-main-contents .comment_wrapper {
+	background: #fafafa url("./images/discussion_gradient.png") repeat-x top left;
+	clear: none;
+	border-top: 1px solid #265ED8;
+	width: 90%;
+	margin: 30px 0 0 10px;
+}
+
+.bayes-main .bayes-main-contents .comment_wrapper .comment_head {
+	clear: none;
+	margin-top: 0;
+}
+
+.bayes-main .bayes-main-contents .comment_wrapper .comment_buttons FORM {
+	display: inline;
+}
