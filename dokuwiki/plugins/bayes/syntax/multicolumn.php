@@ -13,7 +13,7 @@ class syntax_plugin_bayes_multicolumn extends DokuWiki_Syntax_Plugin {
           'date'   => '2008-06-02',
           'name'   => 'BayesFor Multicolumn layout',
           'desc'   => 'Creates a multicolumn layout for the BayesFor template',
-          'url'    => 'http://code.google.com/p/bayes-swarm',
+          'url'    => 'http://www.bayesfor.eu',
       );
   }
 
