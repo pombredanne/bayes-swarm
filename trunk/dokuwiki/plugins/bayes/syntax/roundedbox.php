@@ -24,7 +24,7 @@ class syntax_plugin_bayes_roundedbox extends DokuWiki_Syntax_Plugin {
           'date'   => '2008-06-02',
           'name'   => 'BayesFor rounded Boxes',
           'desc'   => 'Creates rounded boxes used in the BayesFor template',
-          'url'    => 'http://code.google.com/p/bayes-swarm',
+          'url'    => 'http://www.bayesfor.eu',
       );
   }
  
