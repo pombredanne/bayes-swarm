@@ -5,6 +5,7 @@
   define(DOKU_TPL, DOKU_BASE . "lib/tpl/bayes/");
     
   require_once("wiki/inc/init.php");
+  require_once("wiki/inc/auth.php");
   require_once("wiki/inc/parserutils.php");
 
   $entries = 3;
@@ -25,7 +26,7 @@
   $dir = "./wiki/".$conf['savedir']."/pages/blog/";
   if ($handle = opendir($dir)) {
    while (false !== ($file = readdir($handle))) {
-     $files[$file] = filectime($dir.$file);
+     $files[$file] = filemtime($dir.$file);
    }
    uasort($files, "cmp_filetime_reverse");
 
@@ -35,12 +36,14 @@
      if ($count == $entries) {
        break;
      }
-     $pagename = "blog:".str_replace(".txt","",$file);
-     $title = $pagename;
-     $news_item = p_wiki_xhtml_summary($pagename, &$title);
+     if (strcmp(".",$file) != 0 && strcmp("..", $file) != 0) {
+       $pagename = "blog:".str_replace(".txt","",$file);
+       $title = $pagename;
+       $news_item = p_wiki_xhtml_summary($pagename, &$title);
      
-     $latest_news .= compose_news_item($pagename, $mtime, $news_item);
-     $count++;
+       $latest_news .= compose_news_item($pagename, $mtime, $news_item);
+       $count++;
+     }
    }
    closedir($handle);
   }
@@ -54,7 +57,7 @@
   <link rel="stylesheet" href="<?php echo DOKU_TPL; ?>layout.css" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="<?php echo DOKU_TPL; ?>design.css" type="text/css" media="screen" charset="utf-8" /> 
   <link rel="stylesheet" href="css/intro.css" type="text/css" media="screen" charset="utf-8" /> 
-	<script src="javascripts/rounded_corners.inc.js" type="text/javascript"></script>
+	<script src="javascripts/rounded_corners.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	  window.onload = function()
 	  {
