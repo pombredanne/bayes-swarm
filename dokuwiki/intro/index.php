@@ -129,6 +129,7 @@
 						<td class="tt"><a href="<?php echo DOKU_BASE ?>"><img src="./images/button2.png" style="border:0" alt="Docs icon"></a></td>
 						<td class="uu"><h2 class="docs"><a href="<?php echo DOKU_BASE ?>">The Docs</a></h2>
 							<ul class="headlines docs">
+                <li><a href="<?php echo DOKU_BASE ?>">Wiki: everything is somewhere inside it.</a></li>											  
 								<li><a href="<?php echo DOKU_BASE."blog" ?>">News and Team blog</a></li>								
 								<li><a href="<?php echo DOKU_BASE."bayes-swarm/documentazione" ?>">Bayes-Swarm: from basics to advanced topics</a></li>
 								<li><a href="<?php echo DOKU_BASE."attivita" ?>">Ongoing activities</a></li>								
