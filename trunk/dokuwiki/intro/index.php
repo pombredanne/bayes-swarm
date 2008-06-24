@@ -57,6 +57,7 @@
   <link rel="stylesheet" href="<?php echo DOKU_TPL; ?>layout.css" type="text/css" media="screen" charset="utf-8" />
   <link rel="stylesheet" href="<?php echo DOKU_TPL; ?>design.css" type="text/css" media="screen" charset="utf-8" /> 
   <link rel="stylesheet" href="css/intro.css" type="text/css" media="screen" charset="utf-8" /> 
+  <link rel="shortcut icon" href="favicon.ico" />
 	<script src="javascripts/rounded_corners.js" type="text/javascript"></script>
 	<script type="text/javascript">
 	  window.onload = function()
