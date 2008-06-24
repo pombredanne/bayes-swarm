@@ -37,7 +37,7 @@
        break;
      }
      if (strcmp(".",$file) != 0 && strcmp("..", $file) != 0) {
-       $pagename = "blog:".str_replace(".txt","",$file);
+       $pagename = "en:blog:".str_replace(".txt","",$file);
        $title = $pagename;
        $news_item = p_wiki_xhtml_summary($pagename, &$title);
      
