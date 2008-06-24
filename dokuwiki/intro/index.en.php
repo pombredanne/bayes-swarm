@@ -114,7 +114,7 @@
 				    <td class="uu">
 				      <p style="font-size: 80%; max-width: 200px">
 				      BayesFor contents are still mainly in italian only. If you are missing something
-				      try jumping to the <a href="index.php.it">italian version</a>.
+				      try jumping to the <a href="index.it.php">italian version</a>.
 				      </p>
 				    </td>
 				  </tr>
