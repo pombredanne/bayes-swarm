@@ -71,6 +71,14 @@ html>body .bayes-header-logo {
 	font-size: 80%;
 }
 
+.dokuwiki .bayes-sidebar .plugin_translation {
+  float:none;
+}
+
+.dokuwiki .bayes-sidebar .plugin_translation UL {
+  display:block;
+}
+
 .bayes-main-contents {
 	font-size: 85%;
 	padding: 0 0.5em;

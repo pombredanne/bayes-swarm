@@ -17,14 +17,14 @@
   function compose_news_item($pagename, $mtime, $news_item) {
     // dirty hack to modify width of embedded imgs
     $composed_item =  str_replace("width=\"500\"", "width=\"200\"", $news_item); 
-    $composed_item = "<hr/>".$composed_item."<p style=\"text-align:right\"> <a href=\"".DOKU_BASE.$pagename."\">Read more...</a>";
+    $composed_item = "<hr/>".$composed_item."<p style=\"text-align:right\"> <a href=\"".DOKU_BASE.$pagename."\">Leggi ancora...</a>";
     
     return $composed_item;
   }
 
   $files = array();
   $dir = "./wiki/".$conf['savedir']."/pages/blog/";
-  if ($handle = opendir($dir)) {
+  if ($handle = @opendir($dir)) {
    while (false !== ($file = readdir($handle))) {
      $files[$file] = filemtime($dir.$file);
    }
@@ -109,17 +109,17 @@
 				<table border="0"  >
 					<tr valign="top">
 						<td class="tt"><a href="<?php echo DOKU_BASE."team" ?>"><img src="./images/button3.png" style="border:0" alt="Team icon"></a> </td>
-						<td class="uu" ><h2 class="team"><a href="<?php echo DOKU_BASE."team" ?>">The Team</a></h2>
+						<td class="uu" ><h2 class="team"><a href="<?php echo DOKU_BASE."team" ?>">Il Team</a></h2>
 							<ul class="headlines team">
-								<li><a href="<?php echo DOKU_BASE."team" ?>">About us. Who we are, what we do</a></li>
-								<li><a href="<?php echo DOKU_BASE."manifest" ?>">Manifest. What we do believe in</a></li>
-								<li><a href="<?php echo DOKU_BASE."collabora_con_noi" ?>">Collaborate. We need your help!</a></li>
-								<li><a href="<?php echo DOKU_BASE."contatti" ?>">Contact Us</a></li>								
+								<li><a href="<?php echo DOKU_BASE."team" ?>">A proposito di noi. Chi siamo, cosa facciamo</a></li>
+								<li><a href="<?php echo DOKU_BASE."manifest" ?>">Manifesto. Ci&ograve; in cui crediamo</a></li>
+								<li><a href="<?php echo DOKU_BASE."collabora_con_noi" ?>">Collabora con noi. Vuoi aiutare?</a></li>
+								<li><a href="<?php echo DOKU_BASE."contatti" ?>">Contattaci</a></li>								
 							</ul>								
 						</td>
 					</tr><tr valign="top">
 						<td class="tt"><a href="<?php echo DOKU_BASE."projects" ?>"><img src="./images/button1.png" style="border:0" alt="Project icon"></a></td>
-						<td class="uu"><h2 class="project"><a href="<?php echo DOKU_BASE."projects" ?>">The Projects</a></h2>
+						<td class="uu"><h2 class="project"><a href="<?php echo DOKU_BASE."projects" ?>">I progetti</a></h2>
 							<ul class="headlines project">
 								<li><a href="<?php echo DOKU_BASE."bayes-swarm" ?>">Bayes-Swarm: Data out of the unexpected!</a></li>
 								<li><a href="<?php echo DOKU_BASE."network" ?>">Web content network analysis</a></li>
@@ -128,13 +128,13 @@
 						</td>
 					</tr><tr valign="top">	
 						<td class="tt"><a href="<?php echo DOKU_BASE ?>"><img src="./images/button2.png" style="border:0" alt="Docs icon"></a></td>
-						<td class="uu"><h2 class="docs"><a href="<?php echo DOKU_BASE ?>">The Docs</a></h2>
+						<td class="uu"><h2 class="docs"><a href="<?php echo DOKU_BASE ?>">I Documenti</a></h2>
 							<ul class="headlines docs">
-                <li><a href="<?php echo DOKU_BASE ?>">Wiki: everything is somewhere inside it.</a></li>											  
-								<li><a href="<?php echo DOKU_BASE."blog" ?>">News and Team blog</a></li>								
-								<li><a href="<?php echo DOKU_BASE."bayes-swarm/documentazione" ?>">Bayes-Swarm: from basics to advanced topics</a></li>
-								<li><a href="<?php echo DOKU_BASE."attivita" ?>">Ongoing activities</a></li>								
-								<li><a href="<?php echo DOKU_BASE."corsolinux/home" ?>">Linux courseware</a></li>
+                <li><a href="<?php echo DOKU_BASE ?>">Wiki: &egrave; tutto qui dentro, da qualche parte.</a></li>											  
+								<li><a href="<?php echo DOKU_BASE."blog" ?>">Notizie e blog del team</a></li>								
+								<li><a href="<?php echo DOKU_BASE."bayes-swarm/documentazione" ?>">Bayes-Swarm: dalle basi ai concetti avanzati</a></li>
+								<li><a href="<?php echo DOKU_BASE."attivita" ?>">Attivit&agrave; e pubblicazioni</a></li>								
+								<li><a href="<?php echo DOKU_BASE."corsolinux/home" ?>">Materiale corso linux</a></li>
 							</ul>																						
 					    </td>
 					</tr>
@@ -143,17 +143,10 @@
 			<td>
 				<div id="news">
 					<div id="newsheader">
-						<h1>In the news</h1><span class="archive"><a href="<?php echo DOKU_BASE."blog" ?>">view the archive</a></span>
+						<h1>Ultime notizie</h1><span class="archive"><a href="<?php echo DOKU_BASE."blog" ?>">consulta l'archivio</a></span>
 						<div id="newscontent">						
 						  <?php echo $latest_news; ?>
 						</div>
-						<!-- 
-						<h2>13-Apr: Elezioni</h2>
-					<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam...</p><p style="text-align:right"> <a href="">Read more</a></p>
-					
-						<h2>8-Apr: Sondaggi</h2>
-						<p>Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud...</p><p style="text-align:right"> <a href="">Read more</a>
-						</p> -->
 					</div>
 				</div>
 			</td>
