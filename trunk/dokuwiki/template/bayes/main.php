@@ -47,6 +47,11 @@ if (!defined('DOKU_INC')) die();
 	
 	<div class="bayes-main dokuwiki" >
 			<div class="bayes-sidebar">
+        <?php
+        $translation = &plugin_load('syntax','translation');
+        echo $translation->_showTranslations();
+        ?>
+        <br clear="both"/>			  
 			  <?php tpl_sidebar()?>
 			</div>
 			<div class="bayes-breadcrumbs">
