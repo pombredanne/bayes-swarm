@@ -131,5 +131,28 @@ class IntwordController < ApplicationController
               :type => 'text/csv; charset=iso-8859-1; header=present', 
               :disposition => "attachment; filename=some_data.csv")
   end
-  
+
+  def csv_cloud
+    def generate_line(row)
+      row_sep = $INPUT_RECORD_SEPARATOR
+      [row, row_sep].join()
+    end
+    
+    filename = "tmp/some_data.csv"
+    attributes = ["visible", "name", "imp", "id", "language_id"]
+    
+    rows = nil
+    iws = Intword.find_popular(Locale.language.id, params[:period], 499, 'imp')
+    iws.each do |iw|
+        row = iw.attributes.values.join(',')
+        rows = [rows, generate_line(row)].join()
+    end
+    header = generate_line(iws[0].attributes.keys.join(','))
+    
+    csv = [header, rows].join
+    
+    send_data(csv, 
+              :type => 'text/csv; charset=iso-8859-1; header=present', 
+              :disposition => "attachment; filename=some_data.csv")
+  end
 end
