@@ -3,7 +3,9 @@
 
 = Warning =
 
-Prototype2 is still under active development and it is *not* in active use for daily extractions. See PrototypeOne for further info. Ideas which are currently being tested in prototype2 will eventually be merged into PrototypeOne into a sort of _stable_ extractor. 
+Prototype2 has been declared obsolete and it is *not* in active use for daily extractions. See PrototypeOne for further info. Ideas which have been tested in prototype2 have been declared not 100% useful for bayes-swarm. Some pieces will eventually be reused for the development of PrototypeThree ( that will hopefully implement the [Architecture] design ).
+
+*The source code and the documentation in this page remain here for consultation purposes, but are no longer maintained.*
 
 = Introduction =
 
