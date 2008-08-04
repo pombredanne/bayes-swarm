@@ -63,6 +63,15 @@ You are now ready to import the data :
 /usr/local/mysql/bin/mysql -u root bayesswarm022 < swarm_dump.sql
 }}}
 
-After some time, depending on your machine capabilities, the `bayesswarm022` database will contain all the bayes-swarm data. Happy coding !
+After some time, depending on your machine capabilities, the `bayesswarm022` database will contain all the bayes-swarm data. 
 
+If you want to access the data from the Rails application that is part of the bayes-swarm project, you also have to create the test user that the application uses to access the data. To do so, execute the statements contained in this file:
 
+[http://code.google.com/p/bayes-swarm/source/browse/trunk/db/schema_users.sql]
+
+Happy coding !
+
+= I need only the schema informations =
+If you don't need all the data, but only the schema informations for the database, you can always find the latest ones here:
+
+[http://code.google.com/p/bayes-swarm/source/browse/trunk/db/schema_latest.sql]
