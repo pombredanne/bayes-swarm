@@ -73,3 +73,12 @@ To install R, just use the official dmg provided at http://www.r-project.org/ .
 
 = Database Setup =
 Now that your local development environment is ready, you can populate it with the FreeDataset . You can tune your Mysql installation using the instructions in DatabaseSetup .
+
+= Source code checkout =
+bayes-swarm uses [http://subversion.tigris.org Subversion] to manage the source code for the project. Once you have installed subversion on your machine, you can download a copy of the source code executing the following command from the command line of your OS:
+
+{{{
+svn checkout http://bayes-swarm.googlecode.com/svn/trunk/ bayes-swarm
+}}}
+
+It will create a folder named `bayes-swarm` which will contain all the project sources.
