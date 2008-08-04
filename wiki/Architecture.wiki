@@ -16,7 +16,7 @@
 
 The bayes-swarm engine is structured in terms of modular components : 
   * *Extractor* : the extractor is responsible for navigating through the web and store the relevant pages locally
-  * *PageStore* : PageStore is the component, file format and filesystem structure responsible for storing the raw extracted data.
+  * *PageStore* : PageStore is the component, file format and filesystem structure responsible for storing the raw extracted data. Read some [FileStorage technical details].
   * Refiners : we currently have two refiners that analyze and consolidate data stored in the PageStore: the first one, currently unnamed, is responsible for reducing and consolidating the raw data into a mysql database. The amount of information stored is limited (we basically keep only the words' count for each word found in the raw data ) and it is mainly used by the website. The second refiner, called *MeanMachine* and currently under development by Matteo Zandi, applies search and indexing criterias on the raw data.
   * *Database* : a Mysql database is used to store a normalized version of the raw data, and is accessed by the Bayes-Swarm website.
   * Bayes-Swarm *website* : the [http://www.bayes-swarm.com bayes-swarm website] provides a publicly accessible version of the stored data, and allows user to extract timeseries and other simple charts from the data. 
