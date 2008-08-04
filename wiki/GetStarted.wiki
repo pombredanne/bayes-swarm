@@ -1,5 +1,5 @@
 #summary The starting point to learn more about the project
-#labels Phase-Deploy,Featured
+#labels Phase-Design,Featured
 
 Bayes-Swarm's aim is to spider web sources (news portals, blogs and online newspapers) and extract correlations between such sources.
 
@@ -9,6 +9,9 @@ The engine will extract relevant informations from correlation analysis, such as
 
 http://bayes-swarm.googlecode.com/svn/images/fed.png
 http://bayes-swarm.googlecode.com/svn/images/primarie.png
+
+=== Architecture ===
+The [Architecture] document describes the architecture used by the *bayes-swarm* engine.
 
 === Environment Setup ===
 The first thing you need to do is to setup your pc to properly work with the project sources. You can follow the instructions described in EnvironmentSetup . 
