@@ -16,6 +16,8 @@ The [Architecture] document describes the architecture used by the *bayes-swarm*
 === Environment Setup ===
 The first thing you need to do is to setup your pc to properly work with the project sources. You can follow the instructions described in EnvironmentSetup . 
 
+You can then populate it with some data from the FreeDataset , following the instructions on DatabaseSetup.
+
 === Prototypes ===
 Once your pc is ready, you can start trying some of our prototypes. Here follows the list of available ones : 
 
