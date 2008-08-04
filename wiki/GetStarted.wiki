@@ -30,5 +30,3 @@ The TestSupport page describes the available resources to simulate data, instead
 
 == Live demo ==
 You can try a live demo at http://www.bayes-swarm.com/
-
-Please note: the demo is still rough and almost for internal-use only.
