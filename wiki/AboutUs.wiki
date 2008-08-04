@@ -1,6 +1,8 @@
 #summary Learn more about the guys behind working at the project
 #labels Featured,About
 
+*NOTE*: an updated description of the team (in italian) is available at http://www.bayesfor.eu/wiki/team
+
 These are the guys which are currently working at the project.
 
 = Bonazzi Alessandro = 
