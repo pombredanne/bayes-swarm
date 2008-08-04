@@ -1,25 +1,16 @@
 #summary How to setup your pc to work and test the project
-#labels Phase-Prototype
+#labels Phase-Deploy
+
+Please, spend some seconds reading the [Architecture] document before. 
 
 = Software Requirements =
 You need the following softwares and elements to get started on the project :
 
-== Database ==
-The database of choice is [http://www.mysql.com/ MySql] (version 5 or later).
-
-You may want to use some database management tool to work with it. We suggest [http://www.minq.se/products/dbvis/ DBVisualizer] , or [http://dev.mysql.com/downloads/gui-tools/5.0.html MySql GUI Tools] .
-
-== Extraction Engine ==
-The engine which performs data extraction, initial analysis and database storage is written in [http://www.ruby-lang.org/en/ ruby]. 
-In addition to ruby, you may require some additional libraries, therefore you should also install the [http://rubygems.org/ rubygems] packaging system. 
-
-A good introduction to ruby is Rolling with Ruby on Rails (revisited)
-http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html
-
-The list of required libraries will be sorted out one day or another. For the moment refer to current prototype requirements , starting from PrototypeOne .
-
-== Analysis Engine ==
-The language of choice is [http://www.r-project.org/ R], wich provides, among other nice things like time series and cluster analysis, [http://cran.r-project.org/src/contrib/Descriptions/RMySQL.html RMySQL] an interface to MySql databates.
+  * a relational database, [http://www.mysql.com/ MySql] ( version 5 or later ) is recommended.
+  * a [http://www.ruby-lang.org/en/ ruby] interpreter. We are currently using version 1.8.6 or later
+  * the [http://rubygems.org/ rubygems] packaging system, to install the additional required libraries
+  * optionally, the [http://www.r-project.org/ R] environment if you want to perform extra analyses on the data. You may want to consider the [http://cran.r-project.org/src/contrib/Descriptions/RMySQL.html RMySQL] library to connect R directly with the MySql database.
+  * the FreeDataset, a publicly available version of the bayes-swarm dataset, that you can use to get started with bayes-swarm development. See DatabaseSetup for info on how to setup such dataset.
 
 = Install Instructions =
 
@@ -37,8 +28,10 @@ Install ruby, rubygems and the required gems (the list shown below is incomplete
 {{{
 sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems tidy
 sudo gem update --system
-sudo gem install --remote ferret --include-dependencies
-sudo gem install --remote tidy --include-dependencies
+sudo gem install rails
+sudo gem install ferret
+sudo gem install tidy
+...
 }}}
 
 mysql/ruby bindings :
@@ -53,24 +46,30 @@ sudo apt-get install r-base
 
 *warning*: you need to use R commands to install RMySql package (http://cran.r-project.org/src/contrib/Descriptions/RMySQL.html)
 
-=== Python ===
-Ubuntu comes with python preinstalled, make sure you have a recent version (2.5)
+== Mac Os X ==
+
+=== MySql ===
+Download one of the available MySql packages for Mac Os X directly from the www.mysql.com website . Install it by double-clicking on the package and following the onscreen instructions. 
+
+=== Ruby ===
+You may follow this guide to set up your ruby / mysql environment :
+  * Mac Os 10.4 : http://hivelogic.com/articles/2007/02/ruby-rails-mongrel-mysql-osx
+  * Mac Os 10.5 : http://hivelogic.com/articles/2008/02/ruby-rails-leopard
+
+Once you have installed ruby and rubygems, you should have the binaries installed in `/usr/local/bin` . You can then update your installation to the most recent version and install the required libraries : 
 
 {{{
-sudo apt-get install python-flup python-webpy
+sudo gem update --system
+sudo gem install rails
+sudo gem install ferret
+sudo gem install tidy
 }}}
 
-Make sure you have weby version >= 0.210. Python dependencies are met with standard Ubuntu repositories as of Gutsy (Ubuntu 7.10)
-
-== Mac Os X ==
-You may follow this guide to set up your ruby / mysql environment :
-http://hivelogic.com/narrative/articles/ruby-rails-mongrel-mysql-osx
-
+=== R ===
 To install R, just use the official dmg provided at http://www.r-project.org/ . 
 
-*warning*: add info on how to install python (is the default version available with macosx sufficient?)
 == Windows ==
-*warning* : this section is still missing. 
- 
- 
- 
+*TODO* : this section is still missing. 
+
+= Database Setup =
+Now that your local development environment is ready, you can populate it with the FreeDataset . You can tune your Mysql installation using the instructions in DatabaseSetup .
