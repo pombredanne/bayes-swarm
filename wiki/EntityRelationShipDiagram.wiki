@@ -10,4 +10,4 @@ This document describes the entity-relationship schema that stores the data extr
 
 http://bayes-swarm.googlecode.com/svn/images/database_schema.png
 
-The complete database schema is available on SVN,  [http://bayes-swarm.googlecode.com/svn/trunk/db/schema.sql following this lik] .
+The complete database schema is available on SVN,  [http://bayes-swarm.googlecode.com/svn/trunk/db/schema_latest.sql following this lik] .
