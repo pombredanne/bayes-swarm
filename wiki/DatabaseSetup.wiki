@@ -8,6 +8,8 @@ Follow the instructions in EnvironmentSetup to install the MySql database engine
 
 If you are one of the bayes-swarm developers you can install one of the daily database backups from the www.bayes-swarm.com website. Otherwise, you can use the data in the FreeDataset .
 
+A rough definition of the database structure is in EntityRelationShipDiagram.
+
 = Detailed Instructions =
 
 Once you have downloaded a dump of the database on your local machine, follow these instructions ( they are thought for Mac Os, but similar instructions apply for Linux and Windows as well ).
