@@ -48,6 +48,9 @@ class Page < ActiveRecord::Base
   def kind_name
     kind.kind.intern
   end
+  def source_name
+    source.name
+  end
 end
 
 class Source < ActiveRecord::Base
