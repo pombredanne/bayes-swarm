@@ -1,9 +1,9 @@
 storage:
     :filesaver: active
-    :base:  /Users/battlehorse/Downloads/store/
+    :base:  /tmp/test_pulsar3
 
 database:
     :host:   localhost
-    :user:   root
-    :pass:   
-    :db:     battleho_bayes
+    :user:   testuser
+    :pass:   test
+    :db:     pulsar
