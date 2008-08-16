@@ -15,12 +15,11 @@ import sys
 import xapian
 
 if len(sys.argv) != 3:
-    print >> sys.stderr, "Usage: %s PATH_TO_PAGESTORE PATH_TO_XAPIAN_DB" % sys.argv[0]
+    print >> sys.stderr, "Usage: %s PATH_TO_XAPIAN_DB PATH_TO_PAGESTORE" % sys.argv[0]
     sys.exit(1)
 else:
-    PATH_TO_PAGESTORE = sys.argv[1]
-    PATH_TO_XAPIAN_DB = sys.argv[2]
-
+    PATH_TO_XAPIAN_DB = sys.argv[1]
+    PATH_TO_PAGESTORE = sys.argv[2]
 
 def xapian_index(db, dir):
     indexer = xapian.TermGenerator()
@@ -35,7 +34,7 @@ def xapian_index(db, dir):
 
     try:
         for page in pages:
-            # example: a792188bd1e8a2d91109197dff2a4009 http://news.google.com 1 url en 1 Google news
+            # example: a792188bd1e8a2d91109197dff2a4009 http://news.google.com 1 url en
             print page
             hash, url, id, kind, language = page
             print id, url
