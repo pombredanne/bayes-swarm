@@ -1,7 +1,7 @@
 # options for swarm_shoal.rb
 
 storage:
-    :filesaver: active
+    :filesaver: disabled
     :base:  /Users/battlehorse/Downloads/store/
 
 database:
