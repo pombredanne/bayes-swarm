@@ -14,6 +14,8 @@ import os
 import sys
 import xapian
 
+from sgmlparser import BaseHTMLParser
+
 if len(sys.argv) != 3:
     print >> sys.stderr, "Usage: %s PATH_TO_XAPIAN_DB PATH_TO_PAGESTORE" % sys.argv[0]
     sys.exit(1)
@@ -48,10 +50,13 @@ def xapian_index(db, dir):
             indexer.set_stemmer(stemmer)
             indexer.set_document(doc)
             f = open(os.path.join(dir, hash, 'contents.html'))
-            try:
-                indexer.index_text(f.read())
-            finally:
-                f.close()
+            
+            htmldoc = BaseHTMLParser()
+            htmldoc.feed(f.read())
+            f.close()
+            htmldoc.close()
+            
+            indexer.index_text(htmldoc.text)
 
             # Add the document to the database.
             database.add_document(doc)
