@@ -68,6 +68,8 @@ def xapian_index(db, dir):
 database = xapian.WritableDatabase(PATH_TO_XAPIAN_DB, xapian.DB_CREATE_OR_OVERWRITE)
 
 for dir, subfolder, files in os.walk(PATH_TO_PAGESTORE):
+    # FIXME: instead of printing dirs, count the number of Meta files
+    # and tell the user a much more useful % of completition
     print "%s:: %s: %s" % (dir, subfolder, files)
     if 'META' in files:
         xapian_index(database, dir)
