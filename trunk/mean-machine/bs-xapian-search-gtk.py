@@ -214,8 +214,8 @@ class Demo:
         gtk.main()
 
     def refresh_results(self):
-        query = CreateQuery(self.entry.get_text(), self.selected_language)
-        if query is not None:
+        if self.entry.get_text().strip() != '' and self.entry.get_text().strip() is not None:
+            query = CreateQuery(self.entry.get_text(), self.selected_language)
             docs, tags = EnquireDB(query, self.selected_language)
             self.model.clear()
             for item in docs:

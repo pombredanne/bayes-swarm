@@ -1,0 +1,10 @@
+Requirements
+
+* bs-xapian-index.py:
+  - xapian
+
+* bs-xapian-search.py:
+  - xapian, pygtk, gtkhtml2
+  
+* bs-xapian-graph.py:
+  - xapian, pygtk, xdot, pydot
