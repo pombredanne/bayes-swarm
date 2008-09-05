@@ -1,0 +1,26 @@
+#summary Mean-Machine is the indexing of Bayes-Swarm db via xapian
+
+= Introduction =
+
+Since we were not happy with our current self-made indexing, we're doing experiments with xapian. This sub-project is called Mean Machine like a famous Sugar Ray's song.
+
+= Details =
+
+Mean-Machine, like every xapian program consists of two distinct phases:
+  * Indexing
+  * Searching
+
+= Indexing =
+
+That's what bs-xapian-index.py does. Just indicate the path to a pagestore and it will do the rest.
+
+= Searching =
+
+We have currently two search GUIs: bs-xapian-search-gtk.py and bs-xapian-graph.py
+
+== bs-xapian-search-gtk.py ==
+http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en_small.png
+[http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en_small.png]
+[http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it_small.png]
+
+== bs-xapian-graph.py ==
