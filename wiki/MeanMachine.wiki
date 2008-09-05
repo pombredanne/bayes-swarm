@@ -19,8 +19,8 @@ That's what bs-xapian-index.py does. Just indicate the path to a pagestore and i
 We have currently two search GUIs: bs-xapian-search-gtk.py and bs-xapian-graph.py
 
 == bs-xapian-search-gtk.py ==
-http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en_small.png
 [http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en_small.png]
 [http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it_small.png]
 
 == bs-xapian-graph.py ==
+[http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph_small.png]
