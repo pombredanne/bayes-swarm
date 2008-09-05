@@ -28,3 +28,5 @@ The user can insert terms to be searched, as a result the most relevant document
 [http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph_small.png]
 
 The user can insert terms to be searched, the program paints a graph of the 10 most connected words, ie the words which are more likely found with what the user entered. By typing more words (or by clicking on one of the nodes), the program searchs for matching words for each of the terms which are entered.
+
+Based on [http://code.google.com/p/jrfonseca/wiki/XDot XDot].
