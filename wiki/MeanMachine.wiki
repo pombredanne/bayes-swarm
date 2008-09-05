@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Since we were not happy with our current self-made indexing, we're doing experiments with [http://www.xapian.org Xapian]. This sub-project is called Mean Machine like a famous Sugar Ray's song.
+Mean Machine is an experimental sub-project, named as the famous Sugar Ray's song, that consists in indexing the Bayes-Swarm [FreeDataset pagestore] with the [http://www.xapian.org Xapian] library.
 
 = Details =
 
@@ -30,3 +30,6 @@ The user can insert terms to be searched, as a result the most relevant document
 The user can insert terms to be searched, the program paints a graph of the 10 most connected words, ie the words which are more likely found with what the user entered. By typing more words (or by clicking on one of the nodes), the program searchs for matching words for each of the terms which are entered.
 
 Based on [http://code.google.com/p/jrfonseca/wiki/XDot XDot].
+
+= Where can I get it? =
+Just download Mean-Machine source from svn, a sample of the xapian indexed db can be found at [http://www.battlehorse.net/swarm_sample/ this url].
