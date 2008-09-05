@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Since we were not happy with our current self-made indexing, we're doing experiments with xapian. This sub-project is called Mean Machine like a famous Sugar Ray's song.
+Since we were not happy with our current self-made indexing, we're doing experiments with [http://www.xapian.org Xapian]. This sub-project is called Mean Machine like a famous Sugar Ray's song.
 
 = Details =
 
@@ -12,7 +12,7 @@ Mean-Machine, like every xapian program consists of two distinct phases:
 
 = Indexing =
 
-That's what bs-xapian-index.py does. Just indicate the path to a pagestore and it will do the rest.
+That's what bs-xapian-index.py does. Just indicate the path to a pagestore and it will do the rest. Xapian can index text in a very smart way, i.e. remembers each word position so that when you search you can find pattern like "clinton NEAR health" or even more complex.
 
 = Searching =
 
@@ -22,5 +22,9 @@ We have currently two search GUIs: bs-xapian-search-gtk.py and bs-xapian-graph.p
 [http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en_small.png]
 [http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it_small.png]
 
+The user can insert terms to be searched, as a result the most relevant documents are presented together with a cloud of the most relevant words. Clicking on the words allows to deepen the search and find the documents which match both words.
+
 == bs-xapian-graph.py ==
 [http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph_small.png]
+
+The user can insert terms to be searched, the program paints a graph of the 10 most connected words, ie the words which are more likely found with what the user entered. By typing more words (or by clicking on one of the nodes), the program searchs for matching words for each of the terms which are entered.
