@@ -36,4 +36,17 @@ class FeaturedController < ApplicationController
     @ofcgraph = open_flash_chart_object(500,375, "/#{params[:locale]}/ofc/pie/#{ids}", false, '/')    
   end  
   
+  def uspresidential2008
+    # def interesting words for usprimary2008
+    @candidate={"all" => "335-321-32532-336"} 
+       
+    if ( params[:id] == nil )
+      params[:id] = @candidate["all"]
+    end
+
+    @intword_ids = params[:id].split("-")
+
+    @ofcgraph = open_flash_chart_object(500,375, "/#{params[:locale]}/ofc/pie/#{params[:id]}", false, '/')    
+  end
+  
 end
