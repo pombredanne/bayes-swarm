@@ -46,7 +46,7 @@ def EnquireDB(input_terms, lang):
         # Find the top 10 results for the query.
         enquire.set_query(query)
         # Retrieve as many results as we can show
-        size = 50
+        size = 20
         mset = enquire.get_mset(0, size - 1)
 
         # FIXME: add status bar
