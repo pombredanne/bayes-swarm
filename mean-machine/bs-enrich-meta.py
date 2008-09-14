@@ -47,25 +47,31 @@ store = Store(database)
 def enrich_meta(meta_file, rss_father_url=None):
     enriched_meta = []
     
-    f = open(meta_file)
-    for line in f:
-        hash, url = line.split()
-        if rss_father_url is not None: url = rss_father_url
-        #print url
-        page, lang, kind = store.find((Page, Language, Kind),
-                                       Page.url == unicode(url),
-                                       Page.language_id == Language.id,
-                                       Page.kind_id == Kind.id).one()
-        enriched_meta.append([hash, page.url, str(page.id), kind.kind, lang.name()])
-        #print [page.url, page.id, kind.kind, lang.name()]
-    f.close()
-    
-    f = open(meta_file, 'w')
-    for enriched_line in enriched_meta:
-        #print enriched_meta
-        f.write(' '.join(enriched_line))
-        f.write('\n')
-    f.close()
+    try:
+        f = open(meta_file)
+        for line in f:
+            hash, url = line.split()
+            if rss_father_url is not None: 
+                search_url = rss_father_url
+            else:
+                search_url = url
+            #print url
+            page, lang, kind = store.find((Page, Language, Kind),
+                                           Page.url == unicode(search_url),
+                                           Page.language_id == Language.id,
+                                           Page.kind_id == Kind.id).one()
+            enriched_meta.append([hash, page.url, str(page.id), kind.kind, lang.name()])
+            #print [page.url, page.id, kind.kind, lang.name()]
+        f.close()
+        
+        f = open(meta_file, 'w')
+        for enriched_line in enriched_meta:
+            #print enriched_meta
+            f.write(' '.join(enriched_line))
+            f.write('\n')
+        f.close()
+    except:
+        pass
 
 def get_rss_father_url(hash, meta_file):
     f = open(meta_file)

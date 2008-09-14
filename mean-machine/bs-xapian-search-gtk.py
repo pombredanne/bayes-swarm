@@ -31,7 +31,7 @@ else:
 # Open the database for searching.
 database = xapian.Database(PATH_TO_XAPIAN_DB)
 
-def CreateQuery(input_terms, lang):
+def EnquireDB(input_terms, lang):
     if input_terms == None:
         # No text given: abort
         return
@@ -42,7 +42,7 @@ def CreateQuery(input_terms, lang):
     qp.set_database(database)
     qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
     try:
-        query1 = qp.parse_query(input_terms, xapian.QueryParser.FLAG_BOOLEAN)
+        query1 = qp.parse_query(input_terms, xapian.QueryParser.FLAG_PHRASE) #xapian.QueryParser.FLAG_BOOLEAN)
     except xapian.QueryParserError:
         print 'Query parser error'
         return
@@ -53,9 +53,7 @@ def CreateQuery(input_terms, lang):
     print "Parsed query is: %s" % query.get_description()
     terms = [term for pos, term in enumerate(query)]
     print "Terms: %s" % ', '.join(terms)
-    return query
 
-def EnquireDB(query, lang):
     # Start an enquire session.
     enquire = xapian.Enquire(database)
     
@@ -80,7 +78,8 @@ def EnquireDB(query, lang):
     docs = []
     rset = xapian.RSet()
     for y, m in enumerate(mset):
-        rset.add_document(m[xapian.MSET_DID])
+        if y < 20:
+            rset.add_document(m[xapian.MSET_DID])
         name = m[xapian.MSET_DOCUMENT].get_data()
         docs.append([m[xapian.MSET_PERCENT], name, m, ''])
 
@@ -135,6 +134,7 @@ class Demo:
     def __init__(self):
         w = gtk.Window()
         w.connect('destroy', gtk.main_quit)
+        w.set_size_request(500, -1)
 
         self.model = gtk.ListStore(int, str, gobject.TYPE_PYOBJECT, str)
 
@@ -156,7 +156,7 @@ class Demo:
 
         def get_celldata_date(column, cell, model, iter):
             doc = model[iter][2].document
-            cell.set_property('text', doc.get_value(2))
+            cell.set_property('text', '%s.%s.%s' % (doc.get_value(4),doc.get_value(3),doc.get_value(2)))
         cell_date = gtk.CellRendererText()
         column_date = gtk.TreeViewColumn ("Date", cell_date)
         #column_summary.set_sort_column_id(0)
@@ -169,7 +169,7 @@ class Demo:
         treeview.set_reorderable(True)
         #treeview.set_property('has-tooltip', True)
         treeview.set_tooltip_column(3)
-        treeview.connect('query-tooltip', self.on_query_tooltip)
+#        treeview.connect('query-tooltip', self.on_query_tooltip)
         
         scrolledwin.add(treeview)
         vpaned = gtk.VPaned()
@@ -188,9 +188,13 @@ class Demo:
         self.view.set_document(document)
         
         scrolledwin2.add(self.view)
-        vpaned.add(scrolledwin2)
+        screlledwin2_inner_vbox = gtk.VBox(False, 0)
+        screlledwin2_inner_vbox.pack_start(gtk.Label("Terms cloud"), False, False, 0)
+        screlledwin2_inner_vbox.pack_start(scrolledwin2)
+        vpaned.add(screlledwin2_inner_vbox)
 
         vbox = gtk.VBox(False, 0)
+        vbox.pack_start(gtk.Label("Matched documents list"), False, False, 0)
         vbox.pack_start(vpaned, True, True, 0)
 
         self.entry = gtk.Entry()
@@ -205,7 +209,9 @@ class Demo:
         self.selected_language = 'it'
         
         hbox = gtk.HBox(False, 0)
+        hbox.pack_start(gtk.Label("Language:"), False, False, 0)
         hbox.pack_start(combobox, False, False, 0)
+        hbox.pack_start(gtk.Label("Search:"), False, False, 0)
         hbox.pack_start(self.entry, True, True, 0)
         vbox.pack_start(hbox, False, False, 0)
 
@@ -215,15 +221,14 @@ class Demo:
 
     def refresh_results(self):
         if self.entry.get_text().strip() != '' and self.entry.get_text().strip() is not None:
-            query = CreateQuery(self.entry.get_text(), self.selected_language)
-            docs, tags = EnquireDB(query, self.selected_language)
+            docs, tags = EnquireDB(self.entry.get_text(), self.selected_language)
             self.model.clear()
             for item in docs:
                 self.model.append(item)
         
-        gtkhtml2_doc = mark_text_up(tags)
-        gtkhtml2_doc.connect('link_clicked', self.on_tag_clicked)
-        self.view.set_document(gtkhtml2_doc)
+            gtkhtml2_doc = mark_text_up(tags)
+            gtkhtml2_doc.connect('link_clicked', self.on_tag_clicked)
+            self.view.set_document(gtkhtml2_doc)
 
     def on_tag_clicked(self, document, link):
         self.entry.set_text(self.entry.get_text().rstrip() + " " + link)
@@ -231,16 +236,17 @@ class Demo:
     def on_entry_changed(self, widget, *args):
         self.refresh_results()
 
-    def on_query_tooltip(self, widget, x, y, keyboard_mode, tooltip, *args):
-        pass
+#    def on_query_tooltip(self, widget, x, y, keyboard_mode, tooltip, *args):
+#        pass
         
     def on_row_activated(self, treeview, path, view_column):
         iter = treeview.get_model().get_iter(path)
         doc = treeview.get_model().get_value(iter, 2).document
-        hash = doc.get_value(1)
-        d = doc.get_value(2)
-        # FIXME: user should specify PATH_TO_PAGESTORE
-        path = os.path.join('.', '2008', '1', d, hash, 'contents.html')
+        path = os.path.join(PATH_TO_PAGESTORE, 
+                            doc.get_value(5),
+                            doc.get_value(1),
+                            'contents.html')
+
         import webbrowser
         webbrowser.open(path)
     
