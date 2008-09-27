@@ -4,7 +4,7 @@ class HomeController < ApplicationController
   def index
     @n_intwords = Intword.count(:conditions => "visible=1")
     @n_languages = LOCALES.length
-    @n_words = Word.count().localize
+    @n_sources = Source.count()
 
     @attr = 'imp'
     @action = 'show'
