@@ -132,6 +132,51 @@ class IntwordController < ApplicationController
               :disposition => "attachment; filename=some_data.csv")
   end
 
+  # same as csv, but retrieves counts splitted per pages
+  def csv_perpage
+    def generate_line(row)
+      row_sep = $INPUT_RECORD_SEPARATOR
+      [row, row_sep].join()
+    end
+    
+    first_date = Date.today().subtract_interval(params[:period])
+    iw_ids = params[:id].split("-")
+    filename = "tmp/some_data.csv"
+    iw_tss = Hash.new()
+    iws = Array
+    
+    dates = nil
+    iw_ids.each do |iw_id|
+      iw = Intword.find(iw_id)
+      # find which pages this iw is found
+      pages = iw.words.count(:select=>:page_id, :conditions=>"scantime>'#{first_date}'", :group=>:page_id).map {|e| e[0]}
+      iw_tss[iw] = Hash.new()
+      pages.each do |page|
+        iw_ts = iw.get_time_series(params[:period], force_complete=true, page_id=page)
+        iw_tss[iw][page] = iw_ts
+        dates = iw_ts.dates
+      end
+    end
+
+    header = "date, page_id, name, count"
+    header = generate_line(header)
+    
+    rows = nil
+    iw_tss.each_pair do |iw, tss|
+      tss.each_pair do |page_id, ts|
+        ts.dates.each_with_index do |d, i|
+          row = "#{d.strftime('%Y/%m/%d')}, #{page_id}, #{iw.name}, #{ts.values[i]}"
+          rows = [rows, generate_line(row)].join()
+        end
+      end
+    end
+    csv = [header, rows].join
+    
+    send_data(csv, 
+              :type => 'text/csv; charset=iso-8859-1; header=present', 
+              :disposition => "attachment; filename=some_data.csv")
+  end
+
   def csv_cloud
     def generate_line(row)
       row_sep = $INPUT_RECORD_SEPARATOR

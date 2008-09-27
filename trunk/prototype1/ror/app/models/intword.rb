@@ -45,12 +45,23 @@ class Intword < ActiveRecord::Base
   # returns last n_month values
   # lastdate is today, firstdate is the oldest date (in the n_months scope)
   # if some days are missing (stem not seen in pages) we fill with zeros
-  def get_time_series(interval, force_complete=false)
-    # FIXME: add page_id parameter like so [ "category IN (?)", categories]
-    # FIXME: add /n_pages to avg_count (based on the language of the stem)
+  def get_time_series(interval, force_complete=false, page_id=nil)
+    # interval = '3m', '1m', '1w', etc
+    # force_complete = boolean, forces the time series to be completed
+    #   ie: very_first_date ... nil ... first_date ... values/zeros .. last_date
+    #   intestead of: first_date ... values/zeros .. last_date
+    # page_id = count only pages which belong to this id or id array
     very_first_date = Date.today().subtract_interval(interval)
+    condi = "scantime>='#{very_first_date}'"
+    if (!page_id.nil?)
+      if (page_id.class == Array)
+        condi = [condi, "page_id IN #{page_id}"].join(' AND ')
+      elsif
+        condi = [condi, "page_id = #{page_id}"].join(' AND ')
+      end
+    end
     ws = words.sum(:count, 
-                   :conditions=>"scantime>='#{very_first_date}'",
+                   :conditions=> condi,
                    :order => "date(scantime)",
                    :group=>"date(scantime)")
 
