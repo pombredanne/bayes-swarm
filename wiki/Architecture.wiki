@@ -1,7 +1,7 @@
 #summary Describes the architecture for the bayes-swarm engine
 #labels Phase-Design,Phase-Deploy
 
-*NOTE* : this document does not describe the actual state of the engine, but a state that we will ( hopefully ) reach very soon ).
+*NOTE* : this document does not describe the actual state of the engine, but a state that we will ( hopefully ) reach very soon in the [Pulsar] design.
 
 = Phases = 
 
@@ -15,9 +15,9 @@
 = Components =
 
 The bayes-swarm engine is structured in terms of modular components : 
-  * *Extractor* : the extractor is responsible for navigating through the web and store the relevant pages locally
+  * *Extractor* ( SwarmWave ) : the extractor is responsible for navigating through the web and store the relevant pages locally. SwarmWave is the codename for the extractor and you'll find it referenced with this name through the code.
   * *PageStore* : PageStore is the component, file format and filesystem structure responsible for storing the raw extracted data. Read some [FileStorage technical details].
-  * Refiners : we currently have two refiners that analyze and consolidate data stored in the PageStore: the first one, currently unnamed, is responsible for reducing and consolidating the raw data into a mysql database. The amount of information stored is limited (we basically keep only the words' count for each word found in the raw data ) and it is mainly used by the website. The second refiner, called *MeanMachine* and currently under development by Matteo Zandi, applies search and indexing criterias on the raw data.
+  * Refiners : we currently have two refiners that analyze and consolidate data stored in the PageStore: the first one, SwarmShoal, is responsible for reducing and consolidating the raw data into a mysql database. The amount of information stored is limited (we basically keep only the words' count for each word found in the raw data ) and it is mainly used by the website. The second refiner, called *MeanMachine* and currently under development by Matteo Zandi, applies search and indexing criterias on the raw data.
   * *Database* : a Mysql database is used to store a normalized version of the raw data, and is accessed by the Bayes-Swarm website.
   * Bayes-Swarm *website* : the [http://www.bayes-swarm.com bayes-swarm website] provides a publicly accessible version of the stored data, and allows user to extract timeseries and other simple charts from the data. 
   * *TimeMachine* : TimeMachine is a particular feature of the website that talks directly to the PageStore and allows users to see raw webpages in the exact form they were when originally spidered by the engine.
