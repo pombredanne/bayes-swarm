@@ -10,9 +10,6 @@
 # Copyright(c) 2008 - bayes-swarm project.
 # Licensed under the Apache2 License.
 
-require 'util/extractor'
-require 'util/storage'
-
 module Pulsar
 
   #--
@@ -30,7 +27,6 @@ module Pulsar
         digest = Digest::MD5.hexdigest(@store_url)
         line = "#{digest} #{@store_url}"
         if @page
-          #line += " #{@page.id} #{@page.kind_name} #{@page.language_name} #{@page.source_id} #{@page.source_name}"
           line += " #{@page.id} #{@page.kind_name} #{@page.language_name}"
         end
         return line
