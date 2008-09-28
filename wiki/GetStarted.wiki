@@ -23,7 +23,7 @@ Once your pc is ready, you can start trying some of our prototypes. Here follows
 
   * PrototypeOne : the very first approach to page data extraction. Currently being used for day-to-day extractions.
   * PrototypeTwo : an ETL structured way to data extraction. Still not in active use and going to be dismissed.
-  * PrototypeThree : the version that will hopefully implement the [Architecture] design.
+  * [Pulsar] : the version that will ultimately implement the [Architecture] design.
 
 === Data Simulation ===
 The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
