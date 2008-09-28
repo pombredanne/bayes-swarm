@@ -48,7 +48,7 @@ with_connection do
     elsif
       warn_log "unknown page kind #{page.kind_name}"
       next # skip the rest of the cycle
-    end    
+    end
     
     begin
       # Save extracted data if needed
