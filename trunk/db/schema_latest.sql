@@ -105,7 +105,7 @@ CREATE TABLE `intwords` (
 DROP TABLE IF EXISTS `kinds`;
 CREATE TABLE `kinds` (
   `id` int(11) NOT NULL auto_increment,
-  `kind` char(3) NOT NULL default '',
+  `kind` char(4) NOT NULL default '',
   PRIMARY KEY  USING BTREE (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
