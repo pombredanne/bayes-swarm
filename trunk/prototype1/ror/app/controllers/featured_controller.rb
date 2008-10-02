@@ -49,4 +49,20 @@ class FeaturedController < ApplicationController
     @ofcgraph = open_flash_chart_object(500,375, "/#{params[:locale]}/ofc/pie/#{params[:id]}", false, '/')    
   end
   
+  def ricercatoriprecari
+    # def interesting words for usprimary2008
+    @temi={"all" => "131-3313"} 
+       
+    if ( params[:id] == nil )
+      params[:id] = @temi["all"]
+    end
+
+    @intword_ids = params[:id].split("-")
+
+    @ofcgraph = open_flash_chart_object(500,375, "/#{params[:locale]}/ofc/pie/#{params[:id]}", false, '/')    
+  end
+  
+  
+  
+  
 end
