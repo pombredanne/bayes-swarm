@@ -65,3 +65,9 @@ Finally run it!
 cd ~/mean-machine
 python ./bs-xapian-search-gtk.py ../xapian-pagestore
 }}}
+
+or if you want to try bs-xapian-graph.py
+{{{
+cd ~/mean-machine
+python ./bs-xapian-graph.py ../xapian-pagestore
+}}}
