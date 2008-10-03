@@ -31,5 +31,30 @@ The user can insert terms to be searched, the program paints a graph of the 10 m
 
 Based on [http://code.google.com/p/jrfonseca/wiki/XDot XDot].
 
-= Where can I get it? =
-Just download Mean-Machine source from svn, a sample of the xapian indexed db can be found at [http://www.battlehorse.net/swarm_sample/ this url].
+= What do I need to try it? =
+  * Mean-Machine source from svn
+  * xapian indexed db (can be found at [http://www.battlehorse.net/swarm_sample/ this url])
+  * xapian library with python bindings
+  * pygtk
+
+== Ubuntu ==
+Install xapian and its python bindings
+{{{
+sudo apt-get install python-xapian
+}}}
+
+pygtk is already installed on the system.
+
+Get the source code
+{{{
+cd ~
+svn checkout http://bayes-swarm.googlecode.com/svn/trunk/mean-machine mean-machine
+}}}
+
+Download the sample db
+{{{
+cd ~
+mkdir xapian-pagestore
+cd xapian-pagestore
+wget http://www.battlehorse.net/swarm_sample/2008_01xap.tar.bz2
+}}}
