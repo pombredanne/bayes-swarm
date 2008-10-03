@@ -38,9 +38,9 @@ Based on [http://code.google.com/p/jrfonseca/wiki/XDot XDot].
   * pygtk
 
 == Ubuntu ==
-Install xapian and its python bindings
+Install xapian, its python bindings, pydot and graphviz
 {{{
-sudo apt-get install python-xapian
+sudo apt-get install python-xapian python-gtk2 python-pyparsing python-pydot graphviz
 }}}
 
 pygtk is already installed on the system.
