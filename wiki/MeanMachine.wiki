@@ -51,10 +51,17 @@ cd ~
 svn checkout http://bayes-swarm.googlecode.com/svn/trunk/mean-machine mean-machine
 }}}
 
-Download the sample db
+Download and uncompress the sample db
 {{{
 cd ~
 mkdir xapian-pagestore
 cd xapian-pagestore
 wget http://www.battlehorse.net/swarm_sample/2008_01xap.tar.bz2
+tar xvf 2008_01xap.tar.bz2
+}}}
+
+Finally run it!
+{{{
+cd ~/mean-machine
+python ./bs-xapian-search-gtk.py ../xapian-pagestore
 }}}
