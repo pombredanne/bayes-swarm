@@ -3,6 +3,11 @@
 # in the pagestore, to enrich them with additional info (as the page_id, kind, language and
 # other infos).
 #
+# To be executed it requires a "-d" parameter to specify the directory that contains the META files.
+# It also requires access to the database to merge existing Page informations.
+# For example:
+#   ruby runner.rb -c swarm_shoal_options.yml -f component/swarm_moremeta -d /path/to/pagestore
+#
 # == Author
 # Riccardo Govoni [battlehorse@gmail.com]
 #
@@ -29,20 +34,14 @@ if !File.directory?(directory)
 end
 log "Parsing #{directory} for META files to be updated..."
 
-
-# A support class to re-use FileSaver logic in creating META files.
-class Meta
-  include Pulsar::Storage::FileSaver
-  
-  def initialize(store_url)
-    @store_url = store_url
-  end
-end
+# Some old entries in the META file ended up having spurious newline
+# between the md5 hash and the url. This flag is used to fix the problem.
+newlinebug = false
 
 with_connection do
   
   # Extract all the META files
-  lister = Pulsar::Storage::Lister.new(directory, /META$/)
+  lister = Pulsar::Lister.new(directory, /META$/)
   lister.extract.each do |metafile|
     
     # Create a META.old backup copy
@@ -54,15 +53,23 @@ with_connection do
       f.each_line do |l|
         unless l.split(" ").length > 2 
           # META file still uses the old format.
-          url = l.split(" ")[1]
-          m = Meta.new(url)
+          m = Pulsar::BayesPageStore.new
+          m.url = l.split(" ")[newlinebug ? 0 : 1]
+          
+          if m.url.nil?
+            newlinebug = true
+            warn_log "No url found for an entry in #{metafile}. Is this the newline bug?" if m.url.nil?
+            next
+          end
+          
+          newlinebug = false
         
           # Load page informations and migrate the META
-          p = Page.find_by_url(url)
+          p = Page.find_by_url(m.url)
           if p
             m.page = p
           else
-            warn_log "Page not found for #{url} in #{metafile}"
+            warn_log "Page not found for #{m.url} in #{metafile}"
           end
           out << m.get_meta + "\n"
         end
