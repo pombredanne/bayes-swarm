@@ -1,9 +1,19 @@
 storage:
     :filesaver: active
-    :base:  /tmp/test_pulsar3
+    :base:  /Users/battlehorse/Downloads/swarmtemp/ps
 
 database:
     :host:   localhost
-    :user:   testuser
-    :pass:   test
-    :db:     pulsar
+    :user:   root
+    :pass:   
+    :db:     battleho_bayes_test
+    
+# These stopwords are used by the swarm normalization and are therefore preserved
+# when appliying the stopwords filter.
+keep_stopwords:
+    :it:
+      [ad, a, e, i, o, con, da, di, in, su, per, tra, è, sono, lo, la, li, le, gli, ne, il, un, uno, una, ed, se, perchè, come, che, chi, cui, non, quale, quanto, quanti, quanta, quante, quello, quelli, quella, quelle, questo, questi, questa, queste, si, no, sono]
+
+    :en:
+      [a, did, her, do, him, after, his, down, to, for, and, from, are, get, up, as, go, man, see, us, at, she, very, was, be, some, because, we, if, went, but, in, not, that, of, the, what, is, off, their, when, came, it, on, them, will, can, had, one, then, with, could, have, there, would, he, out, they]
+

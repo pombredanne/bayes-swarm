@@ -57,7 +57,7 @@ module Pulsar
 end
 
 # Retrieves an options from the command line arguments
-def get_opt(opt, default)
+def get_opt(opt, default=nil)
   opt_value = $*[$*.index(opt) + 1] if $*.index(opt) && $*.index(opt) < $*.length-1
   opt_value || default
 end

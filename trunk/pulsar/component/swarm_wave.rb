@@ -18,17 +18,13 @@ require 'util/ar'
 require 'util/extractor'
 
 require 'bayes/ar'
+require 'bayes/storage'
 
 include Pulsar::Log
 include Pulsar::AR
 
-# Enables file storage if required
-storage_opts = Pulsar::Runner.opts['storage']
-if storage_opts && storage_opts[:filesaver] == 'active'
-  log "File storage is active"
-  require 'util/storage'
-  require 'bayes/storage'
-end
+# Detects whether the PageStore is active
+log "File storage is active" if PageStore.active?
 
 total_bytes = 0
 
@@ -52,11 +48,12 @@ with_connection do
     
     begin
       # Save extracted data if needed
-      if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
-        extractor.base_folder = Pulsar::Runner.opts['storage'][:base]
-        extractor.url = page.url
-        extractor.scantime = Time.now
-        extractor.page = page if extractor.respond_to?(:page=)
+      if PageStore.active?
+        pageStore = Pulsar::BayesPageStore.new
+        pageStore.base_folder = PageStore.baseFolder
+        pageStore.url = page.url
+        pageStore.scantime = Time.now
+        pageStore.page = page
       end
 
       # Get the work done
@@ -66,8 +63,8 @@ with_connection do
         total_bytes += content.size
         
         # Save extracted data if needed
-        if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
-          extractor.persist(content)
+        if pageStore
+          pageStore.persist(content)
         else
           # print out the beginning of the content for debug purposes when filesaver is not active
           log "Would have saved #{content.size} bytes : #{content[0..40]} ... "

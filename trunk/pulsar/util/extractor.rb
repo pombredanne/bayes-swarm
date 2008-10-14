@@ -25,6 +25,7 @@ require 'time'
 require 'timeout'
 
 require 'util/log'
+require 'util/storage' # This is needed because RSS extractor directly stores its contents
 
 module Pulsar
   
@@ -141,24 +142,23 @@ module Pulsar
             new_items += 1
             article_url = item.link
             extractor = HttpMechanizeExtractor.new
-          
-            if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
-              extractor.base_folder = store_folder
-              extractor.url = article_url
-              extractor.scantime = nil  # the same as RssPage, we don't need to save it
-              extractor.page = rss_page if extractor.respond_to?(:page=)
-            end          
-          
+            
+            if PageStore.active?
+              pageStore = Pulsar::PageStore.new # we use the plain PageStore, without extra bayes info
+              pageStore.base_folder = PageStore.baseFolder
+              pageStore.url = article_url
+              pageStore.scantime = nil  # the same as RssPage, we don't need to save it
+              # pageStore.page = page 
+            end
+                    
             # create a wrapper class to pass by the url in the expected format
             item_page = RssItemPage.new(article_url)
             
             cur_content = extractor.extract(item_page)
             if cur_content
               rss_full_content += cur_content
-          
-              if extractor.respond_to?(:is_filesaver?) && extractor.is_filesaver?
-                extractor.persist(cur_content)
-              end      
+              
+              pageStore.persist(cur_content) if pageStore
             end
           else
             verbose_log "skipping #{item.link} because it's too old (#{item.date})"
