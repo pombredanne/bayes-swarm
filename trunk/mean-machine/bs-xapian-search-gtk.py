@@ -40,9 +40,9 @@ def EnquireDB(input_terms, lang):
     stemmer = xapian.Stem(lang)
     qp.set_stemmer(stemmer)
     qp.set_database(database)
-    qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
+    #qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
     try:
-        query1 = qp.parse_query(input_terms, xapian.QueryParser.FLAG_PHRASE) #xapian.QueryParser.FLAG_BOOLEAN)
+        query1 = qp.parse_query(input_terms, xapian.QueryParser.FLAG_BOOLEAN) #xapian.QueryParser.FLAG_PHRASE
     except xapian.QueryParserError:
         print 'Query parser error'
         return
@@ -168,7 +168,7 @@ class Demo:
         treeview.set_headers_clickable(True)
         treeview.set_reorderable(True)
         #treeview.set_property('has-tooltip', True)
-        treeview.set_tooltip_column(3)
+#        treeview.set_tooltip_column(3)
 #        treeview.connect('query-tooltip', self.on_query_tooltip)
         
         scrolledwin.add(treeview)
