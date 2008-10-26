@@ -21,11 +21,11 @@
                                                        :action => 'show' } %>
 </div>
  
-<p><%= "There are currently %d interesting words" / @n_intwords -%>, 
-<%= "among %d languages, in the database" / @n_languages %>
-(<%= link_to "full cloud".t, { :controller => "intword",
-                             :action => "cloud"} %>). 
-<%= "Every day the project spiders a total of %d" / @n_sources %>
+<p><%= "Here are shown the 50 most relevant words in the last seven days, see the".t %>
+<%= link_to "full cloud", { :controller => "intword",
+                             :action => "cloud"} %>).</p>
+
+<p><%= "Every day the project spiders a total of %d" / @n_sources %>
 <%= link_to "sources".t, { :controller => "source",
                          :action => "list"} %>.</p>
 
