@@ -60,7 +60,7 @@ def EnquireDB(input_terms, lang):
     # Find the top 10 results for the query.
     enquire.set_query(query)
     # Retrieve as many results as we can show
-    size = 100
+    size = 300
     mset = enquire.get_mset(0, size - 1)
 
     # FIXME: add status bar
@@ -78,7 +78,7 @@ def EnquireDB(input_terms, lang):
     docs = []
     rset = xapian.RSet()
     for y, m in enumerate(mset):
-        if y < 20:
+        if y < 300:
             rset.add_document(m[xapian.MSET_DID])
         name = m[xapian.MSET_DOCUMENT].get_data()
         docs.append([m[xapian.MSET_PERCENT], name, m, ''])
