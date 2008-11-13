@@ -34,6 +34,7 @@ class Intword < ActiveRecord::Base
       temp = Intword.create(:name => stemdata.stem,
                             :language_id => language_id)
       stemdata.id = temp.id    
+    end
   end
 end
 
