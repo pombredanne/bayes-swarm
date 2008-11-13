@@ -24,7 +24,7 @@ include Pulsar::Log
 include Pulsar::AR
 
 # Detects whether the PageStore is active
-log "File storage is active" if PageStore.active?
+log "File storage is active" if Pulsar::PageStore.active?
 
 total_bytes = 0
 
@@ -46,11 +46,11 @@ with_connection do
       next # skip the rest of the cycle
     end
     
-    begin
+    #begin
       # Save extracted data if needed
-      if PageStore.active?
+      if Pulsar::PageStore.active?
         pageStore = Pulsar::BayesPageStore.new
-        pageStore.base_folder = PageStore.baseFolder
+        pageStore.base_folder = Pulsar::PageStore.baseFolder
         pageStore.url = page.url
         pageStore.scantime = Time.now
         pageStore.page = page
@@ -73,9 +73,9 @@ with_connection do
     
       # Update the last scantime on the database
       Page.update(page.id, {:last_scantime => Time.now()})
-    rescue
-      warn_log "Unhandled expection for page #{page.url} : #{$!}"
-    end
+    #rescue
+    #  warn_log "Unhandled expection for page #{page.url} : #{$!}"
+    #end
     
   end
 end
