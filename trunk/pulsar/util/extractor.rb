@@ -142,6 +142,9 @@ module Pulsar
             new_items += 1
             article_url = item.link
             extractor = HttpMechanizeExtractor.new
+
+            # create a wrapper class to pass by the url in the expected format
+            item_page = RssItemPage.new(article_url, rss_page.id, "rssitem", rss_page.language_name)
             
             if PageStore.active?
               pageStore = Pulsar::BayesPageStore.new
@@ -154,12 +157,9 @@ module Pulsar
               # reassign current url and scantime = nil 
               pageStore.url = article_url
               pageStore.scantime = nil  # the same as RssPage, we don't need to save it
-              pageStore.page = rss_page
+              pageStore.page = item_page
             end
                     
-            # create a wrapper class to pass by the url in the expected format
-            item_page = RssItemPage.new(article_url)
-            
             cur_content = extractor.extract(item_page)
             if cur_content
               rss_full_content += cur_content
@@ -184,9 +184,12 @@ module Pulsar
   
   # An utility class to wrap a +url+ into a +page+ construct
   class RssItemPage
-    attr_reader :url
-    def initialize(url)
+    attr_reader :url, :id, :kind_name, :language_name
+    def initialize(url, id, kind_name, language_name)
       @url = url
+      @id = id
+      @kind_name = kind_name
+      @language_name = language_name
     end
   end
   
