@@ -2,8 +2,9 @@
 # Contains the available web extractors.
 #
 # All the extractors should conform to the following interface: they should
-# provide an +extract()+ method, which takes a +page+ and returns either the
-# page content, or +nil+ in case of error.
+# provide an +extract()+ method, which takes a +page+ and returns
+# an +ExtractedPage+, a wrapper that binds together a page and its content, 
+# or +nil+ in case of error.
 #
 # A +page+ is whatever object that exposes the following parameters:
 # [url] the page source url.
@@ -25,9 +26,41 @@ require 'time'
 require 'timeout'
 
 require 'util/log'
-require 'util/storage' # This is needed because RSS extractor directly stores its contents
 
 module Pulsar
+  
+  # Wrapper class for a page and its associated content.
+  # A page on its own just contains its +url+ and +last_scantime+ .
+  # A page may contain subpages (as is the case for RSS feeds).
+  # Subpages are just a list of +ExtractedPage+s like their parent one.
+  class ExtractedPage
+    attr_reader :page, :subpages
+    attr_accessor :content
+    
+    def initialize(page, content="")
+      @page = page
+      
+      # content is never nil. At most empty
+      @content = content.nil? ? "" : content
+      @subpages = []
+    end
+    
+    def add_subpage(subpage)
+      @subpages << subpage
+    end
+  end
+  
+  # An utility class to wrap a +url+, +kind+ and +language+
+  # into a +page+ construct
+  class RssItemPage
+    attr_reader :url, :id, :kind_name, :language_name
+    def initialize(url, id, language_name)
+      @url = url
+      @id = id
+      @kind_name = "rssitem"
+      @language_name = language_name
+    end
+  end  
   
   # An extractor for web pages that uses the WWW::Mechanize library.
   # It supports redirects and cookies.
@@ -43,7 +76,7 @@ module Pulsar
           response = agent.get(page.url)
           content = response.content
         end
-        return content
+        return ExtractedPage.new(page, content)
       rescue WWW::Mechanize::RedirectLimitReachedError
         warn_log "too many redirects from #{page.url} : #{$!}"
         nil
@@ -60,14 +93,14 @@ module Pulsar
   # An extractor for web pages that uses the plain net/http library.
   # It supports redirects, but not cookies.
   #
-  # No longer use, remains here for reference only
+  # No longer used, remains here for reference only
   class HttpExtractor
     include Pulsar::Log
 
     def extract(page)
       begin
         response = extract_with_redirect(page.url)
-        response.body
+        ExtractedPage.new(page, response.body)
       rescue
         warn_log "unable to extract contents from #{page.url} : #{$!}"
         nil
@@ -114,86 +147,71 @@ module Pulsar
   class RssExtractor
     include Pulsar::Log    
 
-    def extract(rss_page)
-      log "Trying: #{rss_page.url}"
-      rss_content = "" # raw content of rss feed will be loaded here
+    def extract(rss_feed)
+      log "Trying: #{rss_feed.url}"
+      
+      # Load the RSS feed
+      rss_content = ""
       begin
-        open(rss_page.url) { |s| rss_content = s.read }
+        # open-uri augments Kernel with open()
+        open(rss_feed.url) { |s| rss_content = s.read }
       rescue
-        warn_log "Unable to access feed #{rss_page.url} : #{$!}"
+        warn_log "Unable to access feed #{rss_feed.url} : #{$!}"
         return nil
       end
       
-      rss = RSS::Parser.parse(rss_content, false)
+      # Prepare the result extracted page
+      extracted_feed = ExtractedPage.new(rss_feed, rss_content)
+      
+      # Parse the RSS feed, but skip rss validation
+      do_validate = false
+      rss = RSS::Parser.parse(rss_content, do_validate)
       unless rss
-        warn_log "RSS Parser returned a nil for #{rss_page.url}. Maybe an atom feed?"
+        warn_log "RSS Parser returned a nil for #{rss_feed.url}. " +
+                 "Maybe an atom feed?"
         return nil
       end
 
       log "Found #{rss.items.size} items in the feed"
-      new_items = 0
-      rss_full_content = "" # collects content from all articles
       rss.items.each do |item|
         begin
           if !item.date
-            warn_log "Feed #{rss_page.url} contains item #{item.link} with no date. Skipping"
-          elsif (item.date > rss_page.last_scantime)
-            log "Parsing feed element #{item.link}"
-            new_items += 1
-            article_url = item.link
-            extractor = HttpMechanizeExtractor.new
-
-            # create a wrapper class to pass by the url in the expected format
-            item_page = RssItemPage.new(article_url, rss_page.id, "rssitem", rss_page.language_name)
+            warn_log "Feed #{rss_feed.url} contains item #{item.link} " +
+                     "with no date. Skipping"
+          elsif (item.date > rss_feed.last_scantime)
+            log "Parsing feed element #{item.link}"            
             
-            if PageStore.active?
-              pageStore = Pulsar::BayesPageStore.new
-              pageStore.base_folder = Pulsar::PageStore.baseFolder
-              # force the url to be the same as rss_page so that we create a store_folder
-              # which has rss_page url and time included
-              pageStore.url = rss_page.url
-              pageStore.scantime = Time.now
-              pageStore.base_folder = pageStore.store_folder
-              # reassign current url and scantime = nil 
-              pageStore.url = article_url
-              pageStore.scantime = nil  # the same as RssPage, we don't need to save it
-              pageStore.page = item_page
-            end
-                    
-            cur_content = extractor.extract(item_page)
-            if cur_content
-              rss_full_content += cur_content
-              
-              pageStore.persist(cur_content) if pageStore
-            end
+            # create a page representing the single rss item
+            item_page = RssItemPage.new(item.link, rss_feed.id, 
+                                        rss_feed.language_name)
+            
+            extractor = HttpMechanizeExtractor.new        
+            extracted_item = extractor.extract(item_page)
+            
+            # Add the new item to the list of rss items
+            extracted_feed.add_subpage(extracted_item) if extracted_item
           else
-            verbose_log "skipping #{item.link} because it's too old (#{item.date})"
+            verbose_log "skipping #{item.link} " +
+                        "because it's too old (#{item.date})"
           end
         rescue URI::InvalidURIError
           # article_url is invalid
-          warn_log "item #{item.link} in rss feed (#{rss_page.url}) appears to be invalid. Consider it for removal : $!"
-        #rescue TypeError, ArgumentError, NoMethodError
+          warn_log "item #{item.link} in rss feed (#{rss_feed.url}) appears " +
+                   "to be invalid. Consider it for removal : $!"
+        rescue TypeError, ArgumentError, NoMethodError
           # item.date might be nil
-        #  warn_log "warning, rss feed (#{rss_page.url}) contains articles with no date, consider it for removal : $!"
+          warn_log "warning, rss feed (#{rss_feed.url}) contains articles " +
+                   "with no date, consider it for removal : $!"
         end
       end
-      log "#{new_items} items have been recognized as new and stored"
-      return rss_full_content.size > 0 ? rss_full_content : nil
+      log "#{extracted_feed.subpages.length} items have been recognized " + 
+          "as new (later than #{rss_feed.last_scantime}) and stored"    
+      return extracted_feed
     end
   end
   
-  # An utility class to wrap a +url+ into a +page+ construct
-  class RssItemPage
-    attr_reader :url, :id, :kind_name, :language_name
-    def initialize(url, id, kind_name, language_name)
-      @url = url
-      @id = id
-      @kind_name = kind_name
-      @language_name = language_name
-    end
-  end
-  
-  # A simplistic extractor that reads from local files. Used for debugging purporses only.
+  # A simplistic extractor that reads from local files. 
+  # Used for debugging purporses only.
   class FileExtractor
     include Pulsar::Log    
 
@@ -205,7 +223,7 @@ module Pulsar
           content << " " << line
         end
       end
-      return content
+      return ExtractedPage.new(page, content)
     end
 
   end

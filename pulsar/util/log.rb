@@ -28,6 +28,10 @@ module Pulsar
     def warn_log(message)
       log "(WARN) #{message}"
     end
+    
+    def dry_log(message)
+      log "(DRYRUN) #{message}" if Pulsar::Runner.dryRun?
+    end
   
     # Returns whether verbose mode is enabled
     def verbose?

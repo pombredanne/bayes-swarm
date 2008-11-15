@@ -23,7 +23,20 @@ require 'bayes/storage'
 include Pulsar::Log
 include Pulsar::AR
 
-# Detects whether the PageStore is active
+# Utility method that creates a pageStore ready to persist
+# a page to disk
+def get_pagestore(base_folder, extracted_page, time)
+  # Use the Bayes-specific store, that creates rich META files
+  pageStore = Pulsar::BayesPageStore.new
+  pageStore.base_folder = base_folder
+  pageStore.url = extracted_page.page.url
+  pageStore.scantime = time
+  pageStore.page = extracted_page.page
+  
+  return pageStore
+end
+
+# Detects whether the PageStore is active and set it up
 log "File storage is active" if Pulsar::PageStore.active?
 
 total_bytes = 0
@@ -33,6 +46,14 @@ with_connection do
   log "Found #{pages.size} pages"  
   pages.each_with_index do |page, i|
     log "Elaborating page #{i+1} out of #{pages.size}"
+    
+    # Skip pages if requested.
+    unless get_opt("--page").nil?
+      if get_opt("--page").to_i != page.id
+        log "Skipping page with id #{page.id}"
+        next
+      end
+    end
     
     # Define the right extractor
     if (page.kind_name == :url)
@@ -46,36 +67,50 @@ with_connection do
       next # skip the rest of the cycle
     end
     
-    #begin
-      # Save extracted data if needed
-      if Pulsar::PageStore.active?
-        pageStore = Pulsar::BayesPageStore.new
-        pageStore.base_folder = Pulsar::PageStore.baseFolder
-        pageStore.url = page.url
-        pageStore.scantime = Time.now
-        pageStore.page = page
-      end
-
+    begin
       # Get the work done
-      content = extractor.extract(page)
+      extracted_page = extractor.extract(page)
     
-      if content && content.size > 0
-        total_bytes += content.size
+      if extracted_page && extracted_page.content.size > 0
+        total_bytes += extracted_page.content.size
         
-        # Save extracted data if needed
-        if pageStore
-          pageStore.persist(content)
+        if Pulsar::PageStore.active?
+          
+          # Store the extracted page
+          pageStore = get_pagestore(Pulsar::PageStore.baseFolder,
+                                    extracted_page,
+                                    Time.now())
+          pageStore.persist(extracted_page.content) 
+                    
+          # Store subpages (such as RSS Items, if any)
+          extracted_page.subpages.each do |subpage|
+            
+            # The subpage is store _under_ the parent page folder,
+            # with no extra time information (as it is the same as the
+            # parent one)
+            subpageStore = get_pagestore(pageStore.store_folder,
+                                         subpage,
+                                         nil)
+            subpageStore.persist(subpage.content)
+          end
         else
-          # print out the beginning of the content for debug purposes when filesaver is not active
-          log "Would have saved #{content.size} bytes : #{content[0..40]} ... "
+          # print out the beginning of the content for debug purposes 
+          # when filesaver is not active
+          log "Would have saved #{extracted_page.content.size} bytes : " +
+              "#{extracted_page.content[0..40]} ... "
         end
       end
     
       # Update the last scantime on the database
-      Page.update(page.id, {:last_scantime => Time.now()})
-    #rescue
-    #  warn_log "Unhandled expection for page #{page.url} : #{$!}"
-    #end
+      if Pulsar::Runner.dryRun?
+          dry_log "Would have updated last_scantime to #{Time.now()} " +
+              "for page #{page.id}"
+      else
+        Page.update(page.id, {:last_scantime => Time.now()})
+      end
+    rescue
+     warn_log "Unhandled expection for page #{page.url} : #{$!}"
+    end
     
   end
 end
