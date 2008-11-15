@@ -24,8 +24,6 @@ module Pulsar
   class PageStore
     include Pulsar::Log
     
-    attr_accessor :base_folder, :scantime, :url
-    
     # Checks whether the PageStore is active
     def PageStore.active?
       storage_opts = Pulsar::Runner.opts['storage'] if Pulsar::Runner
@@ -47,11 +45,16 @@ module Pulsar
       
       return nil
     end
+    
+    attr_accessor :base_folder, :scantime, :url  
   
     # Returns the folder where the current contents will be stored
     def store_folder
       folder = Pathname.new(@base_folder || Dir.tmpdir) 
-      folder = folder.join(@scantime.year.to_s).join(@scantime.month.to_s).join(@scantime.day.to_s) unless @scantime.nil?      
+      folder = folder.
+        join(@scantime.year.to_s).
+        join(@scantime.month.to_s).
+        join(@scantime.day.to_s) unless @scantime.nil?      
       return folder.join(Digest::MD5.hexdigest(@url))
     end    
     
@@ -63,6 +66,8 @@ module Pulsar
 
         write_contents(store_folder.join("contents.html"),content)
 
+        # META file is always one folder up from the URL
+        # (as it contains the information to explain it)
         write_meta(store_folder.parent.join("META"),@url, @page)
       rescue SystemCallError => sce
         warn_log "Unable to persist url #{@url} due to error #{sce}"
