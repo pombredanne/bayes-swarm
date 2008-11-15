@@ -58,17 +58,12 @@ module Pulsar
     # Save the current contents into the path returned by store_folder . 
     # Creates the folders if necessary.
     def persist(content)
-      folder = Pathname.new(@base_folder || Dir.tmpdir) 
-      folder = folder.join(@scantime.year.to_s).join(@scantime.month.to_s).join(@scantime.day.to_s) unless @scantime.nil?
-  
       begin
-        url_folder = folder.join(Digest::MD5.hexdigest(@url))
-      
-        create_if_missing(url_folder)
+        create_if_missing(store_folder)
 
-        write_contents(url_folder.join("contents.html"),content)
+        write_contents(store_folder.join("contents.html"),content)
 
-        write_meta(folder.join("META"),@url, @page)
+        write_meta(store_folder.join("META"),@url, @page)
       rescue SystemCallError => sce
         warn_log "Unable to persist url #{@url} due to error #{sce}"
       end
