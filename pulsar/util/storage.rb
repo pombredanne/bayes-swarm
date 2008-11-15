@@ -63,7 +63,7 @@ module Pulsar
 
         write_contents(store_folder.join("contents.html"),content)
 
-        write_meta(store_folder.join("META"),@url, @page)
+        write_meta(store_folder.parent.join("META"),@url, @page)
       rescue SystemCallError => sce
         warn_log "Unable to persist url #{@url} due to error #{sce}"
       end
