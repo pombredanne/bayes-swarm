@@ -144,11 +144,17 @@ module Pulsar
             extractor = HttpMechanizeExtractor.new
             
             if PageStore.active?
-              pageStore = Pulsar::PageStore.new # we use the plain PageStore, without extra bayes info
-              pageStore.base_folder = PageStore.baseFolder
+              pageStore = Pulsar::BayesPageStore.new
+              pageStore.base_folder = Pulsar::PageStore.baseFolder
+              # force the url to be the same as rss_page so that we create a store_folder
+              # which has rss_page url and time included
+              pageStore.url = rss_page.url
+              pageStore.scantime = Time.now
+              pageStore.base_folder = pageStore.store_folder
+              # reassign current url and scantime = nil 
               pageStore.url = article_url
               pageStore.scantime = nil  # the same as RssPage, we don't need to save it
-              # pageStore.page = page 
+              pageStore.page = rss_page
             end
                     
             # create a wrapper class to pass by the url in the expected format
@@ -166,10 +172,9 @@ module Pulsar
         rescue URI::InvalidURIError
           # article_url is invalid
           warn_log "item #{item.link} in rss feed (#{rss_page.url}) appears to be invalid. Consider it for removal : $!"
-        rescue TypeError, ArgumentError, NoMethodError
+        #rescue TypeError, ArgumentError, NoMethodError
           # item.date might be nil
-          warn_log
-          log "warning, rss feed (#{rss_page.url}) contains articles with no date, consider it for removal : $!"
+        #  warn_log "warning, rss feed (#{rss_page.url}) contains articles with no date, consider it for removal : $!"
         end
       end
       log "#{new_items} items have been recognized as new and stored"
