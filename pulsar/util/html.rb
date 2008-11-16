@@ -30,8 +30,8 @@ module Pulsar
     
     def plain_text(xpath)
       @doc.search(xpath).map do |el|
-        # links and other urls (such as img urls) are enclosed in brackets, so we strip them.
-        # We also remove html entities.
+        # links and other urls (such as img urls) are enclosed in brackets, 
+        # so we strip them. We also remove html entities.
         el.to_plain_text.gsub(/\[.*?\]/, '').gsub(/&.*?;/," ")
       end
     end
