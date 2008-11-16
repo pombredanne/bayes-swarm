@@ -40,7 +40,7 @@ def EnquireDB(input_terms, lang):
     stemmer = xapian.Stem(lang)
     qp.set_stemmer(stemmer)
     qp.set_database(database)
-    #qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
+    qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
     try:
         query1 = qp.parse_query(input_terms, xapian.QueryParser.FLAG_BOOLEAN) #xapian.QueryParser.FLAG_PHRASE
     except xapian.QueryParserError:
@@ -97,7 +97,7 @@ def EnquireDB(input_terms, lang):
     # match the filter
     eset = enquire.get_eset(50, rset, Filter(terms, stopwords[lang]))
     
-    # Get the first 100 documents and scan their tags
+    # Read the "Expansion set" and scan tags and their score
     tagscores = dict()
     for item in eset:
         tag = item.term
@@ -106,8 +106,11 @@ def EnquireDB(input_terms, lang):
     tags = []
     if tagscores != dict():
         maxscore = max(tagscores.itervalues())
+        minscore = min(tagscores.itervalues())
         for k in tagscores.iterkeys():
-            tags.append((tagscores[k] * 100 / maxscore, k))
+            tags.append([k, (tagscores[k] - minscore) * 100 / (maxscore - minscore) * 3 + 75])
+        # sort by tag alphabetically
+        tags.sort()
 
     return docs, tags
 
@@ -121,8 +124,8 @@ def mark_text_up(result_list):
 a { text-decoration: none; color: black; }
 </style>
 </head><body>""")
-    for score, tag in result_list:
-        document.write_stream('<a href="%s" style="font-size: %d%%">%s</a> ' % (tag, 30+score*3, tag))
+    for tag, score in result_list:
+        document.write_stream('<a href="%s" style="font-size: %d%%">%s</a> ' % (tag.encode('latin-1'), score, tag.encode('latin-1')))
         #print '<a href="%s" style="font-size: %d%%">%s</a> ' % (tag, score*3, desc)
     document.write_stream("</body></html>")
     document.close_stream()

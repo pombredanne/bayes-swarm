@@ -14,7 +14,7 @@ import os
 import sys
 import xapian
 
-from sgmlparser import BaseHTMLParser
+from sgmlparser import MMBaseHTMLParser
 
 if len(sys.argv) != 3:
     print >> sys.stderr, "Usage: %s PATH_TO_XAPIAN_DB PATH_TO_PAGESTORE" % sys.argv[0]
@@ -49,34 +49,37 @@ def xapian_index(db, dir):
         for page in pages:
             # example: a792188bd1e8a2d91109197dff2a4009 http://news.google.com 1 url en
             hash, url, id, kind, language = page
-            date_list = extract_date_from_path(dir)
-            
-            doc = xapian.Document()
-            doc.set_data(url)
-            doc.add_value(0, language)
-            doc.add_value(1, hash)
-            doc.add_value(2, date_list[0])
-            doc.add_value(3, date_list[1])
-            doc.add_value(4, date_list[2])
-            doc.add_value(5, dir)
+            if kind in ['html', 'rssitem']:
+                date_list = extract_date_from_path(dir)
+                
+                doc = xapian.Document()
+                doc.set_data(url)
+                doc.add_value(0, language)
+                doc.add_value(1, hash)
+                doc.add_value(2, date_list[0])
+                doc.add_value(3, date_list[1])
+                doc.add_value(4, date_list[2])
+                doc.add_value(5, dir)
 
-            stemmer = xapian.Stem(language)
-            indexer.set_stemmer(stemmer)
-            indexer.set_document(doc)
-            f = open(os.path.join(dir, hash, 'contents.html'))
-            
-            htmldoc = BaseHTMLParser()
-            htmldoc.feed(f.read())
-            f.close()
-            htmldoc.close()
-            
-            indexer.index_text(htmldoc.text)
+                stemmer = xapian.Stem(language)
+                indexer.set_stemmer(stemmer)
+                indexer.set_document(doc)
+                f = open(os.path.join(dir, hash, 'contents.html'))
+                
+                htmldoc = MMBaseHTMLParser()
+                htmldoc.feed(f.read())
+                f.close()
+                htmldoc.close()
+                
+                indexer.index_text(htmldoc.text)
 
-            # Add the document to the database.
-            database.add_document(doc)
+                # Add the document to the database.
+                database.add_document(doc)
     #except StopIteration:
     except:
-        pass
+        print "Unexpected error:", sys.exc_info()[0]
+        raise
+
 
 # Open the database for update, creating a new database if necessary.
 database = xapian.WritableDatabase(PATH_TO_XAPIAN_DB, xapian.DB_CREATE_OR_OVERWRITE)
@@ -86,14 +89,16 @@ os.chdir(PATH_TO_PAGESTORE)
 nMETA = 0
 print 'Counting META files..',
 for dir, subfolder, files in os.walk("."):
+    # index only META files of single html pages or single rss items
     if 'META' in files:
+        #print files, subfolder
         nMETA += 1
         print '.',
 
 i = 0
-print 'Indexing files..',
+print '\nIndexing files..',
 for dir, subfolder, files in os.walk('.'):
-    if 'META' in files:     
+    if 'META' in files:
         xapian_index(database, dir)
         i += 1
-        print "%2.1f" % (i/float(nMETA)*100)
+        print "%2.1f" % (i/float(nMETA)*100),
