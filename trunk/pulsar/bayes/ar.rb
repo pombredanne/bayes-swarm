@@ -28,7 +28,8 @@ class Intword < ActiveRecord::Base
   end
   
   # Creates new intwords for a given +language_id+ from a list
-  # of +popular_stems+.
+  # of +popular_stems+. Each element of the list is supposed to
+  # be an instance of +StemData+ (as defined in +stemmer.rb+).
   def self.save_popular_stems(popular_stems, language_id)
     popular_stems.each do |stemdata|
       temp = Intword.create(:name => stemdata.stem,
