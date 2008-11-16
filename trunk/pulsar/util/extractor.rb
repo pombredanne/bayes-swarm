@@ -26,6 +26,7 @@ require 'time'
 require 'timeout'
 
 require 'util/log'
+require 'util/rsspage'
 
 module Pulsar
   
@@ -49,19 +50,7 @@ module Pulsar
       @subpages << subpage
     end
   end
-  
-  # An utility class to wrap a +url+, +kind+ and +language+
-  # into a +page+ construct
-  class RssItemPage
-    attr_reader :url, :id, :kind_name, :language_name
-    def initialize(url, id, language_name)
-      @url = url
-      @id = id
-      @kind_name = "rssitem"
-      @language_name = language_name
-    end
-  end  
-  
+    
   # An extractor for web pages that uses the WWW::Mechanize library.
   # It supports redirects and cookies.
   class HttpMechanizeExtractor
@@ -182,8 +171,8 @@ module Pulsar
             log "Parsing feed element #{item.link}"            
             
             # create a page representing the single rss item
-            item_page = RssItemPage.new(item.link, rss_feed.id, 
-                                        rss_feed.language_name)
+            item_page = Pulsar::RssItemPage.new(item.link, rss_feed.id, 
+                                                rss_feed.language_name)
             
             extractor = HttpMechanizeExtractor.new        
             extracted_item = extractor.extract(item_page)
@@ -195,7 +184,7 @@ module Pulsar
                         "because it's too old (#{item.date})"
           end
         rescue URI::InvalidURIError
-          # article_url is invalid
+          # item.link is invalid
           warn_log "item #{item.link} in rss feed (#{rss_feed.url}) appears " +
                    "to be invalid. Consider it for removal : $!"
         rescue TypeError, ArgumentError, NoMethodError

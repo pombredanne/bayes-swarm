@@ -91,7 +91,6 @@ module Pulsar
 
     def write_meta(file,url,page=nil)
       log "Writing META to #{file}"      
-      digest = Digest::MD5.hexdigest(url)
       file.open("a") do |f| 
         f.puts get_meta
       end
@@ -101,7 +100,7 @@ module Pulsar
     # Returns the content to be saved in the META file. Can be
     # extended to provide addtional informations.
     def get_meta
-      digest = Digest::MD5.hexdigest(@url)
+      digest = Digest::MD5.hexdigest(@url.strip)
       "#{digest} #{@url.strip}"
     end
   end
