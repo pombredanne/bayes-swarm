@@ -36,5 +36,18 @@ module Pulsar
       end
     end
     
+    def all_plain_text(xpath)
+      plain_text(xpath).join(" ")
+    end
+          
+    # Return the keywords for the current document, as stored inside the
+    # META tag. See http://en.wikipedia.org/wiki/Meta_tags
+    def keywords
+      all_keywords = @doc.search("//head/meta[@name='keywords']").map do |el|
+        el.attributes["content"].split(",").map { |kw| kw.strip }
+      end
+      return all_keywords.flatten
+    end
+    
   end  
 end
