@@ -16,7 +16,7 @@ module Pulsar
   class Lister
     
     def initialize(directory, filePattern)
-      @directory = directory
+      @directory = directory.chomp("/")
       @filePattern = filePattern
     end
     
