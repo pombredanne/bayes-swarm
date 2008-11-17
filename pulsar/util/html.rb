@@ -19,7 +19,7 @@ module Pulsar
     attr_reader :doc
     
     def initialize(contents)
-      @doc = Hpricot(contents)
+      @doc = Hpricot(contents.gsub(/&.*?;/," "))
       
       # strips away inline scripts and inline stylesheets.
       # This should leave us with a relatively clean webpage
@@ -29,11 +29,7 @@ module Pulsar
     end
     
     def plain_text(xpath)
-      @doc.search(xpath).map do |el|
-        # links and other urls (such as img urls) are enclosed in brackets, 
-        # so we strip them. We also remove html entities.
-        el.to_plain_text.gsub(/\[.*?\]/, '').gsub(/&.*?;/," ")
-      end
+      return @doc.search(xpath).map { |el| el.inner_text }.compact
     end
     
     def all_plain_text(xpath)
