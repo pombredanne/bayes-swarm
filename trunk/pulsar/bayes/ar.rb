@@ -72,31 +72,40 @@ end
 
 class Word < ActiveRecord::Base
   belongs_to :intword
-end
+ 
+  # Saves a list of stems as a serie of Words.
+  # Each stem may belong to multiple page areas (body, title, header, links...),
+  # but they concur together into defining a single word (with different counts
+  # for different areas).
+  #--
+  # TODO(battlehorse): we are not calculating any overall weight associated
+  # to the word at this time, but we should as soon as we figure out a good
+  # formula.  
+  def Word.create_stems(page_id, scantime, stemdata)
+    params = {
+      :intword_id => stemdata.id,
+      :page_id => page_id,
+      :scantime => scantime,
+      :count => stemdata.count
+    }
 
-# Composes different list of stems into a saveable ActiveRecord Word.
-# Each stem may belong to multiple page areas (body, title, header, links), but
-# they concur together into defining a single word (with different counts for
-# different areas). It can also calculate an overall weight for the word as a whole.
-class WordComposer
-  def initialize
-    @words = {}
-  end
-  
-  def add_stems_for_area(stems, area)
-    stems.each do |stemdata|
-      @words[stemdata.id] ||= OpenStruct.new
-      @words[stemdata.id][area] = stemdata.count
+    if stemdata.page_area.size > 0
+      # If we are keeping track of different page areas, 
+      # recalculate the total to avoid double-counting some elements
+      # (such as anchors and headings within the body)
+      params[:count] = (stemdata.area_count[:bodycount] || 0) + 
+                       (stemdata.area_count[:titlecount] || 0) + 
+                       (stemdata.area_count[:keywordcount] || 0)
+                       
+      params = params.merge(stemdata.area_count)
     end
-  end
-  
-  def persist(page_id, scantime)
-    @words.values.each do |w|
-      Word.create(:intword_id=> w.id, 
-                  :page_id => page_id,
-                  :scantime => scantime,
-                  :count => w.count,
-                  :titlecount => w.titlecount)
+    
+    if Pulsar::Runner.dryRun?
+      dry_log "Would create word (#{stemdata.stem},#{stemdata.id}) " +
+              "with count=#{params[:count]} and areas #{stemdata.area_count} " +
+              "for page #{page_id} and time #{scantime}"
+    else    
+      Word.create(params)
     end
   end
 end
