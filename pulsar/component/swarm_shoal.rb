@@ -34,6 +34,7 @@ require 'util/stemmer'
 
 require 'bayes/ar'
 require 'bayes/storage'
+require 'bayes/blender'
 
 include Pulsar::Log
 include Pulsar::AR
@@ -76,7 +77,10 @@ with_connection do
         end
         
         # Skip pages if a command-line filter has been specified
-        next if filter_pageid && filter_pageid != id
+        if filter_pageid && filter_pageid != id
+          log "Skipping page with id #{id}"
+          next 
+        end
         
         # RSS feeds are ignored. We do not parse the xml file.
         # We instead consider rssitem lines that refer to a single element
@@ -112,62 +116,74 @@ with_connection do
           html = Pulsar::Html.new(contents)
           f.close
           
-          # Strip out HTML Markup and apply stemming to the whole body
-          stemmer = Pulsar::FerretStemmer.new
-          stems = stemmer.stem(html.plain_text("/html/body")[0], 
-                               p.language_name)          
-          
-          # Filter interesting stems and identify popular ones
-          aggregator = Pulsar::StemAggregator.new
-          popular_threshold = 5
           intwords_hash = Intword.get_intwords_hash(p.language_id)
-          stem_hashcount = aggregator.to_stem_hashcount(stems)
-                    
-          # Identify interesting stems _and_ leave stem_hashcount only
-          # with the non-interesting ones
-          interesting_stems = aggregator.interesting_filter(stem_hashcount,
-                                                            intwords_hash)
+          blender = Pulsar::BayesBlender.new(intwords_hash)
+          
+          # Dismember the page into its composing stems, keeping track
+          # of the specific areas of the page where they belong to
+          #
+          # Do not change the area names, as they map to database columns
+          # in the Words table
+          blender.dismember(html.plain_text("/html/body")[0],
+                            p.language_name, # language symbol, such as :en
+                            :bodycount, # area
+                            7) # popular threshold
+                            
+          blender.dismember(html.plain_text("//head/title")[0],
+                            p.language_name,
+                            :titlecount,
+                            1) # no threshold for stems in the title
+          
+          blender.dismember(html.keywords.join(" "),
+                            p.language_name,
+                            :keywordcount,
+                            1) # no threshold for stems in the keywords
+                            
+          blender.dismember(html.all_plain_text("//a"),
+                            p.language_name,
+                            :anchorcount,
+                            2) # no threshold for stems in the anchors
+                            
+          headings = ""
+          headings << html.all_plain_text("//h1")
+          headings << html.all_plain_text("//h2")
+          headings << html.all_plain_text("//h3")
+          headings << html.all_plain_text("//h4")
+          headings << html.all_plain_text("//h5")                                        
+          blender.dismember(headings,
+                            p.language_name,
+                            :headingcount,
+                            5) # smaller threshold for stems in headings
+          
+          
+          # Retrieve the blended interesting stems
+          interesting_stems = blender.get_interesting_stems
+          popular_stems = blender.get_popular_stems
 
-          # Cycle over the non-interesting stems and check if any of those
-          # is now popular.
-          popular_stems = aggregator.popularize(stem_hashcount, 
-                                                popular_threshold)          
-          log "Out of #{stems.size}, " +
+          log "On page #{p.id}, " +
               "#{interesting_stems.size} are interesting, and " +
               "#{popular_stems.size} are popular"              
           
           # Create the popular stems and Back-propagate IntWords enrichment
           if save_popular_stems
-            Intword.save_popular_stems(popular_stems, p.language_id)
-            log "#{popular_stems.size} new stems added to Intwords: " +
-                " #{popular_stems}"
+            unless Pulsar::Runner.dryRun? 
+              Intword.save_popular_stems(popular_stems, p.language_id)
+            end
+            log "#{popular_stems.size} new stems added to Intwords " +
+                "for language #{p.language_name} : " +
+                "#{popular_stems}"
           end
           
           # Save results
           total_stems = interesting_stems + 
-                        ( save_popular_stems ? popular_stems : [] )
-          
-          # title_stems = stemmer.stem(html.plain_text("//head/title")[0], p.language_name)
-          # interesting_title_stems = aggregator.interesting_filter(title_stems, intwords_hash)
-          
+                        ( save_popular_stems ? popular_stems : [] )          
           
           total_stems.each do |stemdata|
-            Word.create(:intword_id=> stemdata.id, 
-                        :page_id => p.id, 
-                        :scantime => metadate,
-                        :count => stemdata.count)
+            Word.create_stems(p.id, metadate, stemdata)
           end
           log "#{total_stems.size} new words have been created for " +
               "page #{p.id} on date #{metadate}"
           
-          # Eventually identify specific parts of the page ( headings, links, titles etc... ? )
-          # html.plain_text("//title").each { |a| puts "== #{a} ==" }
-          # html.plain_text("//h1").each { |a| puts "== #{a} ==" }
-          # html.plain_text("//h2").each { |a| puts "== #{a} ==" }
-          # html.plain_text("//h3").each { |a| puts "== #{a} ==" }
-          # html.plain_text("//h4").each { |a| puts "== #{a} ==" }
-          # html.plain_text("//h5").each { |a| puts "== #{a} ==" }                                                  
-          # html.plain_text("//a").each { |a| puts "== #{a} ==" }
         end
 
       end
