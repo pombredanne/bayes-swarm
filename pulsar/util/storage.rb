@@ -55,7 +55,7 @@ module Pulsar
         join(@scantime.year.to_s).
         join(@scantime.month.to_s).
         join(@scantime.day.to_s) unless @scantime.nil?      
-      return folder.join(Digest::MD5.hexdigest(@url))
+      return folder.join(Digest::MD5.hexdigest(@url.strip))
     end    
     
     # Save the current contents into the path returned by store_folder . 
