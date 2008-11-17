@@ -104,13 +104,18 @@ with_connection do
         
         # Load the contents
         if p
-          log "Analyzing contents for Page #{p.id}, kind: #{p.kind_name}, " +
-              "url: #{p.url} on date #{metadate}"
+          log "Analyzing contents for Page #{p.id}, kind: #{kind}, " +
+              "url: #{url} on date #{metadate}"
           
           contentsfile = metafile.clone
           contentsfile[/META/] = md5 + "/contents.html"
           
           verbose_log "Opening #{contentsfile}"
+          if !File.exists?(contentsfile)
+            warn_log "File #{contentsfile} does not exist. md5 incoherency?"
+            next
+          end
+          
           f = File.open(contentsfile)
           contents = f.read
           html = Pulsar::Html.new(contents)
@@ -124,7 +129,12 @@ with_connection do
           #
           # Do not change the area names, as they map to database columns
           # in the Words table
-          blender.dismember(html.plain_text("/html/body")[0],
+          
+          # some pages are so broken they don't even have a body. In that
+          # case, fallback to the whole contents
+          htmlbody = html.plain_text("/html/body")[0]
+          htmlbody = html.plain_text("/html")[0] if htmlbody.nil?
+          blender.dismember(htmlbody,
                             p.language_name, # language symbol, such as :en
                             :bodycount, # area
                             7) # popular threshold
@@ -161,7 +171,7 @@ with_connection do
           popular_stems = blender.get_popular_stems
 
           log "On page #{p.id}, " +
-              "#{interesting_stems.size} are interesting, and " +
+              "#{interesting_stems.size} words are interesting, and " +
               "#{popular_stems.size} are popular"              
           
           # Create the popular stems and Back-propagate IntWords enrichment

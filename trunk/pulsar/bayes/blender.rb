@@ -57,6 +57,11 @@ module Pulsar
     end
     
     def dismember(content, language_name, page_area, popular_threshold)
+      if content.nil? || content.strip.length == 0
+        verbose_log "Received empty content. Skipping."
+        return
+      end
+      
       stems = @stemmer.stem(content, language_name)
       stem_hashcount = @aggregator.to_stem_hashcount(stems)
                 
