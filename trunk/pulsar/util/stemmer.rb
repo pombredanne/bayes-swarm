@@ -118,8 +118,8 @@ module Pulsar
     #     a stem, while the value is a +StemData+ object.
     # +intwords_hash+ is an hash that associates a stem with its database id.
     #
-    # It returns a list of Pulsar::Stem objects, filtered according to the 
-    # "interesting" list and ordered by occurrences count
+    # It returns a list of Pulsar::StemData objects, filtered according to the 
+    # "interesting" list and ordered by occurrences count desc.
     #
     # *NOTE* that this method has also the side effect of removing
     # interesting items from +stem_hashcount+, so what's left after 
@@ -155,6 +155,9 @@ module Pulsar
     #     a stem, while the value is a +StemData+ object.
     # +threshold+ is a number representing the minimum number of stem 
     #     occurrences to qualify it as popular.
+    #
+    # It returns a list of Pulsar::StemData objects that are recognized as
+    # popular. The list if ordered by occurrences count desc.
     def popularize(stem_hashcount, threshold)
       popular_stems_found = stem_hashcount.values
       
