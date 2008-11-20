@@ -32,6 +32,7 @@ require 'util/ar'
 require 'util/html'
 
 require 'bayes/ar'
+require 'bayes/storage'
 require 'bayes/blender'
 
 include Pulsar::Log
