@@ -37,6 +37,10 @@ class Intword < ActiveRecord::Base
       stemdata.id = temp.id    
     end
   end
+  
+  def to_s
+    "#{name} (id=#{id},vis=#{visible})"
+  end
 end
 
 class Kind < ActiveRecord::Base
