@@ -30,10 +30,8 @@ require 'util/log'
 require 'util/lister'
 require 'util/ar'
 require 'util/html'
-require 'util/stemmer'
 
 require 'bayes/ar'
-require 'bayes/storage'
 require 'bayes/blender'
 
 include Pulsar::Log
