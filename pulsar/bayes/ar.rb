@@ -81,11 +81,16 @@ class Word < ActiveRecord::Base
   # Each stem may belong to multiple page areas (body, title, header, links...),
   # but they concur together into defining a single word (with different counts
   # for different areas).
-  #--
-  # TODO(battlehorse): we are not calculating any overall weight associated
-  # to the word at this time, but we should as soon as we figure out a good
-  # formula.  
+  #
+  # Saving is not guaranteed: this function expects a block whose job is to
+  # evaluate if the word qualifies for saving. Usually the block would perform
+  # a threshold check.
+  # The block receives a +StemData+ and must return a boolean.
+  #
+  # The function returns a boolean that says if saving was performed (and
+  # succeeded) or not.
   def Word.create_stems(page_id, scantime, stemdata)
+    created = false;
     params = {
       :intword_id => stemdata.id,
       :page_id => page_id,
@@ -97,19 +102,25 @@ class Word < ActiveRecord::Base
       # If we are keeping track of different page areas, 
       # recalculate the total to avoid double-counting some elements
       # (such as anchors and headings within the body)
-      params[:count] = (stemdata.area_count[:bodycount] || 0) + 
-                       (stemdata.area_count[:titlecount] || 0) + 
-                       (stemdata.area_count[:keywordcount] || 0)
+      params[:count] = stemdata.count_for(:bodycount) + 
+                       stemdata.count_for(:titlecount) + 
+                       stemdata.count_for(:keywordcount)
                        
       params = params.merge(stemdata.area_count)
     end
     
-    if Pulsar::Runner.dryRun?
-      dry_log "Would create word (#{stemdata.stem},#{stemdata.id}) " +
-              "with count=#{params[:count]} and areas #{stemdata.area_count} " +
-              "for page #{page_id} and time #{scantime}"
-    else    
-      Word.create(params)
+    over_threshold = yield stemdata
+    
+    if over_threshold
+      if Pulsar::Runner.dryRun?
+        dry_log "Would create word (#{stemdata.stem},#{stemdata.id}) " +
+                "with count=#{params[:count]} and areas #{stemdata.area_count} " +
+                "for page #{page_id} and time #{scantime}"
+      else    
+        Word.create(params)
+      end
+      created = true
     end
+    return created
   end
 end
