@@ -43,6 +43,10 @@ module Pulsar
     def to_s
       "#{@stem} (id: #{@id}, occ: #{@count}, area_count: #{@area_count})"
     end
+    
+    def count_for(area)
+      area_count[area] || 0
+    end
   end
   
   class BayesBlender

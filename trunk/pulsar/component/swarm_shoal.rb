@@ -51,6 +51,10 @@ log "Focusing on page id #{filter_pageid} ..." if filter_pageid
 
 save_popular_stems = flag?("--save-pop-stems")
 warn_log "Popular stems are NOT saved into the database" if !save_popular_stems
+warn_log "Intwords cache is disabled!" if save_popular_stems
+
+# Prepare the intwords cache
+intwords_cache = {}
 
 # And start working ...
 with_connection do
@@ -120,7 +124,20 @@ with_connection do
           html = Pulsar::Html.new(contents)
           f.close
           
-          intwords_hash = Intword.get_intwords_hash(p.language_id)
+          # Obtaining the intwords hash, either from cache or db
+          # When popular stems are saved, the intwords cache cannot be
+          # used, as the intwords change after every page
+          if save_popular_stems
+            intwords_hash = Intword.get_intwords_hash(p.language_id)
+          else
+            intwords_hash = intwords_cache[p.language_id]
+            if intwords_hash.nil?
+              log "Populating intwords cache for lang #{p.language_id}"
+              intwords_hash = Intword.get_intwords_hash(p.language_id)
+              intwords_cache[p.language_id] = intwords_hash
+            end
+          end
+          
           blender = Pulsar::BayesBlender.new(intwords_hash)
           
           # Dismember the page into its composing stems, keeping track
@@ -141,17 +158,17 @@ with_connection do
           blender.dismember(html.plain_text("//head/title")[0],
                             p.language_name,
                             :titlecount,
-                            1) # no threshold for stems in the title
+                            1) # popular threshold
           
           blender.dismember(html.keywords.join(" "),
                             p.language_name,
                             :keywordcount,
-                            1) # no threshold for stems in the keywords
+                            1) # popular threshold
                             
           blender.dismember(html.all_plain_text("//a"),
                             p.language_name,
                             :anchorcount,
-                            2) # no threshold for stems in the anchors
+                            2) # popular threshold
                             
           headings = ""
           headings << html.all_plain_text("//h1")
@@ -169,29 +186,43 @@ with_connection do
           interesting_stems = blender.get_interesting_stems
           popular_stems = blender.get_popular_stems
 
-          log "On page #{p.id}, " +
-              "#{interesting_stems.size} words are interesting, and " +
-              "#{popular_stems.size} are popular"              
+          log "On page #{p.id}: " +
+              "#{interesting_stems.size} interesting, " +
+              "#{popular_stems.size} popular words"              
           
           # Create the popular stems and Back-propagate IntWords enrichment
           if save_popular_stems
             unless Pulsar::Runner.dryRun? 
               Intword.save_popular_stems(popular_stems, p.language_id)
             end
-            log "#{popular_stems.size} new stems added to Intwords " +
+            log "#{popular_stems.size} popular stems added " +
                 "for language #{p.language_name} : " +
                 "#{popular_stems}"
           end
           
           # Save results
+          log "Saving words for page #{p.id} on #{metadate} ..."
           total_stems = interesting_stems + 
                         ( save_popular_stems ? popular_stems : [] )          
           
+          saved_count = 0
           total_stems.each do |stemdata|
-            Word.create_stems(p.id, metadate, stemdata)
+            saved = Word.create_stems(p.id, metadate, stemdata) do |sd|
+              # We operate a minimum occurrence threshold. If a term appears
+              # only once in the whole page, we do not store it, as it would
+              # pollute the database.
+              #
+              # This is a very soft threshold. We should probably be stricter.
+              sd.count_for(:bodycount) > 1 || 
+              sd.count_for(:titlecount) > 0 ||
+              sd.count_for(:headingcount) > 0 ||
+              sd.count_for(:anchorcount) > 0 ||
+              sd.count_for(:keywordcount) > 0              
+              
+            end
+            saved_count += 1 if saved
           end
-          log "#{total_stems.size} new words have been created for " +
-              "page #{p.id} on date #{metadate}"
+          log "#{saved_count} saved."
           
         end
 
