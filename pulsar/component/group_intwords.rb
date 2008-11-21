@@ -99,7 +99,7 @@ with_connection do
       if sorted[0].name.downcase != sorted[0].name
         statements << "UPDATE intwords SET name = " +
                       "'#{sorted[0].name.downcase}' " +
-                      "WHERE id = #{sorted[0].id}"
+                      "WHERE id = #{sorted[0].id} ;"
       end
     end
   end
