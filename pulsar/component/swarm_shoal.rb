@@ -55,6 +55,7 @@ warn_log "Intwords cache is disabled!" if save_popular_stems
 
 # Prepare the intwords cache
 intwords_cache = {}
+cache_accesses = 0
 
 # And start working ...
 with_connection do
@@ -130,12 +131,17 @@ with_connection do
           if save_popular_stems
             intwords_hash = Intword.get_intwords_hash(p.language_id)
           else
+            # Do not ask why, but my ruby crashes with a GC-related error
+            # if I do not wipe the cache from time to time
+            # (method call on terminated object)
+            intwords_cache = {} if cache_accesses % 10 == 0
             intwords_hash = intwords_cache[p.language_id]
             if intwords_hash.nil?
               log "Populating intwords cache for lang #{p.language_id}"
               intwords_hash = Intword.get_intwords_hash(p.language_id)
               intwords_cache[p.language_id] = intwords_hash
             end
+            cache_accesses += 1
           end
           
           blender = Pulsar::BayesBlender.new(intwords_hash)
