@@ -11,6 +11,10 @@
 
 require 'hpricot'
 
+# Allocate 128Kb for parsing abnormally large attributes, that we have
+# here and there. See http://code.whytheluckystiff.net/hpricot/ticket/13
+Hpricot.buffer_size = 131072
+
 module Pulsar
   
   # Provides just an ultra-thin layer over the Hpricot library
@@ -40,7 +44,8 @@ module Pulsar
     # META tag. See http://en.wikipedia.org/wiki/Meta_tags
     def keywords
       all_keywords = @doc.search("//head/meta[@name='keywords']").map do |el|
-        el.attributes["content"].split(",").map { |kw| kw.strip }
+        content = el.attributes["content"]
+        content.nil? ? "" : content.split(",").map { |kw| kw.strip }
       end
       return all_keywords.flatten
     end
