@@ -17,6 +17,7 @@
 #   --dryRun option for a dryRun that does not affect the database. 
 #   --page {pageId} option to limit the execution for a particular page.
 #   --save-pop-stems do not save popular stems back to the database. 
+#   --disable-cache disables intword caching
 # 
 #
 # == Author
@@ -50,12 +51,12 @@ filter_pageid = get_opt("--page")
 log "Focusing on page id #{filter_pageid} ..." if filter_pageid
 
 save_popular_stems = flag?("--save-pop-stems")
+disable_cache = flag?("--disable-cache")
 warn_log "Popular stems are NOT saved into the database" if !save_popular_stems
-warn_log "Intwords cache is disabled!" if save_popular_stems
+warn_log "Intwords cache is disabled!" if save_popular_stems || disable_cache
 
 # Prepare the intwords cache
 intwords_cache = {}
-cache_accesses = 0
 
 # And start working ...
 with_connection do
@@ -128,20 +129,15 @@ with_connection do
           # Obtaining the intwords hash, either from cache or db
           # When popular stems are saved, the intwords cache cannot be
           # used, as the intwords change after every page
-          if save_popular_stems
+          if save_popular_stems || disable_cache
             intwords_hash = Intword.get_intwords_hash(p.language_id)
           else
-            # Do not ask why, but my ruby crashes with a GC-related error
-            # if I do not wipe the cache from time to time
-            # (method call on terminated object)
-            intwords_cache = {} if cache_accesses % 10 == 0
             intwords_hash = intwords_cache[p.language_id]
             if intwords_hash.nil?
               log "Populating intwords cache for lang #{p.language_id}"
               intwords_hash = Intword.get_intwords_hash(p.language_id)
               intwords_cache[p.language_id] = intwords_hash
             end
-            cache_accesses += 1
           end
           
           blender = Pulsar::BayesBlender.new(intwords_hash)
