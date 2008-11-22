@@ -21,7 +21,7 @@ class Intword < ActiveRecord::Base
     res = Hash.new
     iws.each do |iw|
       id = iw.id
-      name = iw.name
+      name = iw.name.clone
       res[name] = id
     end
     res
