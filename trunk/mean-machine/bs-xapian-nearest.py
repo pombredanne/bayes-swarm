@@ -52,7 +52,7 @@ class Filter(xapian.ExpandDecider):
 
 eset = enquire.get_eset(50, rset, Filter(stopwords[lang], [term], keywords))
 
-print "keyword, keyword2, distance, weight"
+print "keyword, keyword2, distance, weight, weight2"
 for ki, keyword in enumerate(eset):
     for oi, other in enumerate(eset):
         if ki < oi:
@@ -72,5 +72,5 @@ for ki, keyword in enumerate(eset):
             
             if distances != []:
                 #print ",".join([keyword, other, "%f" % (sum(distances)/float(len(distances)))])
-                print ",".join([keyword.term, other.term, "%f" % (sum(distances)/500.0), "%f" % (keyword.weight/other.weight)])
-                print ",".join([other.term, keyword.term, "%f" % (sum(distances)/500.0), "%f" % (other.weight/keyword.weight)])
+                print ",".join([keyword.term, other.term, "%f" % (sum(distances)/500.0), "%f" % keyword.weight, "%f" % other.weight])
+                print ",".join([other.term, keyword.term, "%f" % (sum(distances)/500.0), "%f" % other.weight, "%f" % keyword.weight])

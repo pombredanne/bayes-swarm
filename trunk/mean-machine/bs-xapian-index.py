@@ -49,7 +49,7 @@ def xapian_index(db, dir):
         for page in pages:
             # example: a792188bd1e8a2d91109197dff2a4009 http://news.google.com 1 url en
             hash, url, id, kind, language = page
-            if kind in ['html', 'rssitem']:
+            if kind in ['url', 'rssitem']:
                 date_list = extract_date_from_path(dir)
                 
                 doc = xapian.Document()
