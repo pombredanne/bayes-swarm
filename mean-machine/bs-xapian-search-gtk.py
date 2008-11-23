@@ -126,7 +126,6 @@ a { text-decoration: none; color: black; }
 </head><body>""")
     for tag, score in result_list:
         document.write_stream('<a href="%s" style="font-size: %d%%">%s</a> ' % (tag.encode('latin-1'), score, tag.encode('latin-1')))
-        #print '<a href="%s" style="font-size: %d%%">%s</a> ' % (tag, score*3, desc)
     document.write_stream("</body></html>")
     document.close_stream()
     return document   
