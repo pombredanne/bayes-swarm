@@ -95,8 +95,8 @@ CREATE TABLE `intwords` (
   `visible` tinyint(1) NOT NULL default '0',
   PRIMARY KEY  USING BTREE (`id`),
   KEY `fk_int_words_language` (`language_id`),
-  CONSTRAINT `fk_intword_language` FOREIGN KEY (`language_id`) REFERENCES `globalize_languages` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `idx_id_lang_visible` (`id`,`language_id`,`visible`)
+) ENGINE=MyISAM AUTO_INCREMENT=71889 DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `kinds`
@@ -105,7 +105,7 @@ CREATE TABLE `intwords` (
 DROP TABLE IF EXISTS `kinds`;
 CREATE TABLE `kinds` (
   `id` int(11) NOT NULL auto_increment,
-  `kind` char(4) NOT NULL default '',
+  `kind` char(3) NOT NULL default '',
   PRIMARY KEY  USING BTREE (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
@@ -155,7 +155,7 @@ CREATE TABLE `users` (
   `email` varchar(100) default NULL,
   `hashed_password` varchar(40) default NULL,
   PRIMARY KEY  (`id`)
-) ENGINE=MyISAM AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
+) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 --
 -- Table structure for table `words`
@@ -166,16 +166,17 @@ CREATE TABLE `words` (
   `id` int(11) NOT NULL auto_increment,
   `intword_id` int(11) NOT NULL default '0',
   `page_id` int(11) NOT NULL default '0',
-  `scantime` datetime NOT NULL default '0000-00-00 00:00:00',
+  `scantime` date NOT NULL default '0000-00-00',
   `count` int(11) NOT NULL default '0',
+  `bodycount` int(11) NOT NULL default '0',
   `titlecount` int(11) NOT NULL default '0',
-  `weight` decimal(6,3) NOT NULL default '0.000',
+  `keywordcount` int(11) NOT NULL default '0',
+  `anchorcount` int(11) NOT NULL default '0',
+  `headingcount` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `fk_word_intword` (`intword_id`),
   KEY `fk_word_page` (`page_id`),
-  CONSTRAINT `fk_word_intword` FOREIGN KEY (`intword_id`) REFERENCES `intwords` (`id`),
-  CONSTRAINT `fk_word_page` FOREIGN KEY (`page_id`) REFERENCES `pages` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+  KEY `idx_intwordid_scantime` (`intword_id`,`scantime`)
+) ENGINE=MyISAM AUTO_INCREMENT=21181849 DEFAULT CHARSET=latin1;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
