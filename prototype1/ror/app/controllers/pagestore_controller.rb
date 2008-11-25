@@ -28,6 +28,7 @@ class PagestoreController < ApplicationController
     date = Date.strptime(params[:date])
     
     metafile = PAGESTORE_LOCATION + "#{date.year}/#{date.month.to_i}/#{date.day.to_i}/META"
+    RAILS_DEFAULT_LOGGER.debug "Opening META #{metafile}"
     contentsfile = nil
     if File.exists?(metafile)
       File.open(metafile) do |f|
@@ -39,11 +40,13 @@ class PagestoreController < ApplicationController
     end
     
     if contentsfile.nil?
+      RAILS_DEFAULT_LOGGER.debug "Content file not found for #{pageurl} at #{date}"
       @contents = "<html><body>"
       @contents << "<p>The historical version of this webpage is no longer available online.</p>"
       @contents << "<p>If you are really interested in this page, <a href='mailto:info@bayesfor.eu'>contact us</a>, since we keep an offline historical archive</p>"
       @contents << "</body></html>"
     else
+      RAILS_DEFAULT_LOGGER.debug "Opening contents file #{contentsfile}"
       @contents = ""
       File.open(contentsfile) do |f|
         f.each_line { |l| @contents << l}

@@ -62,8 +62,8 @@ class Intword < ActiveRecord::Base
     end
     ws = words.sum(:count, 
                    :conditions=> condi,
-                   :order => "date(scantime)",
-                   :group=>"date(scantime)")
+                   :order => "scantime",
+                   :group=>"scantime")
 
     fail "Stem has no words" if (ws.size == 0)
     IntwordTimeSeries.new(ws, interval, force_complete)
@@ -101,9 +101,9 @@ class Intword < ActiveRecord::Base
 
     # find only intwords which have at least 2/3 of the words in the chosen period
     iws = Intword.find_by_sql("select intword_id as id, name, language_id
-                               from (select intword_id, date(scantime) 
+                               from (select intword_id, scantime 
                                      from words where scantime>'#{first_date}' 
-                                     group by intword_id, date(scantime)) a, 
+                                     group by intword_id, scantime) a, 
                                     intwords iw 
                                where a.intword_id=iw.id 
                                      and iw.language_id=#{self.language_id} 
@@ -172,7 +172,7 @@ class IntwordTimeSeries
     very_first_date = last_date.subtract_interval(interval)
     
     values = words.values
-    dates = words.keys.map {|x| Date.strptime(x, '%Y-%m-%d')}
+    dates = words.keys
 
     first_date = dates[0]
     # check if ts si complete
