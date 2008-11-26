@@ -1,0 +1,6 @@
+<h1>Search for a word</h1>
+
+<% form_tag :action => 'find' do %>
+  <%= render :partial => 'form_search', :locals => {:advanced => true} %>
+  <%= submit_tag "Search" %>
+<% end %>

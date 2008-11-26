@@ -1,0 +1,26 @@
+<h1>Listing sources</h1>
+
+<table class="sources">
+<% for source in @sources %>
+  <tr>
+    <td><%= source.name %></td>
+    <td><%= link_to 'Show', :action => 'show', :id => source %></td>
+    <td><%= link_to 'Edit', :action => 'edit', :id => source %></td>
+    <td><%= link_to 'Destroy', { :action => 'destroy', :id => source }, :confirm => 'Are you sure?', :method => :post %></td>
+  </tr>
+<% end %>
+</table>
+
+<%= link_to 'Previous page', { :page => @source_pages.current.previous } if @source_pages.current.previous %>
+<%= link_to 'Next page', { :page => @source_pages.current.next } if @source_pages.current.next %> 
+
+<% if !(params[:action] == 'listall' ) %>
+<p>
+  Note: only sources with pages are displayed,
+  <%= link_to 'full list', :action => 'listall' %>.
+</p>
+<% end %>
+
+<p>
+  <%= link_to 'New source', :action => 'new' %>
+</p>

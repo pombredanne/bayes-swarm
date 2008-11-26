@@ -1,0 +1,28 @@
+<h1>Featured contents</h1>
+
+<ul>
+    <li><%= link_to "US Presidential Elections 2008" , :controller => "featured" , :action => "uspresidential2008" %>
+        <sup class="new">new</sup> 
+    </li>
+</ul>
+
+<ul>
+    <li><%= link_to "Ali-Italian Researchers" , :controller => "featured" , :action => "ricercatoriprecari" %>
+        <sup class="new">new</sup> 
+    </li>
+</ul>
+
+<h2>Past featured contents</h2>
+
+<ul class="links">
+    <li><%= link_to "US Primary 2008" , :controller => "featured" , :action => "usprimary2008" %>
+        <a href="http://fusion.google.com/add?source=atgs&moduleurl=http%3A//www.bayes-swarm.com/ig/ig_us_primary.xml">
+            <img src="http://buttons.googlesyndication.com/fusion/add.gif" border="0" alt="Add to Google">
+        </a>
+    </li>
+    <li><%= link_to "Italian Politics" , :controller => "featured" , :action => "ita2008" %>
+        <a href="http://fusion.google.com/add?source=atgs&moduleurl=http%3A//www.bayes-swarm.com/ig/ig_ita_elezioni.xml">
+            <img src="http://buttons.googlesyndication.com/fusion/add.gif" border="0" alt="Add to Google">
+        </a>
+    </li>
+</ul>
