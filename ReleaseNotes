@@ -1,3 +1,11 @@
+Bayes-Swarm 0.3 (2008-11-25), svn 390
+	* Released pulsar, the new extraction and parsing engine
+	* Added MeanMachine, an alternative approach to data indexing, best suited for SNA
+	* Released the new BayesFor.eu homepage and wiki template
+	* Added csv_cloud, new website action to extract the intword cloud in a csv form
+	* Added new csv_perpage action
+	* Added US Presidential Election featured page on the website
+	* Added a new featured content: Ali-Italian Researchers
 Bayes-Swarm 0.2.3 (2008-04-29), svn 289
 	* Added wiki link (show bayesfor.eu wiki pages in bayes-swarm.com domain)
 	* Added TimeMachine (browse, show, highlight saved pages)
