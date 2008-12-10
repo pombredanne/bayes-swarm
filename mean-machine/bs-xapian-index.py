@@ -78,7 +78,7 @@ def xapian_index(db, dir):
     #except StopIteration:
     except:
         print "Unexpected error:", sys.exc_info()[0]
-        raise
+        #raise
 
 
 # Open the database for update, creating a new database if necessary.
