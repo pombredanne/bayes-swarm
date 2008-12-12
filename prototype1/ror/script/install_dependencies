@@ -1,7 +1,0 @@
-#!/bin/sh
-
-script/plugin install http://svn.globalize-rails.org/svn/globalize/branches/for-1.2
-mv vendor/plugins/for-1.2 vendor/plugins/globalize
-#rake globalize:setup
-
-script/plugin install http://svn.pullmonkey.com/plugins/trunk/open_flash_chart/
