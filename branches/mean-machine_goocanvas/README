@@ -1,0 +1,16 @@
+Requirements:
+
+* bs-xapian-index.py: 
+  - xapian
+
+* bs-xapian-search-gtk.py:
+  - xapian, pygtk, gtkhtml2
+  
+* bs-xapian-graph.py:
+  - xapian, pygtk, xdot, pydot
+
+* bs-xapian-nearest.py:
+  - xapian
+  
+* bs-nearest-plotter.py:
+  - pygtk, igraph

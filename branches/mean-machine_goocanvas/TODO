@@ -1,0 +1,31 @@
+TODO:
+
+* merge every component in a single slick killer application:
+  - each component is a different tab
+  - share search ui among components (add: source, time)
+  - leave specific parameters inside each component (ie threshold for
+    nearest-plotter)
+  - add proper log messages
+  - remove 'search when you type', add a search button + progressbar
+    
+* bs-xapian-index.py:
+  - add source info as document value, so that it can be used for
+    filtering during visualization
+
+* bs-xapian-search.py:
+  - status bar
+  - filter tags as you type (re-run eset with updated filter)
+
+* bs-xapian-graph.py:
+  - integrate clicking functionality with nearest-plotter and remove
+  
+* bs-xapian-nearest.py:
+  - add a proper command line interface so that it can be used
+    standalone or as a library
+    
+* bs-nearest-plotter.py:
+  - add a search box
+  - use seed in order to stabilize graphs
+  - center the searched term in the graph
+  - allow to switch between distance graph and matching graph (current
+    bs-xapian-graph view based on xapian weight only)
