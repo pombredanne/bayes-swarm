@@ -12,10 +12,10 @@ keywords = ['mccain', 'war', 'iraq', 'jobs', 'health'
   'care', 'people', 'terrorist', 'retirement', 'market', 'patriotism',
   'dignity', 'homes', 'wages', 'future', 'families', 'education']
 
-term = "mccain"
+term = "obama"
 lang = "en"
 
-db = xapian.Database("/home/matteo/Development/pagestore/agosto_xap")
+db = xapian.Database("/home/matteo/Development/pagestore/us2008_xap")
 
 stemmer = xapian.Stem(lang)
 
@@ -30,8 +30,8 @@ query = xapian.Query(xapian.Query.OP_AND, query1, query2)
 
 enquire = xapian.Enquire(db)
 enquire.set_query(query)
-size = 500
-mset = enquire.get_mset(0, size)
+n_docs = 1000
+mset = enquire.get_mset(0, n_docs)
 
 rset = xapian.RSet()
 for y, m in enumerate(mset):
@@ -72,5 +72,5 @@ for ki, keyword in enumerate(eset):
             
             if distances != []:
                 #print ",".join([keyword, other, "%f" % (sum(distances)/float(len(distances)))])
-                print ",".join([keyword.term, other.term, "%f" % (sum(distances)/500.0), "%f" % keyword.weight, "%f" % other.weight])
-                print ",".join([other.term, keyword.term, "%f" % (sum(distances)/500.0), "%f" % other.weight, "%f" % keyword.weight])
+                print ",".join([keyword.term, other.term, "%f" % (sum(distances)/float(n_docs)), "%f" % keyword.weight, "%f" % other.weight])
+                print ",".join([other.term, keyword.term, "%f" % (sum(distances)/float(n_docs)), "%f" % other.weight, "%f" % keyword.weight])
