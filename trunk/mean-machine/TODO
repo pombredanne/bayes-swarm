@@ -1,0 +1,5 @@
+TODO:
+
+* bs-xapian-search.py:
+  - status bar
+  - filter tags as you type (re-run eset with updated filter)
