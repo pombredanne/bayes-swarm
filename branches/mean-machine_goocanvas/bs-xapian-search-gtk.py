@@ -15,7 +15,7 @@ import sys
 import xapian
 
 import gtk, gobject
-import gtkhtml2
+from tagcloudcanvas import TagCloudCanvasText, TagCloudCanvas
 
 stopwords = {'it': ["ad", "al", "allo", "ai", "agli", "all", "agl", "alla", "alle", "con", "col", "coi", "da", "dal", "dallo", "dai", "dagli", "dall", "dagl", "dalla", "dalle", "di", "del", "dello", "dei", "degli", "dell", "degl", "della", "delle", "in", "nel", "nello", "nei", "negli", "nell", "negl", "nella", "nelle", "su", "sul", "sullo", "sui", "sugli", "sull", "sugl", "sulla", "sulle", "per", "tra", "contro", "io", "tu", "lui", "lei", "noi", "voi", "loro", "mio", "mia", "miei", "mie", "tuo", "tua", "tuoi", "tue", "suo", "sua", "suoi", "sue", "nostro", "nostra", "nostri", "nostre", "vostro", "vostra", "vostri", "vostre", "mi", "ti", "ci", "vi", "lo", "la", "li", "le", "gli", "ne", "il", "un", "uno", "una", "ma", "ed", "se", "perch\303\251", "anche", "come", "dov", "dove", "che", "chi", "cui", "non", "pi\303\271", "quale", "quanto", "quanti", "quanta", "quante", "quello", "quelli", "quella", "quelle", "questo", "questi", "questa", "queste", "si", "tutto", "tutti", "a", "c", "e", "i", "l", "o", "ho", "hai", "ha", "abbiamo", "avete", "hanno", "abbia", "abbiate", "abbiano", "avr\303\262", "avrai", "avr\303\240", "avremo", "avrete", "avranno", "avrei", "avresti", "avrebbe", "avremmo", "avreste", "avrebbero", "avevo", "avevi", "aveva", "avevamo", "avevate", "avevano", "ebbi", "avesti", "ebbe", "avemmo", "aveste", "ebbero", "avessi", "avesse", "avessimo", "avessero", "avendo", "avuto", "avuta", "avuti", "avute", "sono", "sei", "\303\250", "siamo", "siete", "sia", "siate", "siano", "sar\303\262", "sarai", "sar\303\240", "saremo", "sarete", "saranno", "sarei", "saresti", "sarebbe", "saremmo", "sareste", "sarebbero", "ero", "eri", "era", "eravamo", "eravate", "erano", "fui", "fosti", "fu", "fummo", "foste", "furono", "fossi", "fosse", "fossimo", "fossero", "essendo", "faccio", "fai", "facciamo", "fanno", "faccia", "facciate", "facciano", "far\303\262", "farai", "far\303\240", "faremo", "farete", "faranno", "farei", "faresti", "farebbe", "faremmo", "fareste", "farebbero", "facevo", "facevi", "faceva", "facevamo", "facevate", "facevano", "feci", "facesti", "fece", "facemmo", "faceste", "fecero", "facessi", "facesse", "facessimo", "facessero", "facendo", "sto", "stai", "sta", "stiamo", "stanno", "stia", "stiate", "stiano", "star\303\262", "starai", "star\303\240", "staremo", "starete", "staranno", "starei", "staresti", "starebbe", "staremmo", "stareste", "starebbero", "stavo", "stavi", "stava", "stavamo", "stavate", "stavano", "stetti", "stesti", "stette", "stemmo", "steste", "stettero", "stessi", "stesse", "stessimo", "stessero", "stando"], 'en': ["a", "about", "above", "after", "again", "against", "all", "am", "an", "and", "any", "are", "aren't", "as", "at", "be", "because", "been", "before", "being", "below", "between", "both", "but", "by", "cannot", "can't", "could", "couldn't", "did", "didn't", "do", "does", "doesn't", "doing", "don't", "down", "during", "each", "few", "for", "from", "further", "had", "hadn't", "has", "hasn't", "have", "haven't", "having", "he", "he'd", "he'll", "her", "here", "here's", "hers", "herself", "he's", "him", "himself", "his", "how", "how's", "i", "i'd", "if", "i'll", "i'm", "in", "into", "is", "isn't", "it", "its", "it's", "itself", "i've", "let's", "me", "more", "most", "mustn't", "my", "myself", "no", "nor", "not", "of", "off", "on", "once", "only", "or", "other", "ought", "our", "ours", "ourselves", "out", "over", "own", "same", "shan't", "she", "she'd", "she'll", "she's", "should", "shouldn't", "so", "some", "such", "than", "that", "that's", "the", "their", "theirs", "them", "themselves", "then", "there", "there's", "these", "they", "they'd", "they'll", "they're", "they've", "this", "those", "through", "to", "too", "under", "until", "up", "very", "was", "wasn't", "we", "we'd", "we'll", "were", "we're", "weren't", "we've", "what", "what's", "when", "when's", "where", "where's", "which", "while", "who", "whom", "who's", "why", "why's", "with", "won't", "would", "wouldn't", "you", "you'd", "you'll", "your", "you're", "yours", "yourself", "yourselves", "you've", "one", "every", "least", "less", "many", "now", "ever", "never", "say", "says", "said", "also", "get", "go", "goes", "just", "made", "make", "put", "see", "seen", "whether", "like", "well", "back", "even", "still", "way", "take", "since", "another", "however", "two", "three", "four", "five", "first", "second", "new", "old", "high", "long"]}
 
@@ -35,17 +35,17 @@ def EnquireDB(input_terms, lang):
     if input_terms == None:
         # No text given: abort
         return
-    
-    qp = xapian.QueryParser()
-    stemmer = xapian.Stem(lang)
-    qp.set_stemmer(stemmer)
-    qp.set_database(database)
-    qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
-    try:
-        query1 = qp.parse_query(input_terms, xapian.QueryParser.FLAG_BOOLEAN) #xapian.QueryParser.FLAG_PHRASE
-    except xapian.QueryParserError:
-        print 'Query parser error'
-        return
+    else:
+        qp = xapian.QueryParser()
+        stemmer = xapian.Stem(lang)
+        qp.set_stemmer(stemmer)
+        qp.set_database(database)
+        qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
+        try:
+            query1 = qp.parse_query(input_terms, xapian.QueryParser.FLAG_BOOLEAN) #xapian.QueryParser.FLAG_PHRASE
+        except xapian.QueryParserError:
+            print 'Query parser error'
+            return
 
     query2 = xapian.Query(xapian.Query.OP_VALUE_RANGE, 0, lang, lang)
     query = xapian.Query(xapian.Query.OP_AND, query1, query2)
@@ -108,27 +108,11 @@ def EnquireDB(input_terms, lang):
         maxscore = max(tagscores.itervalues())
         minscore = min(tagscores.itervalues())
         for k in tagscores.iterkeys():
-            tags.append([k, (tagscores[k] - minscore) * 100 / (maxscore - minscore) * 3 + 75])
+            tags.append([k, (tagscores[k] - minscore) / (maxscore - minscore) * 16 + 8])
         # sort by tag alphabetically
         tags.sort()
 
     return docs, tags
-
-def mark_text_up(result_list):
-    # 0-100 score, key (facet::tag), description
-    document = gtkhtml2.Document()
-    document.clear()
-    document.open_stream("text/html")
-    document.write_stream("""<html><head>
-<style type="text/css">
-a { text-decoration: none; color: black; }
-</style>
-</head><body>""")
-    for tag, score in result_list:
-        document.write_stream('<a href="%s" style="font-size: %d%%">%s</a> ' % (tag.encode('latin-1'), score, tag.encode('latin-1')))
-    document.write_stream("</body></html>")
-    document.close_stream()
-    return document   
 
 class Demo:
     query = None
@@ -180,16 +164,12 @@ class Demo:
         scrolledwin2 = gtk.ScrolledWindow()
         scrolledwin2.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
-        document = gtkhtml2.Document()
-        document.clear()
-        document.open_stream("text/html")
-        document.write_stream("<html><body>Welcome, enter some text to start searching!</body></html>")
-        document.close_stream()
-        self.view = gtkhtml2.View()
-        self.view.set_size_request(-1, 200)
-        self.view.set_document(document)
+        self.canvas = TagCloudCanvas()
+        self.canvas.set_callback_function(self.on_tag_clicked)
+        #self.canvas.set_size_request(scrolledwin2.get_size()[0], scrolledwin2.get_size()[1])
+        #self.canvas.set_bounds(0, 0, scrolledwin2.get_size()[0], scrolledwin2.get_size()[1])
         
-        scrolledwin2.add(self.view)
+        scrolledwin2.add(self.canvas)
         screlledwin2_inner_vbox = gtk.VBox(False, 0)
         screlledwin2_inner_vbox.pack_start(gtk.Label("Terms cloud"), False, False, 0)
         screlledwin2_inner_vbox.pack_start(scrolledwin2)
@@ -217,23 +197,27 @@ class Demo:
         hbox.pack_start(self.entry, True, True, 0)
         vbox.pack_start(hbox, False, False, 0)
 
+        self.refresh_results()
+
         w.add(vbox)
         w.show_all()
         gtk.main()
 
     def refresh_results(self):
         if self.entry.get_text().strip() != '' and self.entry.get_text().strip() is not None:
-            docs, tags = EnquireDB(self.entry.get_text(), self.selected_language)
+            query_text = self.entry.get_text()
+                  
+            docs, tags = EnquireDB(query_text, self.selected_language)
             self.model.clear()
             for item in docs:
                 self.model.append(item)
-        
-            gtkhtml2_doc = mark_text_up(tags)
-            gtkhtml2_doc.connect('link_clicked', self.on_tag_clicked)
-            self.view.set_document(gtkhtml2_doc)
+            self.canvas.set_tags(tags)
+        else:
+            # clean the cloud
+            pass
 
-    def on_tag_clicked(self, document, link):
-        self.entry.set_text(self.entry.get_text().rstrip() + " " + link)
+    def on_tag_clicked(self, tag):        
+        self.entry.set_text(self.entry.get_text().rstrip() + " " + tag)
 
     def on_entry_changed(self, widget, *args):
         self.refresh_results()
@@ -255,7 +239,7 @@ class Demo:
     def on_lang_menu_selected(self, combobox):
         model = combobox.get_model()
         index = combobox.get_active()
-        #if index:
+
         self.selected_language = model[index][0]
         self.refresh_results()
 
