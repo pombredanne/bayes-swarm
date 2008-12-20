@@ -38,19 +38,18 @@ for y, m in enumerate(mset):
     rset.add_document(m[xapian.MSET_DID])
 
 class Filter(xapian.ExpandDecider):
-    def __init__(self, stopwords, excluded_terms, keywords=None):
+    def __init__(self, stopwords, keywords=[]):
         xapian.ExpandDecider.__init__(self)
-        self.excluded_terms = excluded_terms
         self.stopwords = stopwords
         self.keywords = keywords
         
     def __call__(self, term):
-        if keywords is None:
-            return term[0].islower() and term not in self.excluded_terms and term not in self.stopwords and '_' not in term
+        if self.keywords == []:
+            return term[0].islower() and term not in self.stopwords and '_' not in term
         else:
             return term in self.keywords
 
-eset = enquire.get_eset(50, rset, Filter(stopwords[lang], [term], keywords))
+eset = enquire.get_eset(25, rset, xapian.Enquire.INCLUDE_QUERY_TERMS, 1, Filter(stopwords[lang], keywords))
 
 print "keyword, keyword2, distance, weight, weight2"
 for ki, keyword in enumerate(eset):
