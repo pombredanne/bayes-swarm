@@ -14,9 +14,12 @@
 import sys
 import csv
 import igraph
-
+from math import exp
 import gtk
 from igraphdrawingarea import IGraphDrawingArea
+
+def log_scale(x):
+    return (exp(x)-1)/(exp(1)-1)
 
 if len(sys.argv) == 2:
     PATH_TO_CSV_FILE = sys.argv[1]
@@ -29,16 +32,25 @@ class Demo():
         window = gtk.Window()
         vbox = gtk.VBox(False, 0)
         
-        adj = gtk.Adjustment(0.50, 0, 1, 0.01, 0.1, 0)
-        adj.connect("value_changed", self.cb_value_changed)
-        self.slider = gtk.HScale(adj)
+        self.adj = gtk.Adjustment(0.50, 0, 1, 0.01, 0.1, 0)
+        self.slider = gtk.HScale(self.adj)
         self.slider.set_digits(2)
 
-        g2 = self.update_graph(g, adj.value)
-        self.igraph_drawing_area = IGraphDrawingArea(g2)
+        self.adj2 = gtk.Adjustment(0.50, 0, 1, 0.01, 0.1, 0)
+        self.slider2 = gtk.HScale(self.adj2)
+        self.slider2.set_digits(2)
 
-        vbox.pack_start(self.igraph_drawing_area, True, True, 0)
+        self.adj.connect("value_changed", self.cb_threshold_changed)
+        self.adj2.connect("value_changed", self.cb_threshold_changed)
+        
+        self.igraph_drawing_area = IGraphDrawingArea(g)
+        self.cb_threshold_changed(self.adj)
+
+        vbox.pack_start(self.igraph_drawing_area, True, True, 0)        
         vbox.pack_start(self.slider, False, False, 0)
+        vbox.pack_start(gtk.Label("edge weight"), False, False, 0)        
+        vbox.pack_start(self.slider2, False, False, 0)
+        vbox.pack_start(gtk.Label("vertex size"), False, False, 0)
         
         window.add(vbox)
         window.connect("destroy", gtk.main_quit)
@@ -46,16 +58,17 @@ class Demo():
 
         gtk.main()
 
-    def update_graph(self, g, threshold):
-        # keep only edges where wheight > threshold
-        g2 = g - g.es.select(weight_lt=threshold)
-        # keep only non isolated vertex
-        g3 = g2.subgraph(g2.vs.select(_degree_gt=0))
-        return g3
+    def cb_threshold_changed(self, adj):
+        # keep only edges where weight > threshold
+        g2 = g - g.es.select(weight_lt=log_scale(self.adj.value))
         
-    def cb_value_changed(self, adj):
-        updated_graph = self.update_graph(g, adj.value)
-        self.igraph_drawing_area.change_graph(updated_graph)
+        # keep only non isolated vertex
+        # g3 = g2.subgraph(g2.vs.select(_degree_gt=0))
+        
+        # keep only vertex where size > threshold
+        g3 = g2.subgraph(g2.vs.select(size_gt=log_scale(self.adj2.value)))
+
+        self.igraph_drawing_area.change_graph(g3)
 
 if __name__ == "__main__":
     labels_id = {}
@@ -93,8 +106,8 @@ if __name__ == "__main__":
 
     min_size = min(sizes)
     max_size = max(sizes)
-    g.vs['sizes'] = [(i - min_size) / float(max_size - min_size) * 20 + 7 for i in sizes]
-    
+    g.vs['size'] = [(i - min_size) / float(max_size - min_size) for i in sizes]
+
     fixed = [False for i in range(len(sizes)-1)]
     fixed.append(True)
     g.vs['fixed'] = fixed
