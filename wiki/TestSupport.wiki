@@ -1,5 +1,7 @@
 #summary resources to support program and functionality testing
-#labels Phase-QA,Phase-Prototype
+#labels Deprecated
+
+*NOTE*: this page is *obsolete* and has been deprecated.
 
 = Introduction =
 
