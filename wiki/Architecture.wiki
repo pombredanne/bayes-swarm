@@ -1,7 +1,7 @@
 #summary Describes the architecture for the bayes-swarm engine
 #labels Phase-Design,Phase-Deploy
 
-*NOTE* : this document does not describe the actual state of the engine, but a state that we will ( hopefully ) reach very soon in the [Pulsar] design.
+*NOTE* : this document describes the actual state of the engine, codenamed [Pulsar].
 
 = Phases = 
 
@@ -40,10 +40,17 @@ In addition to ruby, you may require some additional libraries, therefore you sh
 
 The website is currently powered by [http://www.rubyonrails.org/ Ruby on Rails] .
 
-*TODO*: add here list of required rubygems.
+The project relies on the following gems, in addition to the ones provided by the standard library:
+  * Hpricot
+  * Mechanize
+  * Ferret
 
 A good introduction to ruby is Rolling with Ruby on Rails (revisited)
 http://www.onlamp.com/pub/a/onlamp/2005/01/20/rails.html
 
 == Analysis Engine ==
 In addition to code written in *ruby*, the language of choice for prototypes and additional analysis is [http://www.r-project.org/ R], wich provides, among other nice things like time series and cluster analysis, [http://cran.r-project.org/src/contrib/Descriptions/RMySQL.html RMySQL] an interface to MySql databases.
+
+== MeanMachine ==
+
+MeanMachine is developed in *python* and relies on additional libraries, such as the [http://xapian.org/ Xapian] indexing library and [http://www.pygtk.org/ PyGTK] GUI library.
