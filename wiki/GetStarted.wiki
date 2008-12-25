@@ -18,15 +18,19 @@ The first thing you need to do is to setup your pc to properly work with the pro
 
 You can then populate it with some data from the FreeDataset , following the instructions on DatabaseSetup.
 
-=== Prototypes ===
-Once your pc is ready, you can start trying some of our prototypes. Here follows the list of available ones : 
+=== Engines ===
+Once your pc is ready, you can start trying some of our extraction and analyze engines. Here follows the list of available ones : 
 
-  * PrototypeOne : the very first approach to page data extraction. Currently being used for day-to-day extractions.
-  * PrototypeTwo : an ETL structured way to data extraction. Still not in active use and going to be dismissed.
-  * [Pulsar] : the version that will ultimately implement the [Architecture] design.
+  * [Pulsar] : the version that implements the [Architecture] design, and is currently running daily in our production environment.
+  * [MeanMachine] : a next-gen subproject that consists in indexing the Bayes-Swarm pagestore with the Xapian library.
+
+The following are *obsolete* ones:
+  * PrototypeOne : the very first approach to page data extraction. No longer in use since November 2008
+  * PrototypeTwo : an ETL structured way to data extraction. Not active, some concepts have been merged into Pulsar.
+Their source code has been removed from the main trunk and now lives in the [http://code.google.com/p/bayes-swarm/source/browse/#svn/tags/release-0.3 release0.3] svn tag.
 
 === Data Simulation ===
-The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
+*Obsolete* : The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
 
 == Live demo ==
 You can try a live demo at http://www.bayes-swarm.com/
