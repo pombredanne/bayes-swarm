@@ -1,6 +1,10 @@
 #summary Kickstart your development with the free bayes-swarm dataset.
 #labels Phase-Deploy,Featured
 
+*NOTE*: the db and pagestore structure underwent some changes in *November 2008*. Some issues may arise when importing the data linked in this page, as they are a bit stale.
+
+*TODO*: update the free dataset with a more recent snapshot
+
 = Introduction =
 
 The [http://www.bayesfor.eu BayesFor] association has been using the code from this project to analyze and spider various web sources ( mostly to monitor media agencies and newspapers ) since late 2007. 
@@ -19,7 +23,7 @@ The sources are organized in two packages :
 See the [Architecture] document to understand the role played by these two components.
 
 = Where can I get the dataset =
-The two files ( a dump of the mysql database and a tar.gz version of the pagestore ) can be downloaded from [http://www.battlehorse.net/swarm_sample/ this website]
+The files ( a dump of the mysql database and a tar.gz version of the pagestore ) can be downloaded from [http://www.battlehorse.net/swarm_sample/ this website]
 
 = How to install it on my machine =
 
