@@ -30,7 +30,8 @@ sudo apt-get install ruby irb ri rdoc ruby1.8-dev rubygems tidy
 sudo gem update --system
 sudo gem install rails
 sudo gem install ferret
-sudo gem install tidy
+sudo gem install hpricot
+sudo gem install mechanize
 ...
 }}}
 
@@ -62,7 +63,8 @@ Once you have installed ruby and rubygems, you should have the binaries installe
 sudo gem update --system
 sudo gem install rails
 sudo gem install ferret
-sudo gem install tidy
+sudo gem install hpricot
+sudo gem install mechanize
 }}}
 
 === R ===
