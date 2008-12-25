@@ -1,18 +1,15 @@
 #summary Usage instructions and informations for Prototype 2
-#labels Phase-Prototype
+#labels Phase-Prototype,Deprecated
 
 = Warning =
 
-Prototype2 has been declared obsolete and it is *not* in active use for daily extractions. See PrototypeOne for further info. Ideas which have been tested in prototype2 have been declared not 100% useful for bayes-swarm. Some pieces will eventually be reused for the development of PrototypeThree ( that will hopefully implement the [Architecture] design ).
+Prototype2 has been declared obsolete and it is *not* in active use for daily extractions. See PrototypeOne for further info. Ideas which have been tested in prototype2 have been declared not 100% useful for bayes-swarm. Some pieces have been reused for the development of [Pulsar] ( that implements the [Architecture] design ).
 
 *The source code and the documentation in this page remain here for consultation purposes, but are no longer maintained.*
 
 = Introduction =
 
 Prototype 2 is a structured approach to page data extraction. It models the extraction approach as a standard [http://en.wikipedia.org/wiki/Extract%2C_transform%2C_load ETL] process . 
-
-== RDocs ==
-Take a look at [http://bayes-swarm.googlecode.com/svn/trunk/prototype2/ruby/doc/index.html the latest documentation] about this prototype.
 
 == Extract Transform and Load ==
 
