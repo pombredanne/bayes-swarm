@@ -50,6 +50,8 @@ ruby runner.rb -c swarm_shoal_options.yml -f test/noop
 
 (notice the missing _.rb_ extension from the component name.
 
-== Additional Docs ==
+== Components ==
 
-The rdoc documentation for Pulsar is available at [http://www.bayesfor.eu/rdoc/pulsar/] . *Warning*: it may sometime be out of date.
+The following main components are actually defined: 
+  * *SwarmWave* : this is the web spider, responsible for navigating websites, extracting their contents and saving them locally. It supports plain web pages and rss feeds. It stores the spidered data on a filesystem using a specific structure, described in FileStorage.
+  * *SwarmShoal* : it analyzes the contents in the FileStorage and creates a relational database structure suitable for word analysis ( see EntityRelationShipDiagram ). It performs various operations to increase the quality of the information retrieval: stemming, elimination of stop-words, identification of words and their relative importance in the  webpage ( titles, links, headings ... ). It uses a back-propagation mechanism, enriching the list of tracked words depending on their abundance in analyzed pages.
