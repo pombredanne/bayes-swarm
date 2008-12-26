@@ -29,6 +29,9 @@ The following are *obsolete* ones:
   * PrototypeTwo : an ETL structured way to data extraction. Not active, some concepts have been merged into Pulsar.
 Their source code has been removed from the main trunk and now lives in the [http://code.google.com/p/bayes-swarm/source/browse/#svn/tags/release-0.3 release0.3] svn tag.
 
+The following are proposed designs for future components:
+  * [Quasar] : next generation visualization frontend to explore the bayes-swarm datacube.
+
 === Data Simulation ===
 *Obsolete* : The TestSupport page describes the available resources to simulate data, instead of effectively extracting them.
 
