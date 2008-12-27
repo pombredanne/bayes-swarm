@@ -14,11 +14,11 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `aggregate`
+-- Table structure for table `aggregates`
 --
 
-DROP TABLE IF EXISTS `aggregate`;
-CREATE TABLE `aggregate` (
+DROP TABLE IF EXISTS `aggregates`;
+CREATE TABLE `aggregates` (
   `id` int(11) NOT NULL auto_increment,
   `intword_id` int(11) NOT NULL default '0',
   `period` char(2) NOT NULL,
