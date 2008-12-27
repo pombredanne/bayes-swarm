@@ -14,6 +14,25 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
+-- Table structure for table `aggregate`
+--
+
+DROP TABLE IF EXISTS `aggregate`;
+CREATE TABLE `aggregate` (
+  `id` int(11) NOT NULL auto_increment,
+  `intword_id` int(11) NOT NULL default '0',
+  `period` char(2) NOT NULL,
+  `count` int(11) NOT NULL default '0',
+  `bodycount` int(11) NOT NULL default '0',
+  `titlecount` int(11) NOT NULL default '0',
+  `keywordcount` int(11) NOT NULL default '0',
+  `anchorcount` int(11) NOT NULL default '0',
+  `headingcount` int(11) NOT NULL default '0',
+  PRIMARY KEY  (`id`),
+  KEY `idx_period_intwordid` (`period`,`intword_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=398882 DEFAULT CHARSET=latin1;
+
+--
 -- Table structure for table `globalize_countries`
 --
 
@@ -174,9 +193,11 @@ CREATE TABLE `words` (
   `anchorcount` int(11) NOT NULL default '0',
   `headingcount` int(11) NOT NULL default '0',
   PRIMARY KEY  (`id`),
-  KEY `fk_word_page` (`page_id`),
-  KEY `idx_intwordid_scantime` (`intword_id`,`scantime`)
-) ENGINE=MyISAM AUTO_INCREMENT=21181849 DEFAULT CHARSET=latin1;
+  KEY `idx_intwordid_scantime` (`intword_id`,`scantime`),
+  KEY `idx_scantime_intwordid` (`scantime`,`intword_id`),
+  KEY `idx_intwordid_pageid` (`intword_id`,`page_id`),
+  KEY `idx_pageid_intwordid` (`page_id`,`intword_id`)
+) ENGINE=MyISAM AUTO_INCREMENT=25151998 DEFAULT CHARSET=latin1;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
 /*!40014 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS */;
