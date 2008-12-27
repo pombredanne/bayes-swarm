@@ -27,7 +27,7 @@ include Pulsar::AR
 
 def get_aggregate_stmt(label, interval=nil)
   sql = ""
-  sql << "insert into aggregate ( "
+  sql << "insert into aggregates ( "
   sql << "intword_id, period, count, bodycount, titlecount, keywordcount, "
   sql << "anchorcount, headingcount) "
   sql << "select intword_id , '#{label}' as period ,"
@@ -55,10 +55,10 @@ end
 # And start working ...
 with_connection do |conn|
   begin
-    conn_execute(conn, "LOCK TABLES aggregate WRITE, words READ")
+    conn_execute(conn, "LOCK TABLES aggregates WRITE, words READ")
     log "Tables locked"
     
-    conn_execute(conn, "DELETE FROM aggregate")
+    conn_execute(conn, "DELETE FROM aggregates")
     log "Aggregate table has been emptied"
     
     conn_execute(conn, get_aggregate_stmt('7d', 7))
@@ -79,7 +79,7 @@ with_connection do |conn|
     conn_execute(conn, get_aggregate_stmt('al'))    
     log "all-time aggregate created"
     
-    conn_execute(conn, "OPTIMIZE TABLE aggregate")
+    conn_execute(conn, "OPTIMIZE TABLE aggregates")
     log "Table optimized"    
   rescue
     warn_log "Unhandled expection while aggregating : #{$!}"
