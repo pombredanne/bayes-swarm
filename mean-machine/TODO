@@ -2,7 +2,8 @@ TODO:
 
 * merge every component in a single slick killer application:
   - each component is a different tab
-  - share search ui among components (add: source, time)
+  - share search ui among components (add: source, time, db, number of
+    docs to retrieve, n. of docs for rset, n. of terms for eset)
   - leave specific parameters inside each component (ie threshold for
     nearest-plotter)
   - add proper log messages
