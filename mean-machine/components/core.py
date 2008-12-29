@@ -47,7 +47,6 @@ class MMMatchDeciderAlwaysTrue(xapian.MatchDecider):
         xapian.MatchDecider.__init__(self)
         self.progressbar = progressbar
         self.step = step
-        self.count = 0
 
     def __call__(self, doc):
         #logging.debug('Filtering docs in MSet')
@@ -55,6 +54,4 @@ class MMMatchDeciderAlwaysTrue(xapian.MatchDecider):
             self.progressbar.set_fraction(self.progressbar.get_fraction() + self.step)
             while gtk.events_pending():
                 gtk.main_iteration()
-            print self.count, doc.get_data(), self.progressbar.get_fraction()
-            self.count += 1
         return True
