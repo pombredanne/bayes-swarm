@@ -7,7 +7,8 @@ __copyright__ = 'BayesFor Association'
 __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
 import os
-import gtk, gobject, gtkhtml2
+import gtk
+from components.core import get_components
 from notebookwithclosebuttonontabs import NotebookWithCloseButtonOnTabs
 import xapian
 
@@ -99,8 +100,10 @@ class MMMainFrame(gtk.VBox):
         self.component.run_and_display(enquire, self.selected_language, db, self.searchform.progressbar)
         self.searchform.set_sensitive(True)
 
-class MMMainWindow(object):
-    def __init__(self, components):
+class MainMachine(object):
+    def __init__(self):
+        components = get_components()
+        
         w = gtk.Window()
         w.connect('destroy', gtk.main_quit)
         w.set_size_request(600, 600)
