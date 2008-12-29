@@ -79,7 +79,7 @@ class MMMainFrame(gtk.VBox):
         self.searchform.comboboxentry_db.child.connect('changed', self.on_db_manually_entered, self.searchform.comboboxentry_db)
         self.searchform.start_button.connect('clicked', self.on_start_button_clicked)
         
-        # assign self.selected_language and self.selected_db
+        # assign self.selected_language and self.db
         self.on_db_selected(self.searchform.comboboxentry_db)
         self.on_lang_selected(self.searchform.combobox)
 
@@ -99,7 +99,7 @@ class MMMainFrame(gtk.VBox):
                 self.db = xapian.Database(entered_db)
             else:
                 db_host, port = entered_db.split(':')
-                self.db = xapian.remote_open(db_host, port)
+                self.db = xapian.remote_open(db_host, int(port))
         except xapian.DatabaseOpeningError, e:
             logging.error('Error while opening %s (%s)' % (entered_db, e))
             return False

@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG, format=format)
 logging = logging.getLogger('components.search')
 
 from core import MMComponent, MMRsetFilter, MMMatchDeciderAlwaysTrue, stopwords
-from .ui.uis import MMResultSearch
+from .ui.search import MMResultSearch
 
 class MMSearchComponent(MMComponent):
     is_mm_component = True
