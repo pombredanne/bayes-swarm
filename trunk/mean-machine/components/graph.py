@@ -12,7 +12,7 @@ logging = logging.getLogger('components.graph')
 
 import gtk
 from core import MMComponent, MMRsetFilter, MMMatchDeciderAlwaysTrue, stopwords
-from .ui.uis import MMResultGraph
+from .ui.graph import MMResultGraph
 
 #keywords = ['mccain', 'war', 'iraq', 'jobs', 'health'
 #  'afghanistan', 'poverty', 'security', 'hope', 'change', 'middle-class', 
