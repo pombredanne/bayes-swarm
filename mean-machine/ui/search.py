@@ -25,8 +25,6 @@ a { text-decoration: none; color: black; }
     return document 
 
 class MMResultSearch(object):
-    is_mm_ui = True
-    name = 'resultsearch'
     def __init__(self, box, searchform):
         '''box is where this widget is packed'''
         self.searchform = searchform
@@ -51,7 +49,7 @@ class MMResultSearch(object):
 
         def get_celldata_date(column, cell, model, iter):
             doc = model[iter][2].document
-            cell.set_property('text', '%s.%s.%s' % (doc.get_value(4),doc.get_value(3),doc.get_value(2)))
+            cell.set_property('text', doc.get_value(2))
         cell_date = gtk.CellRendererText()
         column_date = gtk.TreeViewColumn ("Date", cell_date)
         #column_summary.set_sort_column_id(0)
