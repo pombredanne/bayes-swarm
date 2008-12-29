@@ -11,13 +11,23 @@ import gtk, gobject, gtkhtml2
 from notebookwithclosebuttonontabs import NotebookWithCloseButtonOnTabs
 import xapian
 
+import logging
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+logging.basicConfig(level=logging.DEBUG, format=format)
+logging = logging.getLogger('ui.mainwindow')
+
 class MMSearchForm(gtk.HBox):
     def __init__(self):
         gtk.HBox.__init__(self, False, 12)
         self.set_border_width(6)
         
         self.entry = gtk.Entry()
-        
+
+        self.start_button = gtk.Button()
+        self.start_button.set_label('Search')
+        self.start_button.set_flags(gtk.CAN_DEFAULT)
+        # TODO: set grab_default() when it is packed into the window
+                
         self.combobox = gtk.combo_box_new_text()
         self.combobox.append_text('it')
         self.combobox.append_text('en')
@@ -25,13 +35,14 @@ class MMSearchForm(gtk.HBox):
 
         self.selected_language = 'it'
         
-        self.pack_start(gtk.Label("Search:"), False, False, 0)
-        self.pack_start(self.entry, True, True, 0)
-        self.pack_start(gtk.Label("Language:"), False, False, 0)
-        self.pack_start(self.combobox, False, False, 0)
-
         self.progressbar = gtk.ProgressBar()
         self.progressbar.set_size_request(100,-1)
+
+        self.pack_start(gtk.Label("Query:"), False, False, 0)
+        self.pack_start(self.entry, True, True, 0)
+        self.pack_start(self.start_button, False, False, 0)
+        self.pack_start(gtk.Label("Language:"), False, False, 0)
+        self.pack_start(self.combobox, False, False, 0)
         self.pack_start(self.progressbar, False, False, 0)
 
 class MMMainFrame(gtk.VBox):
@@ -47,21 +58,21 @@ class MMMainFrame(gtk.VBox):
         self.pack_start(self.resultbox, True, True, 0)
         self.pack_start(self.searchform, False, False, 0)
 
-        self.searchform.entry.connect('changed', self.on_entry_changed)
         self.searchform.combobox.connect('changed', self.on_lang_menu_selected)
+        self.searchform.start_button.connect('clicked', self.on_start_button_clicked)
 
     def set_component(self, component):
         self.component = component()
         self.component.ui = self.component.ui(self.resultbox, self.searchform)
-
-    def on_entry_changed(self, widget, *args):
-        self.refresh_results()
 
     def on_lang_menu_selected(self, combobox):
         model = combobox.get_model()
         index = combobox.get_active()
 
         self.selected_language = model[index][0]
+
+    def on_start_button_clicked(self, button):
+        self.searchform.set_sensitive(False)
         self.refresh_results()
 
     def refresh_results(self):
@@ -80,10 +91,13 @@ class MMMainFrame(gtk.VBox):
         query2 = xapian.Query(xapian.Query.OP_VALUE_RANGE, 0, self.selected_language, self.selected_language)
         query = xapian.Query(xapian.Query.OP_AND, query1, query2)
         
+        logging.debug("Setting query: %s" % query.get_description())
+        
         enquire = xapian.Enquire(db)
         enquire.set_query(query)
 
         self.component.run_and_display(enquire, self.selected_language, db, self.searchform.progressbar)
+        self.searchform.set_sensitive(True)
 
 class MMMainWindow(object):
     def __init__(self, components):
@@ -107,14 +121,6 @@ class MMMainWindow(object):
         self.notebook.set_scrollable(True)
         self.notebook.set_property('homogeneous', True)    
         box.pack_start(self.notebook, True, True, 0)
-
-        #statusbar = gtk.Statusbar()
-        #statusbar.set_homogeneous(False)
-        #statusbar.set_spacing(10)
-        #self.progressbar = gtk.ProgressBar()
-        #self.progressbar.set_size_request(100,-1)
-        #statusbar.pack_start(self.progressbar, True, False, 10)
-        #box.pack_start(statusbar, False, False, 0)
 
         w.add(box)
         w.show_all()
