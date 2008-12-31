@@ -82,12 +82,12 @@ class MMResultSearch(object):
         
         scrolledwin2.add(self.view)
         screlledwin2_inner_vbox = gtk.VBox(False, 0)
-        screlledwin2_inner_vbox.pack_start(gtk.Label("Terms cloud"), False, False, 0)
+        screlledwin2_inner_vbox.pack_start(gtk.Label("Terms cloud"), False, False, 3)
         screlledwin2_inner_vbox.pack_start(scrolledwin2)
         vpaned.add(screlledwin2_inner_vbox)
 
         self.vbox = gtk.VBox(False, 0)
-        self.vbox.pack_start(gtk.Label("Matched documents list"), False, False, 0)
+        self.vbox.pack_start(gtk.Label("Matched documents list"), False, False, 3)
         self.vbox.pack_start(vpaned, True, True, 0)
 
         box.add(self.vbox)
