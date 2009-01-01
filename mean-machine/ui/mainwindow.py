@@ -172,18 +172,15 @@ class MMMainFrame(gtk.VBox):
                 self.db = xapian.remote_open(db_host, int(port))
         except xapian.DatabaseOpeningError, e:
             logging.error('Error while opening %s (%s)' % (entered_db, e))
-            self.searchform.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
             return False
         except xapian.NetworkError, e:
             logging.error('Error while opening %s (%s)' % (entered_db, e))
-            self.searchform.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
             return False
         #except:
         #    logging.error('Error while opening %s' % entered_db)
         #    self.searchform.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
         #    return False
         else:
-            self.searchform.image_connected.set_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_MENU)
             return True
 
     def add_db_to_model(self, model, entered_db):
@@ -196,28 +193,26 @@ class MMMainFrame(gtk.VBox):
         if unique == True:
             model.append([entered_db, 0, self.selected_localdb, FLAG_DB_IS_VALID])
 
-    def check_db_if_needed(self, combobox, do_check, entry=None):        
-        #model = self.searchform.model_db
+    def check_db_if_needed(self, combobox, do_check, entry=None):
         model = combobox.get_model()
         index = combobox.get_active()
 
         # if we're editing comboboxentry set MODEL_DB_IS_LOCAL = self.selected_localdb
         if index == -1:
-            logging.debug("Running 'check_db_if_needed', triggered by manual insertion (entry=%s)." % entry)
-            selected_db_is_local = self.selected_localdb
             if entry is not None:
+                selected_db_is_local = self.selected_localdb
                 db_url = entry.get_text()
+                logging.debug("Running 'check_db_if_needed' on %s, triggered by manual insertion (entry=%s)." % (db_url, entry))
             else:
                 return
         else:
-            db_url = model[index][MODEL_DB_URL]
             selected_db_is_local = model[index][MODEL_DB_IS_LOCAL]
+            db_url = model[index][MODEL_DB_URL]
             logging.debug("Running 'check_db_if_needed' on %s, triggered by combobox selection (entry=%s)." % (db_url, entry))
 
-        # Avoid stupid timeouts, check only if we pass True to do_check
-        # or local is selected. In any case, check only current type
-        # (local or remote) of dbs
-        logging.debug('index: %d, do_check: %s, selected_localdb: %s, is_local: %s' % (index, do_check, self.selected_localdb, selected_db_is_local))
+        # Avoid stupid timeouts, check only if we pass True to do_check (triggered by connect button)
+        # or local is selected. In any case, check only current type (local or remote) of dbs
+        #logging.debug('index: %d, do_check: %s, selected_localdb: %s, is_local: %s' % (index, do_check, self.selected_localdb, selected_db_is_local))
         if (do_check or self.selected_localdb) and (selected_db_is_local == self.selected_localdb):
             # check if db is valid and disable search button accordingly
             if self.is_db_valid(db_url):
@@ -225,35 +220,48 @@ class MMMainFrame(gtk.VBox):
                 if index == -1:
                     self.add_db_to_model(self.searchform.model_db, db_url)
                 else:
-                    #model[index][MODEL_DB_VALIDITY] = FLAG_DB_IS_VALID
                     iter_filtered_model = model.get_iter((index,))
                     iter_full_model = model.convert_iter_to_child_iter(iter_filtered_model)
                     self.searchform.model_db.set_value(iter_full_model, MODEL_DB_VALIDITY, FLAG_DB_IS_VALID)
                 self.searchform.upperbox.set_sensitive(True)
+                self.set_image_connected(True)
             else:
-                if index == -1:
-                    #model[index][MODEL_DB_VALIDITY] = FLAG_DB_IS_NOT_VALID
-                    iter = model.get_iter((index,))
-                    self.searchform.model_db.set_value(iter, MODEL_DB_VALIDITY, FLAG_DB_IS_NOT_VALID)
                 self.searchform.upperbox.set_sensitive(False)
+                self.set_image_connected(False)
         else:
             self.searchform.upperbox.set_sensitive(False)
-            self.searchform.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
+            self.set_image_connected(False)
 
     def on_db_selected(self, combobox, do_check=False):
+        # on_db_selected is triggered when user selects something with the
+        # combobox, but after calling on_db_manually_entered
+        logging.debug('on_db_selected')
         self.check_db_if_needed(combobox, do_check, None)
 
     def on_db_manually_entered(self, entry, do_check=False):
+        # on_db_manually_entered is triggered when user edits the 
+        # comboboxentry, but after calling on_db_selected
+        logging.debug('on_db_manutally_entered')
         self.check_db_if_needed(self.searchform.comboboxentry_db, do_check, entry)
 
     def on_start_button_clicked(self, button):
         self.searchform.set_sensitive(False)
         self.refresh_results()
 
+    def set_image_connected(self, state):
+        # state = True (connected), False (disconnected)
+        tooltips = gtk.Tooltips()
+        if state == True:
+            self.searchform.image_connected.set_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_MENU)
+            tooltips.set_tip(self.searchform.image_connected, 'Connected')
+        else:
+            self.searchform.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
+            tooltips.set_tip(self.searchform.image_connected, 'Disconnected')
+
     def on_connect_button_clicked(self, button):
         # TODO: set_sensitive(False) on remote/local combo + db combo
         # trigger db check (force avoidcheck as True)
-        self.on_db_manually_entered(self.searchform.entry, True)
+        self.on_db_manually_entered(self.searchform.comboboxentry_db.child, True)
 
     def refresh_results(self):
         stemmer = xapian.Stem(self.selected_language)
