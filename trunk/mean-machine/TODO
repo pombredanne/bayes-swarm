@@ -1,24 +1,25 @@
 TODO:
 
 * merge every component in a single slick killer application:
+  - handle possible errors with queries/timeouts of the server
+  - add a stop button
   - share db list at app level
-  - share search ui among components (add: source, time, db, number of
-    docs to retrieve, n. of docs for rset, n. of terms for eset)
-  - leave specific parameters inside each component (ie threshold for
-    nearest-plotter)
+  - add search options: source, number of docs to retrieve, n. of 
+    docs for rset, n. of terms for eset, keywords filter list for eset)
+  - freeze component specific parameters when doing searches
   - add proper log messages
-  - improve progressbar
   - show error/warning messages in statusbar
+  - show progressbar progress during mset, rset, eset
 
 * graph component
   - add an export button on graph component
   - use seed in order to stabilize graphs
-  - center the searched term in the graph
+  - center the searched term in the graph, use a different vertex color
   - allow to switch between distance graph and matching graph (current
     bs-xapian-graph view based on xapian weight only)
 
 * search component
-  - time-machine like functionality
+  - add time-machine like functionality
   
 * bs-xapian-index.py:
   - add source info as document value, so that it can be used for

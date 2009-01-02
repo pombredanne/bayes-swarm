@@ -290,7 +290,8 @@ class MMMainFrame(gtk.VBox):
         date_processor = xapian.DateValueRangeProcessor(2)
         qp.add_valuerangeprocessor(date_processor)
 
-        # FIXME: handle xapian.QueryParserError
+        # FIXME: handle xapian.QueryParserError, xapian.NetworkTimeoutError
+        # show error message in statusbar, user can clear search with 'stop'
         query1 = qp.parse_query(self.searchform.entry.get_text(), xapian.QueryParser.FLAG_BOOLEAN)
         query2 = xapian.Query(xapian.Query.OP_VALUE_RANGE, 0, self.selected_language, self.selected_language)
         query = xapian.Query(xapian.Query.OP_AND, query1, query2)
