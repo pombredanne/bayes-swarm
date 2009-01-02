@@ -41,6 +41,7 @@ class MMSearchForm(gtk.VBox):
 
         self.progressbar = gtk.ProgressBar()
         self.progressbar.set_size_request(100,-1)
+        self.progressbar.set_text('Ready')
 
         self.upperbox.pack_start(gtk.Label("Query:"), False, False, 0)
         self.upperbox.pack_start(self.entry, True, True, 0)
@@ -117,6 +118,7 @@ class MMMainFrame(gtk.VBox):
         self.on_lang_selected(self.searchform.combobox)
         self.on_dblocal_changed(self.searchform.combobox_dblocal)
 
+        self.searchform.entry.connect('changed', self.on_entry_changed)
         self.searchform.combobox.connect('changed', self.on_lang_selected)
         self.searchform.combobox_dblocal.connect('changed', self.on_dblocal_changed)
         self.searchform.comboboxentry_db.connect('changed', self.on_db_selected)
@@ -133,7 +135,11 @@ class MMMainFrame(gtk.VBox):
         self.component = component()
         self.component.ui = self.component.ui(self.resultbox, self.searchform)
 
+    def on_entry_changed(self, entry):
+        self.clear_results()
+
     def on_lang_selected(self, combobox):
+        self.clear_results()
         model = combobox.get_model()
         index = combobox.get_active()
         self.selected_language = model[index][0]
@@ -143,6 +149,7 @@ class MMMainFrame(gtk.VBox):
         return model.get_value(iter, MODEL_DB_IS_LOCAL) == self.selected_localdb
 
     def on_dblocal_changed(self, combobox):
+        self.clear_results()
         model = combobox.get_model()
         index = combobox.get_active()
         self.selected_localdb = model[index][0]
@@ -236,17 +243,20 @@ class MMMainFrame(gtk.VBox):
         # on_db_selected is triggered when user selects something with the
         # combobox, but after calling on_db_manually_entered
         logging.debug('on_db_selected')
+        self.clear_results()
         self.check_db_if_needed(combobox, do_check, None)
 
     def on_db_manually_entered(self, entry, do_check=False):
         # on_db_manually_entered is triggered when user edits the 
         # comboboxentry, but after calling on_db_selected
         logging.debug('on_db_manutally_entered')
+        self.clear_results()
         self.check_db_if_needed(self.searchform.comboboxentry_db, do_check, entry)
 
     def on_start_button_clicked(self, button):
         self.searchform.set_sensitive(False)
         self.refresh_results()
+        self.searchform.set_sensitive(True)
 
     def set_image_connected(self, state):
         # state = True (connected), False (disconnected)
@@ -280,6 +290,7 @@ class MMMainFrame(gtk.VBox):
         date_processor = xapian.DateValueRangeProcessor(2)
         qp.add_valuerangeprocessor(date_processor)
 
+        # FIXME: handle xapian.QueryParserError
         query1 = qp.parse_query(self.searchform.entry.get_text(), xapian.QueryParser.FLAG_BOOLEAN)
         query2 = xapian.Query(xapian.Query.OP_VALUE_RANGE, 0, self.selected_language, self.selected_language)
         query = xapian.Query(xapian.Query.OP_AND, query1, query2)
@@ -290,7 +301,11 @@ class MMMainFrame(gtk.VBox):
         enquire.set_query(query)
 
         self.component.run_and_display(enquire, self.selected_language, db, self.searchform.progressbar)
-        self.searchform.set_sensitive(True)
+
+    def clear_results(self):
+        self.component.clear_results()
+        self.searchform.progressbar.set_fraction(0.0)
+        self.searchform.progressbar.set_text('Ready')
 
 class MainMachine(object):
     def __init__(self):

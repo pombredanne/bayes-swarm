@@ -15,6 +15,7 @@ format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(level=logging.DEBUG, format=format)
 logging = logging.getLogger('components.search')
 
+import gtk
 from core import MMComponent, MMRsetFilter, MMMatchDeciderAlwaysTrue, stopwords
 from .ui.search import MMResultSearch
 
@@ -32,17 +33,25 @@ class MMSearchComponent(MMComponent):
     
     def run(self, enquire, lang, db, progressbar):
         logging.debug('Getting MSet')
+        progressbar.set_text('Getting MSet')
+        while gtk.events_pending():
+            gtk.main_iteration()
         mset = enquire.get_mset(0,
                                 self.n_result_docs,
                                 0,
                                 None,
-                                MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_result_docs + self.n_result_cloud)))
+                                #MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_result_docs + self.n_result_cloud)))
                                 #MMMatchDeciderAlwaysTrue())
+                                None)
 
         # Results
         docs = []
         rset = xapian.RSet()
         logging.debug('Getting RSet')
+        progressbar.set_fraction(0.33)
+        progressbar.set_text('Getting RSet')
+        while gtk.events_pending():
+            gtk.main_iteration()
         for y, m in enumerate(mset):
             if y < self.n_result_docs:
                 rset.add_document(m[xapian.MSET_DID])
@@ -52,12 +61,16 @@ class MMSearchComponent(MMComponent):
         # Obtain the "Expansion set" for the search: the n most relevant terms that
         # match the filter
         logging.debug('Getting ESet')
+        progressbar.set_fraction(0.66)
+        progressbar.set_text('Getting ESet')
+        while gtk.events_pending():
+            gtk.main_iteration()
         eset = enquire.get_eset(self.n_result_cloud, 
                                 rset, 
                                 #xapian.Enquire.INCLUDE_QUERY_TERMS, 
                                 #1, 
-                                MMRsetFilter(stopwords[lang], [], progressbar, 1/float(self.n_result_docs + self.n_result_cloud)))
-                                #MMRsetFilter(stopwords[lang], []))
+                                #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(self.n_result_docs + self.n_result_cloud)))
+                                MMRsetFilter(stopwords[lang], []))
         
         # Read the "Expansion set" and scan tags and their score
         tagscores = dict()
@@ -85,6 +98,10 @@ class MMSearchComponent(MMComponent):
         docs, tags = self.run(enquire, lang, db, progressbar)
         self.display(docs, tags)
         progressbar.set_fraction(1.0)
+        progressbar.set_text('Done')
+
+    def clear_results(self):
+        self.ui.clear()
 
 if __name__ == "__main__":
     s = MMSearchComponent()
