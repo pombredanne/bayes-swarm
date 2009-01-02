@@ -35,18 +35,20 @@ class IGraphDrawingArea(gtk.DrawingArea):
 
     def draw(self, context):
         rect = self.get_allocation()
-
-        surface = cairo.ImageSurface (cairo.FORMAT_ARGB32,
-                        rect.width,
-                        rect.height)
-
+        context.set_source_rgb(255, 255, 255)
+        
+        # FIXME: leave blank background while adding igraph plot
         if self.g is not None:
+            surface = cairo.ImageSurface (cairo.FORMAT_ARGB32,
+                            rect.width,
+                            rect.height)
+
             plot = igraph.drawing.Plot(surface, (0, 0, rect.width, rect.height))
             seed_layout = self.g.layout("fr", seed = self.g.vs['fr_seed_coords'])
             plot.add(self.g, layout=seed_layout, margin=(20,20,20,20), weights = self.g.es['weight'], vertex_size=[s * 20 + 7 for s in self.g.vs['size']]) #, fixed = self.g.vs['fixed'])
             plot.redraw()
-
-        context.set_source_surface (surface)
+            
+            context.set_source_surface (surface)
         context.paint()
         
         return False

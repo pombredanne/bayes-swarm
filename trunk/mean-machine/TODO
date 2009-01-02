@@ -1,7 +1,6 @@
 TODO:
 
 * merge every component in a single slick killer application:
-  - clear result window if no results are returned
   - share db list at app level
   - share search ui among components (add: source, time, db, number of
     docs to retrieve, n. of docs for rset, n. of terms for eset)

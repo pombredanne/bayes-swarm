@@ -106,3 +106,6 @@ class MMResultGraph():
         g3 = g2.subgraph(g2.vs.select(size_gt=log_scale(self.adj2.value)))
 
         self.igraph_drawing_area.change_graph(g3)
+
+    def clear(self):
+        self.igraph_drawing_area.change_graph(None)

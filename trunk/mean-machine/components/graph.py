@@ -34,34 +34,45 @@ class MMSearchComponent(MMComponent):
     def run(self, enquire, lang, db, progressbar=None):
         logging.debug('Getting MSet')
         progressbar.set_text('Getting MSet')
+        while gtk.events_pending():
+            gtk.main_iteration()
         mset = enquire.get_mset(0,
                                 self.n_result_docs,
                                 0,
                                 None,
-                                MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_result_docs + self.n_eset + self.n_eset*self.n_eset)))
+                                #MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_result_docs + self.n_eset + self.n_eset*self.n_eset)))
                                 #MMMatchDeciderAlwaysTrue())
+                                None)
 
         logging.debug('Getting RSet')
+        progressbar.set_fraction(0.25)
         progressbar.set_text('Getting RSet')
+        while gtk.events_pending():
+            gtk.main_iteration()
         rset = xapian.RSet()
         for y, m in enumerate(mset):
             rset.add_document(m[xapian.MSET_DID])
 
         logging.debug('Getting ESet')
-        progressbar.set_text('Getting ESet')
         progressbar.set_fraction(0.5)
+        progressbar.set_text('Getting ESet')
+        while gtk.events_pending():
+            gtk.main_iteration()
         eset = enquire.get_eset(self.n_eset, 
                                 rset, 
                                 xapian.Enquire.INCLUDE_QUERY_TERMS, 
                                 1, 
-                                #MMRsetFilter(stopwords[lang]))
-                                MMRsetFilter(stopwords[lang], [], progressbar, 1/float(self.n_result_docs + self.n_eset + self.n_eset*self.n_eset)))
+                                MMRsetFilter(stopwords[lang]))
+                                #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(self.n_result_docs + self.n_eset + self.n_eset*self.n_eset)))
 
         #print "keyword, keyword2, distance, weight, weight2"
         distances_list = []
 
         logging.debug('Calculating distances on %i terms' % len(eset))
+        progressbar.set_fraction(0.75)
         progressbar.set_text('Calculating %i distances' % len(eset))
+        while gtk.events_pending():
+            gtk.main_iteration()
         for ki, keyword in enumerate(eset):
             for oi, other in enumerate(eset):
                 if ki < oi:
@@ -82,8 +93,8 @@ class MMSearchComponent(MMComponent):
                     if distances != []:
                         #print ",".join([keyword, other, "%f" % (sum(distances)/float(len(distances)))])
                         
-                        #f = lambda x: sum(x)/float(self.n_result_docs)
-                        f = lambda x: sum(x)/float(len(x))
+                        f = lambda x: sum(x)/float(self.n_result_docs)
+                        #f = lambda x: sum(x)/float(len(x))
                         
                         distances_list.append([keyword.term, 
                                                other.term, 
@@ -96,7 +107,7 @@ class MMSearchComponent(MMComponent):
                                                other.weight,
                                                keyword.weight])
                 if progressbar is not None: 
-                    step = 1/float(self.n_result_docs + self.n_eset + self.n_eset*self.n_eset)
+                    step = 0.25/float(self.n_eset*self.n_eset)
                     progressbar.set_fraction(progressbar.get_fraction() + step)
                     while gtk.events_pending():
                         gtk.main_iteration()
@@ -114,3 +125,6 @@ class MMSearchComponent(MMComponent):
         self.display(distances_list)
         progressbar.set_fraction(1.0)
         progressbar.set_text('Done')
+
+    def clear_results(self):
+        self.ui.clear()

@@ -101,6 +101,12 @@ class MMResultSearch(object):
         gtkhtml2_doc.connect('link_clicked', self.on_tag_clicked)
         self.view.set_document(gtkhtml2_doc)
 
+    def clear(self):
+        self.model.clear()
+        
+        document = gtkhtml2.Document()
+        self.view.set_document(document)
+
     def on_tag_clicked(self, document, link):
         self.searchform.entry.set_text(self.searchform.entry.get_text().rstrip() + " " + link)
 
