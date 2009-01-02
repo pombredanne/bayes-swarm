@@ -65,31 +65,47 @@ class MMSearchComponent(MMComponent):
                                 MMRsetFilter(stopwords[lang]))
                                 #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(self.n_result_docs + self.n_eset + self.n_eset*self.n_eset)))
 
-        #print "keyword, keyword2, distance, weight, weight2"
-        distances_list = []
-
         logging.debug('Calculating distances on %i terms' % len(eset))
         progressbar.set_fraction(0.75)
         progressbar.set_text('Calculating %i distances' % len(eset))
         while gtk.events_pending():
             gtk.main_iteration()
+
+        positions_matrix = {}
+        for ki, keyword in enumerate(eset):
+            positions_arrays = {}
+            for m in mset:
+                docid = m[xapian.MSET_DID]
+                try:
+                    positions_array = set(db.positionlist(docid, keyword.term))
+                except xapian.RangeError:
+                    positions_array = []
+                positions_arrays[docid] = positions_array
+            positions_matrix[ki] = positions_arrays
+
+            if progressbar is not None: 
+                step = 0.25/float(self.n_eset)
+                progressbar.set_fraction(progressbar.get_fraction() + step)
+                while gtk.events_pending():
+                    gtk.main_iteration()
+
+        distances_list = []
         for ki, keyword in enumerate(eset):
             for oi, other in enumerate(eset):
                 if ki < oi:
                     distances = []
                     for m in mset:
                         docid = m[xapian.MSET_DID]
-                        try:
-                            s1 = set(db.positionlist(docid, keyword.term))
-                            s2 = set(db.positionlist(docid, other.term))
-                            count = []
-                            for i in s1:
-                                for j in s2:
-                                    count.append(abs(i-j))
+                    #    try:
+                        count = []
+                        for i in positions_matrix[ki][docid]:
+                            for j in positions_matrix[oi][docid]:
+                                count.append(abs(i-j))
+                        if count != []:
                             distances.append(min(count))
-                        except xapian.RangeError:
-                            pass
-                    
+                    #    except KeyError:
+                    #        pass
+
                     if distances != []:
                         #print ",".join([keyword, other, "%f" % (sum(distances)/float(len(distances)))])
                         
@@ -106,11 +122,11 @@ class MMSearchComponent(MMComponent):
                                                f(distances),
                                                other.weight,
                                                keyword.weight])
-                if progressbar is not None: 
-                    step = 0.25/float(self.n_eset*self.n_eset)
-                    progressbar.set_fraction(progressbar.get_fraction() + step)
-                    while gtk.events_pending():
-                        gtk.main_iteration()
+                    if progressbar is not None: 
+                        step = 0.25/float(self.n_eset)
+                        progressbar.set_fraction(progressbar.get_fraction() + step)
+                        while gtk.events_pending():
+                            gtk.main_iteration()
                 
         return distances_list
         
