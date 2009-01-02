@@ -166,10 +166,10 @@ class MMMainFrame(gtk.VBox):
         try:
             logging.debug('Checking %s' % entered_db)
             if self.selected_localdb:
-                self.db = xapian.Database(entered_db)
+                db = xapian.Database(entered_db)
             else:
                 db_host, port = entered_db.split(':')
-                self.db = xapian.remote_open(db_host, int(port))
+                db = xapian.remote_open(db_host, int(port))
         except xapian.DatabaseOpeningError, e:
             logging.error('Error while opening %s (%s)' % (entered_db, e))
             return False
@@ -266,9 +266,15 @@ class MMMainFrame(gtk.VBox):
     def refresh_results(self):
         stemmer = xapian.Stem(self.selected_language)
 
+        if self.selected_localdb:
+            db = xapian.Database(self.selected_db)
+        else:
+            db_host, port = self.selected_db.split(':')
+            db = xapian.remote_open(db_host, int(port))
+
         qp = xapian.QueryParser()
         qp.set_stemmer(stemmer)
-        qp.set_database(self.db)
+        qp.set_database(db)
         qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
 
         date_processor = xapian.DateValueRangeProcessor(2)
@@ -280,10 +286,10 @@ class MMMainFrame(gtk.VBox):
 
         logging.debug("Setting query: %s" % query.get_description())
 
-        enquire = xapian.Enquire(self.db)
+        enquire = xapian.Enquire(db)
         enquire.set_query(query)
 
-        self.component.run_and_display(enquire, self.selected_language, self.db, self.searchform.progressbar)
+        self.component.run_and_display(enquire, self.selected_language, db, self.searchform.progressbar)
         self.searchform.set_sensitive(True)
 
 class MainMachine(object):

@@ -9,6 +9,7 @@ TODO:
     nearest-plotter)
   - add proper log messages
   - improve progressbar
+  - show error/warning messages in statusbar
 
 * graph component
   - add an export button on graph component
@@ -16,6 +17,9 @@ TODO:
   - center the searched term in the graph
   - allow to switch between distance graph and matching graph (current
     bs-xapian-graph view based on xapian weight only)
+
+* search component
+  - time-machine like functionality
   
 * bs-xapian-index.py:
   - add source info as document value, so that it can be used for
