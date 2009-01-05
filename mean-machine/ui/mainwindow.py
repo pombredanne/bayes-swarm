@@ -14,7 +14,7 @@ import xapian
 
 import logging
 format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=format)
+logging.basicConfig(format=format)
 logging = logging.getLogger('ui.mainwindow')
 
 MODEL_DB_URL, MODEL_DB_PORT, MODEL_DB_IS_LOCAL, MODEL_DB_VALIDITY = range(4)
@@ -83,7 +83,7 @@ class MMSearchForm(gtk.VBox):
         #cell = gtk.CellRendererText()
         #self.comboboxentry_db.pack_start(cell, True)
         #self.comboboxentry_db.add_attribute(cell, 'text', MODEL_DB_IS_LOCAL)
-        self.model_db.append(['/home/matteo/Development/pagestore/renzi_xap_20081220', 0, True, FLAG_DB_NOT_CHECKED])
+        self.model_db.append(['/home/matteo/Development/pagestore/renzi_xap_20090101', 0, True, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['/home/matteo/Development/pagestore/us2008_xap', 0, True, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['10.0.2.2:3333', 0, False, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['localhost:3333', 0, False, FLAG_DB_NOT_CHECKED])
@@ -145,7 +145,7 @@ class MMMainFrame(gtk.VBox):
         self.selected_language = model[index][0]
 
     def visible_dbs_cb(self, model, iter):
-        logging.debug('Is db %s local? %s, therefore is db shown? %s' % (model.get_value(iter, MODEL_DB_URL), model.get_value(iter, MODEL_DB_IS_LOCAL), model.get_value(iter, MODEL_DB_IS_LOCAL) == self.selected_localdb))
+        #logging.debug('Is db %s local? %s, therefore is db shown? %s' % (model.get_value(iter, MODEL_DB_URL), model.get_value(iter, MODEL_DB_IS_LOCAL), model.get_value(iter, MODEL_DB_IS_LOCAL) == self.selected_localdb))
         return model.get_value(iter, MODEL_DB_IS_LOCAL) == self.selected_localdb
 
     def on_dblocal_changed(self, combobox):
@@ -153,10 +153,14 @@ class MMMainFrame(gtk.VBox):
         model = combobox.get_model()
         index = combobox.get_active()
         self.selected_localdb = model[index][0]
-        logging.debug('Selecting local db? %s' % self.selected_localdb)
+        if self.selected_localdb == True:
+            logging.debug('Selecting local db')
+        else:
+            logging.debug('Selecting remote db')
         self.searchform.connect_button.set_sensitive(not self.selected_localdb) # set sensitive only if remote selected
         self.searchform.filtered_model_db.refilter() # show only local/remote dbs in comboboxentry
 
+        # Filter dbs according to what user selected
         model = self.searchform.comboboxentry_db.get_model()
         iter = model.get_iter_root()
         while (iter):
@@ -171,7 +175,7 @@ class MMMainFrame(gtk.VBox):
         # - returns True if db can be opened by Xapian
         # - changes image_connected
         try:
-            logging.debug('Checking %s' % entered_db)
+            logging.debug('Checking if db %s is valid' % entered_db)
             if self.selected_localdb:
                 db = xapian.Database(entered_db)
             else:
@@ -188,6 +192,7 @@ class MMMainFrame(gtk.VBox):
         #    self.searchform.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
         #    return False
         else:
+            logging.info('Db %s is valid' % entered_db)
             return True
 
     def add_db_to_model(self, model, entered_db):
@@ -209,13 +214,13 @@ class MMMainFrame(gtk.VBox):
             if entry is not None:
                 selected_db_is_local = self.selected_localdb
                 db_url = entry.get_text()
-                logging.debug("Running 'check_db_if_needed' on %s, triggered by manual insertion (entry=%s)." % (db_url, entry))
+                #logging.debug("Running 'check_db_if_needed' on %s, triggered by manual insertion (entry=%s)." % (db_url, entry))
             else:
                 return
         else:
             selected_db_is_local = model[index][MODEL_DB_IS_LOCAL]
             db_url = model[index][MODEL_DB_URL]
-            logging.debug("Running 'check_db_if_needed' on %s, triggered by combobox selection (entry=%s)." % (db_url, entry))
+            #logging.debug("Running 'check_db_if_needed' on %s, triggered by combobox selection (entry=%s)." % (db_url, entry))
 
         # Avoid stupid timeouts, check only if we pass True to do_check (triggered by connect button)
         # or local is selected. In any case, check only current type (local or remote) of dbs
@@ -242,14 +247,12 @@ class MMMainFrame(gtk.VBox):
     def on_db_selected(self, combobox, do_check=False):
         # on_db_selected is triggered when user selects something with the
         # combobox, but after calling on_db_manually_entered
-        logging.debug('on_db_selected')
         self.clear_results()
         self.check_db_if_needed(combobox, do_check, None)
 
     def on_db_manually_entered(self, entry, do_check=False):
         # on_db_manually_entered is triggered when user edits the 
         # comboboxentry, but after calling on_db_selected
-        logging.debug('on_db_manutally_entered')
         self.clear_results()
         self.check_db_if_needed(self.searchform.comboboxentry_db, do_check, entry)
 
