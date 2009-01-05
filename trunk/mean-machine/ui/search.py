@@ -72,10 +72,6 @@ class MMResultSearch(object):
         scrolledwin2.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
         document = gtkhtml2.Document()
-        document.clear()
-        document.open_stream("text/html")
-        document.write_stream("<html><body>Welcome, enter some text to start searching!</body></html>")
-        document.close_stream()
         self.view = gtkhtml2.View()
         self.view.set_size_request(-1, 150)
         self.view.set_document(document)

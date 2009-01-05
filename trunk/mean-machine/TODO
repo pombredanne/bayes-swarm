@@ -1,11 +1,12 @@
 TODO:
 
 * merge every component in a single slick killer application:
+  - add search options: source, number of docs to retrieve, n. of 
+    docs for rset, n. of terms for eset, keywords filter list for eset)
+  - keywords black list for eset
   - handle possible errors with queries/timeouts of the server
   - add a stop button
   - share db list at app level
-  - add search options: source, number of docs to retrieve, n. of 
-    docs for rset, n. of terms for eset, keywords filter list for eset)
   - freeze component specific parameters when doing searches
   - add proper log messages
   - show error/warning messages in statusbar
