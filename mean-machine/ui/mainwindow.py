@@ -11,6 +11,7 @@ import gtk
 from components.core import get_components
 from notebookwithclosebuttonontabs import NotebookWithCloseButtonOnTabs
 from searchform import MMSearchForm
+from sourcesdialog import MMSourcesDialog
 import xapian
 
 import logging
@@ -43,13 +44,15 @@ class MMMainFrame(gtk.VBox):
         self.searchform.combobox_dblocal.connect('changed', self.on_dblocal_changed)
         self.searchform.comboboxentry_db.connect('changed', self.on_db_selected)
         self.searchform.comboboxentry_db.child.connect('changed', self.on_db_manually_entered)
+        self.searchform.combobox_sources.connect('changed', self.on_combobox_sources_changed)
         self.searchform.start_button.connect('clicked', self.on_start_button_clicked)
         self.searchform.connect_button.connect('clicked', self.on_connect_button_clicked)
         self.searchform.filtered_model_db.set_visible_func(self.visible_dbs_cb)
         self.searchform.filtered_model_db.refilter()
 
-        # assign self.db
+        # assign self.db, self.sources_list, self.allsources
         self.on_db_selected(self.searchform.comboboxentry_db, self.selected_localdb)
+        self.on_combobox_sources_changed(self.searchform.combobox_sources)
 
     def set_component(self, component):
         self.component = component()
@@ -84,18 +87,39 @@ class MMMainFrame(gtk.VBox):
         model = self.searchform.comboboxentry_db.get_model()
         iter = model.get_iter_root()
         while (iter):
-            # FIXME: this implies that entries both local and remote are always present
+            # FIXME: this works only if one entry for each type (local, remote) is always present
             if model.get_value(iter, MODEL_DB_IS_LOCAL) == self.selected_localdb:
                 #print self.searchform.model_db.get_value(iter, MODEL_DB_URL)
                 break
             iter = model.iter_next(iter)
         self.searchform.comboboxentry_db.set_active(model.get_path(iter)[0])
 
+    def get_sources_list(self, db_url):
+        if self.selected_localdb:
+            db = xapian.Database(db_url)
+        else:
+            db_host, port = db_url.split(':')
+            db = xapian.remote_open(db_host, int(port))
+        query = xapian.Query(xapian.Query.OP_VALUE_RANGE, 0, 'a', 'z')
+        qp = xapian.QueryParser()
+        qp.set_database(db)
+        enquire = xapian.Enquire(db)
+        enquire.set_query(query)
+        enquire.set_collapse_key(MODEL_DOC_SOURCEID)
+        mset = enquire.get_mset(0, 100, 0)
+        list = []
+        for m in mset:
+            list.append([m[xapian.MSET_DOCUMENT].get_value(4), m[xapian.MSET_DOCUMENT].get_value(5)])
+        return list
+        #return [['1', 'quotidiani'], ['2', 'aggregatori'], ['3', 'pagine personali']]
+        
     def is_db_valid(self, entered_db):
         # - returns True if db can be opened by Xapian
         # - changes image_connected
         try:
             logging.debug('Checking if db %s is valid' % entered_db)
+            # FIXME: use self.db instead of db, so that we avoid repeating
+            # the opening. use keep_alive if remote
             if self.selected_localdb:
                 db = xapian.Database(entered_db)
             else:
@@ -155,6 +179,7 @@ class MMMainFrame(gtk.VBox):
                     iter_filtered_model = model.get_iter((index,))
                     iter_full_model = model.convert_iter_to_child_iter(iter_filtered_model)
                     self.searchform.model_db.set_value(iter_full_model, MODEL_DB_VALIDITY, FLAG_DB_IS_VALID)
+                self.sources_list = self.get_sources_list(self.selected_db)
                 self.searchform.set_controls_sensitive(True)
                 self.set_image_connected(True)
             else:
@@ -191,6 +216,36 @@ class MMMainFrame(gtk.VBox):
             self.searchform.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
             tooltips.set_tip(self.searchform.image_connected, 'Disconnected')
 
+    def on_combobox_sources_changed(self, combobox):
+        self.clear_results()
+        model = combobox.get_model()
+        index = combobox.get_active()
+        self.allsources = model[index][0]
+        if self.allsources == True:
+            logging.debug('Selecting all sources')
+        else:
+            logging.debug('Selecting selected sources')
+            
+            try:
+                already_selected_ids = self.selected_sources
+                d = MMSourcesDialog(self.sources_list, already_selected_ids)
+            except:
+                d = MMSourcesDialog(self.sources_list, None)
+            
+            if d.run() == gtk.RESPONSE_CANCEL:
+                logging.debug('User canceled sources selection dialog')
+                combobox.set_active(0)
+            else:
+                if d.return_id_list == []:
+                    logging.debug('User selected None, selecting all sources')
+                    combobox.set_active(0)
+                elif len(d.return_id_list) == len(self.sources_list):
+                    logging.debug("User selected all sources, selecting 'all'")
+                    combobox.set_active(0)
+                else:
+                    logging.debug('User selected sources: %s' % ', '.join(d.return_id_list))
+                    self.selected_sources = d.return_id_list
+
     def on_connect_button_clicked(self, button):
         # TODO: set_sensitive(False) on remote/local combo + db combo
         # trigger db check (force avoidcheck as True)
@@ -218,8 +273,13 @@ class MMMainFrame(gtk.VBox):
         query_search = qp.parse_query(self.searchform.entry.get_text(), xapian.QueryParser.FLAG_BOOLEAN)
         query_lang = xapian.Query(xapian.Query.OP_VALUE_RANGE, MODEL_DOC_LANG, self.selected_language, self.selected_language)
         query = xapian.Query(xapian.Query.OP_AND, query_search, query_lang)
-        if self.searchform.allsources == False:
-            query_sources = xapian.Query(xapian.Query.OP_VALUE_RANGE, MODEL_DOC_SOURCEID, '1', '1')
+        if self.allsources == False:
+            for i, id in enumerate(self.selected_sources):
+                if i == 0:
+                    query_sources = xapian.Query(xapian.Query.OP_VALUE_RANGE, MODEL_DOC_SOURCEID, id, id)
+                else:
+                    query_source_id = xapian.Query(xapian.Query.OP_VALUE_RANGE, MODEL_DOC_SOURCEID, id, id)
+                    query_sources = xapian.Query(xapian.Query.OP_OR, query_sources, query_source_id)
             query = xapian.Query(xapian.Query.OP_AND, query, query_sources)
 
         logging.debug("Setting query: %s" % query.get_description())
