@@ -48,6 +48,7 @@ class MMSearchForm(gtk.VBox):
 
         lowerbox = gtk.HBox(False, 12)
 
+        # combobox for selecting all/some sources
         modelsources = gtk.ListStore('gboolean')
         self.combobox_sources = gtk.ComboBox(modelsources)
         cell = gtk.CellRendererText()
@@ -55,7 +56,6 @@ class MMSearchForm(gtk.VBox):
         self.combobox_sources.set_cell_data_func(cell, self.set_allsources_or_selected)
         modelsources.append([True])
         modelsources.append([False])
-        self.combobox_sources.connect('changed', self.on_combobox_sources_changed)
         self.combobox_sources.set_active(0)
         
         # combobox for selecting local/remote db
@@ -124,17 +124,6 @@ class MMSearchForm(gtk.VBox):
         if is_local == True:
             label = 'all'
         else:
-            label = 'selected'
+            label = 'select'
         cell.set_property('text', label)
         return
-
-    def on_combobox_sources_changed(self, combobox):
-        model = combobox.get_model()
-        index = combobox.get_active()
-        self.allsources = model[index][0]
-        if self.allsources == True:
-            logging.debug('Selecting all sources')
-        else:
-            logging.debug('Selecting selected sources')
-        
-        
