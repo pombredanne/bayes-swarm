@@ -10,6 +10,7 @@ import os
 import gtk
 from components.core import get_components
 from notebookwithclosebuttonontabs import NotebookWithCloseButtonOnTabs
+from searchform import MMSearchForm
 import xapian
 
 import logging
@@ -17,91 +18,10 @@ format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(format=format)
 logging = logging.getLogger('ui.mainwindow')
 
+MODEL_DOC_LANG, MODEL_DOC_HASH, MODEL_DOC_DATE, MODEL_DOC_DIR, MODEL_DOC_SOURCEID, MODEL_DOC_SOURCE = range(6)
+# FIXME: these should be defined only once!
 MODEL_DB_URL, MODEL_DB_PORT, MODEL_DB_IS_LOCAL, MODEL_DB_VALIDITY = range(4)
 FLAG_DB_NOT_CHECKED, FLAG_DB_IS_VALID, FLAG_DB_IS_NOT_VALID = [gtk.STOCK_DIALOG_QUESTION, gtk.STOCK_YES, gtk.STOCK_NO]
-
-class MMSearchForm(gtk.VBox):
-    def __init__(self):
-        gtk.VBox.__init__(self, False, 6)
-
-        self.upperbox = gtk.HBox(False, 12)
-        self.set_border_width(6)
-
-        self.entry = gtk.Entry()
-
-        self.start_button = gtk.Button()
-        self.start_button.set_label('Search')
-        self.start_button.set_flags(gtk.CAN_DEFAULT)
-        # TODO: set grab_default() when it is packed into the window
-
-        self.combobox = gtk.combo_box_new_text()
-        self.combobox.append_text('it')
-        self.combobox.append_text('en')
-        self.combobox.set_active(0)
-
-        self.progressbar = gtk.ProgressBar()
-        self.progressbar.set_size_request(100,-1)
-        self.progressbar.set_text('Ready')
-
-        self.upperbox.pack_start(gtk.Label("Query:"), False, False, 0)
-        self.upperbox.pack_start(self.entry, True, True, 0)
-        self.upperbox.pack_start(self.start_button, False, False, 0)
-        self.upperbox.pack_start(gtk.Label("Language:"), False, False, 0)
-        self.upperbox.pack_start(self.combobox, False, False, 0)
-        self.upperbox.pack_start(self.progressbar, False, False, 0)
-
-        hbox2 = gtk.HBox(False, 12)
-
-        def set_local_or_remote(tvcolumn, cell, model, iter):
-            is_local = model.get_value(iter, 0)
-            if is_local == True:
-                label = 'local'
-            else:
-                label = 'remote'
-            cell.set_property('text', label)
-            return
-
-        # combobox for selecting local/remote db
-        model = gtk.ListStore('gboolean')
-        self.combobox_dblocal = gtk.ComboBox(model)
-        cell = gtk.CellRendererText()
-        self.combobox_dblocal.pack_start(cell, True)
-        self.combobox_dblocal.set_cell_data_func(cell, set_local_or_remote)
-        model.append([True])
-        model.append([False])
-        self.combobox_dblocal.set_active(0)
-
-        # db comboboxentry
-        # model = MODEL_DB_URL, MODEL_DB_PORT, MODEL_DB_IS_LOCAL, MODEL_DB_VALIDITY
-        # MODEL_DB_VALIDITY = FLAG_DB_NOT_CHECKED, FLAG_DB_IS_VALID, FLAG_DB_IS_NOT_VALID
-        self.model_db = gtk.ListStore(str, int, 'gboolean', str)
-        self.filtered_model_db = self.model_db.filter_new()
-        self.comboboxentry_db = gtk.ComboBoxEntry(self.filtered_model_db)
-        cellpb = gtk.CellRendererPixbuf()
-        self.comboboxentry_db.pack_start(cellpb, False)
-        self.comboboxentry_db.add_attribute(cellpb, 'stock_id', MODEL_DB_VALIDITY)
-        #cell = gtk.CellRendererText()
-        #self.comboboxentry_db.pack_start(cell, True)
-        #self.comboboxentry_db.add_attribute(cell, 'text', MODEL_DB_IS_LOCAL)
-        self.model_db.append(['/home/matteo/Development/pagestore/renzi_xap_20090101', 0, True, FLAG_DB_NOT_CHECKED])
-        self.model_db.append(['/home/matteo/Development/pagestore/us2008_xap', 0, True, FLAG_DB_NOT_CHECKED])
-        self.model_db.append(['10.0.2.2:3333', 0, False, FLAG_DB_NOT_CHECKED])
-        self.model_db.append(['localhost:3333', 0, False, FLAG_DB_NOT_CHECKED])
-        self.comboboxentry_db.set_active(0)
-
-        self.image_connected = gtk.Image()
-
-        self.connect_button = gtk.Button()
-        self.connect_button.set_label('Connect')
-
-        hbox2.pack_start(gtk.Label('Database:'), False, False, 0)
-        hbox2.pack_start(self.combobox_dblocal, False, False, 0)
-        hbox2.pack_start(self.comboboxentry_db, True, True, 0)
-        hbox2.pack_start(self.image_connected, False, False, 0)
-        hbox2.pack_start(self.connect_button, False, False, 0)
-
-        self.pack_start(self.upperbox, False, False, 0)
-        self.pack_start(hbox2, False, False, 0)
 
 class MMMainFrame(gtk.VBox):
     def __init__(self, component):
@@ -235,13 +155,13 @@ class MMMainFrame(gtk.VBox):
                     iter_filtered_model = model.get_iter((index,))
                     iter_full_model = model.convert_iter_to_child_iter(iter_filtered_model)
                     self.searchform.model_db.set_value(iter_full_model, MODEL_DB_VALIDITY, FLAG_DB_IS_VALID)
-                self.searchform.upperbox.set_sensitive(True)
+                self.searchform.set_controls_sensitive(True)
                 self.set_image_connected(True)
             else:
-                self.searchform.upperbox.set_sensitive(False)
+                self.searchform.set_controls_sensitive(False)
                 self.set_image_connected(False)
         else:
-            self.searchform.upperbox.set_sensitive(False)
+            self.searchform.set_controls_sensitive(False)
             self.set_image_connected(False)
 
     def on_db_selected(self, combobox, do_check=False):
@@ -290,14 +210,17 @@ class MMMainFrame(gtk.VBox):
         qp.set_database(db)
         qp.set_stemming_strategy(xapian.QueryParser.STEM_SOME)
 
-        date_processor = xapian.DateValueRangeProcessor(2)
+        date_processor = xapian.DateValueRangeProcessor(MODEL_DOC_DATE)
         qp.add_valuerangeprocessor(date_processor)
 
         # FIXME: handle xapian.QueryParserError, xapian.NetworkTimeoutError
-        # show error message in statusbar, user can clear search with 'stop'
-        query1 = qp.parse_query(self.searchform.entry.get_text(), xapian.QueryParser.FLAG_BOOLEAN)
-        query2 = xapian.Query(xapian.Query.OP_VALUE_RANGE, 0, self.selected_language, self.selected_language)
-        query = xapian.Query(xapian.Query.OP_AND, query1, query2)
+        # show error message in statusbar, user should be able to clear search with 'stop'
+        query_search = qp.parse_query(self.searchform.entry.get_text(), xapian.QueryParser.FLAG_BOOLEAN)
+        query_lang = xapian.Query(xapian.Query.OP_VALUE_RANGE, MODEL_DOC_LANG, self.selected_language, self.selected_language)
+        query = xapian.Query(xapian.Query.OP_AND, query_search, query_lang)
+        if self.searchform.allsources == False:
+            query_sources = xapian.Query(xapian.Query.OP_VALUE_RANGE, MODEL_DOC_SOURCEID, '1', '1')
+            query = xapian.Query(xapian.Query.OP_AND, query, query_sources)
 
         logging.debug("Setting query: %s" % query.get_description())
 

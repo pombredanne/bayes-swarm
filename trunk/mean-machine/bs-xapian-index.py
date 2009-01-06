@@ -16,6 +16,40 @@ import xapian
 
 from sgmlparser import MMBaseHTMLParser
 
+from storm.locals import *
+
+class Page(object):
+    __storm_table__ = "pages"
+    id = Int(primary=True)
+    language_id = Int()
+    kind_id = Int()
+    source_id = Int()
+    url = Unicode()
+
+class Source(object):
+    __storm_table__ = 'sources'
+    id = Int(primary=True)
+    name = Unicode()
+
+class Kind(object):
+    __storm_table__ = "kinds"
+    id = Int(primary=True)
+    kind = Unicode()
+
+class Language(object):
+    __storm_table__ = "globalize_languages"
+    id = Int(primary=True)
+    iso_639_1 = Unicode()
+    
+    def name(self):
+        return self.iso_639_1
+
+mysql_db = create_database("mysql://testuser:test@localhost/renzi")
+store = Store(mysql_db)
+
+#source = store.find((Source), Source.id == 1).one()
+#print source.id, source.name
+
 if len(sys.argv) != 3:
     print >> sys.stderr, "Usage: %s PATH_TO_XAPIAN_DB PATH_TO_PAGESTORE" % sys.argv[0]
     sys.exit(1)
@@ -39,6 +73,7 @@ def xapian_index(db, dir):
 
     pages = []
     f = open(os.path.join(dir, 'META'))
+    # some url contain '\n', since split can be mangled, we use 'try'
     try:
         for line in f:
             pages.append(line.split())
@@ -56,6 +91,9 @@ def xapian_index(db, dir):
                 doc.add_value(1, hash)
                 doc.add_value(2, extract_date_from_path(dir))
                 doc.add_value(3, dir)
+                source, page = store.find((Source, Page), Source.id == Page.source_id, Page.id == int(id)).one()
+                doc.add_value(4, str(source.id))
+                doc.add_value(5, source.name)
 
                 stemmer = xapian.Stem(language)
                 indexer.set_stemmer(stemmer)
