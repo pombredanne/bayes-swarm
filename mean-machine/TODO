@@ -13,12 +13,15 @@ TODO:
   - show progressbar progress during mset, rset, eset
 
 * graph component
-  - add an export button on graph component
+  - filter eset terms with a specific dialog
+  - add an export button
+  - add a save graph image button
   - use seed in order to stabilize graphs
-  - center the searched term in the graph, use a different vertex color
+  - center the searched term in the graph
   - allow to switch between distance graph and matching graph (current
     bs-xapian-graph view based on xapian weight only)
-
+  - show vertex connected to [at least one/all] term vertex
+  
 * search component
   - add time-machine like functionality
   
