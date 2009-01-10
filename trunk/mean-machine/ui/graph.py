@@ -33,7 +33,9 @@ class MMResultGraph():
         self.igraph_drawing_area = IGraphDrawingArea()
         #self.cb_threshold_changed(self.adj)
 
-        vbox.pack_start(self.igraph_drawing_area, True, True, 0)
+        self.isolated_button = gtk.CheckButton("Show only not-isolated vertex")
+        self.isolated_button.connect("toggled", self.cb_threshold_changed)
+        
         table = gtk.Table(2, 2, False)
         table.set_row_spacings(6)
         table.set_col_spacings(12)
@@ -46,6 +48,9 @@ class MMResultGraph():
         label2.set_alignment(0, 0.5)
         table.attach(label2, 0, 1, 1, 2, gtk.FILL)
         table.attach(self.slider2, 1, 2, 1, 2)
+        
+        vbox.pack_start(self.igraph_drawing_area, True, True, 0)
+        vbox.pack_start(self.isolated_button, False, False, 0)
         vbox.pack_start(table, False, True, 0)
         
         box.add(vbox)
@@ -85,9 +90,12 @@ class MMResultGraph():
         max_size = max(sizes)
         g.vs['size'] = [(i - min_size) / float(max_size - min_size) for i in sizes]
 
+        g.vs['is_term'] = [False for l in labels] # FIXME: how do you set an attribute for all vertex?
         for term in terms:
             v = g.vs.select(label_eq=term)
-            if len(v) == 1: v['color'] = ['blue']
+            if len(v) == 1: 
+                v['color'] = ['blue']
+                v['is_term'] = [True]
 
         #fixed = [False for i in range(len(sizes)-1)]
         #fixed.append(True)
@@ -103,13 +111,15 @@ class MMResultGraph():
         # keep only edges where weight > threshold
         g2 = self.g - self.g.es.select(weight_lt=log_scale(self.adj.value))
         
-        # keep only non isolated vertex
-        # g3 = g2.subgraph(g2.vs.select(_degree_gt=0))
-        
         # keep only vertex where size > threshold
         g3 = g2.subgraph(g2.vs.select(size_gt=log_scale(self.adj2.value)))
 
-        self.igraph_drawing_area.change_graph(g3)
+        if self.isolated_button.get_active():
+            # keep only non isolated vertex (except terms)
+            g4 = g3 - g3.vs.select(_degree_eq=0, is_term_eq=False)
+            self.igraph_drawing_area.change_graph(g4)
+        else:
+            self.igraph_drawing_area.change_graph(g3)
 
     def clear(self):
         self.igraph_drawing_area.change_graph(None)
