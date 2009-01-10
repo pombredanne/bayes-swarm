@@ -8,6 +8,7 @@ __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
 from math import exp
 import gtk, gobject, gtkhtml2
+import os
 
 def mark_text_up(result_list):
     document = gtkhtml2.Document()
@@ -112,8 +113,9 @@ class MMResultSearch(object):
     def on_row_activated(self, treeview, path, view_column):
         iter = treeview.get_model().get_iter(path)
         doc = treeview.get_model().get_value(iter, 2).document
+        PATH_TO_PAGESTORE = '/home/matteo/Development/pagestore/renzi_pagestore_20090109'
         path = os.path.join(PATH_TO_PAGESTORE, 
-                            doc.get_value(5),
+                            doc.get_value(3),
                             doc.get_value(1),
                             'contents.html')
 
