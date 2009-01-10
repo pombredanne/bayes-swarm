@@ -50,7 +50,7 @@ class MMResultGraph():
         
         box.add(vbox)
 
-    def display(self, distances_list):
+    def display(self, distances_list, terms):
         labels_id = {}
         labels = []
         edges = []
@@ -85,9 +85,13 @@ class MMResultGraph():
         max_size = max(sizes)
         g.vs['size'] = [(i - min_size) / float(max_size - min_size) for i in sizes]
 
-        fixed = [False for i in range(len(sizes)-1)]
-        fixed.append(True)
-        g.vs['fixed'] = fixed
+        for term in terms:
+            v = g.vs.select(label_eq=term)
+            if len(v) == 1: v['color'] = ['blue']
+
+        #fixed = [False for i in range(len(sizes)-1)]
+        #fixed.append(True)
+        #g.vs['fixed'] = fixed
 
         g.vs['fr_seed_coords'] = g.layout_circle()
 

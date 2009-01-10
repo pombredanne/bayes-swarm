@@ -80,40 +80,38 @@ def xapian_index(db, dir):
     finally:
         f.close()
 
-    try:
-        for page in pages:
-            # example: a792188bd1e8a2d91109197dff2a4009 http://news.google.com 1 url en
-            hash, url, id, kind, language = page
-            if kind in ['url', 'rssitem']:
-                doc = xapian.Document()
-                doc.set_data(url)
-                doc.add_value(0, language)
-                doc.add_value(1, hash)
-                doc.add_value(2, extract_date_from_path(dir))
-                doc.add_value(3, dir)
-                source, page = store.find((Source, Page), Source.id == Page.source_id, Page.id == int(id)).one()
-                doc.add_value(4, str(source.id))
-                doc.add_value(5, source.name)
+    for page in pages:
+        # example: a792188bd1e8a2d91109197dff2a4009 http://news.google.com 1 url en
+        hash, url, id, kind, language = page
+        if kind in ['url', 'rssitem']:
+            doc = xapian.Document()
+            doc.set_data(url)
+            doc.add_value(0, language)
+            doc.add_value(1, hash)
+            doc.add_value(2, extract_date_from_path(dir))
+            doc.add_value(3, dir)
+            source, page = store.find((Source, Page), Source.id == Page.source_id, Page.id == int(id)).one()
+            doc.add_value(4, str(source.id))
+            doc.add_value(5, source.name)
 
-                stemmer = xapian.Stem(language)
-                indexer.set_stemmer(stemmer)
-                indexer.set_document(doc)
-                f = open(os.path.join(dir, hash, 'contents.html'))
+            stemmer = xapian.Stem(language)
+            indexer.set_stemmer(stemmer)
+            indexer.set_document(doc)
+            f = open(os.path.join(dir, hash, 'contents.html'))
 
-                htmldoc = MMBaseHTMLParser()
-                htmldoc.feed(f.read())
-                f.close()
-                htmldoc.close()
+            htmldoc = MMBaseHTMLParser()
+            htmldoc.feed(f.read())
+            f.close()
+            htmldoc.close()
 
-                indexer.index_text(htmldoc.text)
+            try:
+                doc_text = htmldoc.text
+                indexer.index_text(doc_text)
+            except:
+                print "Unexpected error:", sys.exc_info()[0]
 
-                # Add the document to the database.
-                database.add_document(doc)
-    #except StopIteration:
-    except:
-        print "Unexpected error:", sys.exc_info()[0]
-        #raise
-
+            # Add the document to the database.
+            database.add_document(doc)
 
 # Open the database for update, creating a new database if necessary.
 database = xapian.WritableDatabase(PATH_TO_XAPIAN_DB, xapian.DB_CREATE_OR_OVERWRITE)

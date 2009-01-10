@@ -33,7 +33,7 @@ class MMSearchComponent(MMComponent):
     
     def run(self, enquire, lang, db, progressbar):
         logging.debug('Getting MSet')
-        progressbar.set_text('Getting MSet')
+        progressbar.set_text('0%')
         while gtk.events_pending():
             gtk.main_iteration()
         mset = enquire.get_mset(0,
@@ -49,7 +49,7 @@ class MMSearchComponent(MMComponent):
         rset = xapian.RSet()
         logging.debug('Getting RSet')
         progressbar.set_fraction(0.33)
-        progressbar.set_text('Getting RSet')
+        progressbar.set_text('33%')
         while gtk.events_pending():
             gtk.main_iteration()
         for y, m in enumerate(mset):
@@ -62,7 +62,7 @@ class MMSearchComponent(MMComponent):
         # match the filter
         logging.debug('Getting ESet')
         progressbar.set_fraction(0.66)
-        progressbar.set_text('Getting ESet')
+        progressbar.set_text('66%')
         while gtk.events_pending():
             gtk.main_iteration()
         eset = enquire.get_eset(self.n_result_cloud, 

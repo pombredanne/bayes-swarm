@@ -1,13 +1,13 @@
 TODO:
 
 * merge every component in a single slick killer application:
-  - add search options: source, number of docs to retrieve, n. of 
-    docs for rset, n. of terms for eset, keywords filter list for eset)
-  - keywords black list for eset
+  - add search options: number of docs to retrieve, n. of docs for rset,
+    n. of terms for eset, keywords black list for eset)
   - handle possible errors with queries/timeouts of the server
   - add a stop button
-  - share db list at app level
-  - freeze component specific parameters when doing searches
+  - share db ListStore at app level
+  - freeze component specific parameters when doing searches or when
+    result frame is cleared
   - add proper log messages
   - show error/warning messages in statusbar
   - show progressbar progress during mset, rset, eset
@@ -21,6 +21,10 @@ TODO:
 
 * search component
   - add time-machine like functionality
+  
+* info component?
+  - display: total n. of indexed docs, n. of docs per source, n. of
+    languages, date range
   
 * bs-xapian-index.py:
   - add source info as document value, so that it can be used for
