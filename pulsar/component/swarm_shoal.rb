@@ -20,6 +20,9 @@
 #   --disable-cache disables intword caching
 # 
 #
+# TODO: refactor this component to use Pulsar::StoreIterator and remove all
+# the associated boilerplate
+#
 # == Author
 # Riccardo Govoni [battlehorse@gmail.com]
 #
@@ -152,6 +155,13 @@ with_connection do
           # case, fallback to the whole contents
           htmlbody = html.plain_text("/html/body")[0]
           htmlbody = html.plain_text("/html")[0] if htmlbody.nil?
+          if htmlbody.nil?
+            warn_log "Nil body for page id #{id}, #{url}. Check the page " +
+                     "contents and its database config. " +
+                     "Maybe you configured a feed as url?"
+            next
+          end
+          
           blender.dismember(htmlbody,
                             p.language_name, # language symbol, such as :en
                             :bodycount, # area
