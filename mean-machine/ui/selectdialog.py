@@ -8,9 +8,18 @@ __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
 import gtk
 
-class MMSourcesDialog:
-    def __init__(self, sources_list, id_true_list=None):
-        self.dialog = gtk.Dialog('Sources list',
+class MMSelectDialog:
+    def __init__(self, name, sources_list, id_true_list=None):
+        # sources_list = [['1', 'quotidiani'], ['2', 'aggregatori'], ['3', 'pagine personali']]
+        # id_true_list = ['1', '2']
+        #
+        # if id_true_list is not passed, all sources are set as True, otherwise
+        # they are set True only if id is found in id_true_list
+        #
+        # returns gtk.RESPONSE_OK or gtk.RESPONSE_CANCEL, if OK return_id_list 
+        # contains ['2', '3'] which corresponds to the ids selected by user
+        
+        self.dialog = gtk.Dialog('%s list' % name,
             None,
             gtk.DIALOG_MODAL,
             (gtk.STOCK_OK, gtk.RESPONSE_OK, gtk.STOCK_CANCEL, gtk.RESPONSE_CANCEL))
@@ -19,7 +28,7 @@ class MMSourcesDialog:
         upper_vbox.set_border_width(5)
         
         l = gtk.Label()
-        l.set_markup('<span weight="bold">%s</span>' % 'Sources')
+        l.set_markup('<span weight="bold">%s</span>' % name)
         
         scrolledwin = gtk.ScrolledWindow()
         treeview = gtk.TreeView()
@@ -108,7 +117,7 @@ if __name__ == "__main__":
     for m in mset:
         list.append([m[xapian.MSET_DOCUMENT].get_value(4), m[xapian.MSET_DOCUMENT].get_value(5)])
     
-    d = MMSourcesDialog(list, ['1', '2'])
+    d = MMSelectDialog(list, ['1', '2'])
 
     if d.run() == gtk.RESPONSE_CANCEL:
         print 'cancelled'
