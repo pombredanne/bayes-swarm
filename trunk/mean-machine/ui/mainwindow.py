@@ -11,7 +11,7 @@ import gtk
 from components.core import get_components
 from notebookwithclosebuttonontabs import NotebookWithCloseButtonOnTabs
 from searchform import MMSearchForm
-from sourcesdialog import MMSourcesDialog
+from selectdialog import MMSelectDialog
 import xapian
 
 import logging
@@ -228,9 +228,9 @@ class MMMainFrame(gtk.VBox):
             
             try:
                 already_selected_ids = self.selected_sources
-                d = MMSourcesDialog(self.sources_list, already_selected_ids)
+                d = MMSelectDialog('Sources', self.sources_list, already_selected_ids)
             except:
-                d = MMSourcesDialog(self.sources_list, None)
+                d = MMSelectDialog('Sources', self.sources_list, None)
             
             if d.run() == gtk.RESPONSE_CANCEL:
                 logging.debug('User canceled sources selection dialog')

@@ -10,6 +10,7 @@ from math import exp
 import gtk
 import igraph
 from igraphdrawingarea import IGraphDrawingArea
+from selectdialog import MMSelectDialog
 
 def log_scale(x):
     return (exp(x)-1)/(exp(1)-1)
@@ -33,8 +34,13 @@ class MMResultGraph():
         self.igraph_drawing_area = IGraphDrawingArea()
         #self.cb_threshold_changed(self.adj)
 
+        hbox_buttons = gtk.HBox(True, 0)
+        self.filter_checkbutton = gtk.CheckButton("Filter vertex manually")
+        self.filter_checkbutton.connect("toggled", self.on_filter_checkbutton_changed)
         self.isolated_button = gtk.CheckButton("Show only not-isolated vertex")
         self.isolated_button.connect("toggled", self.cb_threshold_changed)
+        hbox_buttons.pack_start(self.filter_checkbutton, False, True, 0)
+        hbox_buttons.pack_end(self.isolated_button, False, True, 0)
         
         table = gtk.Table(2, 2, False)
         table.set_row_spacings(6)
@@ -50,8 +56,8 @@ class MMResultGraph():
         table.attach(self.slider2, 1, 2, 1, 2)
         
         vbox.pack_start(self.igraph_drawing_area, True, True, 0)
-        vbox.pack_start(self.isolated_button, False, False, 0)
         vbox.pack_start(table, False, True, 0)
+        vbox.pack_start(hbox_buttons, False, False, 0)
         
         box.add(vbox)
 
@@ -109,17 +115,57 @@ class MMResultGraph():
 
     def cb_threshold_changed(self, adj):
         # keep only edges where weight > threshold
-        g2 = self.g - self.g.es.select(weight_lt=log_scale(self.adj.value))
+        g = self.g - self.g.es.select(weight_lt=log_scale(self.adj.value))
+        print len(g.vs)
         
         # keep only vertex where size > threshold
-        g3 = g2.subgraph(g2.vs.select(size_gt=log_scale(self.adj2.value)))
+        g = g.subgraph(g.vs.select(size_gt=log_scale(self.adj2.value)))
+        print len(g.vs)
+        
+        self.terms_list = []
+        for v in g.vs:
+            self.terms_list.append([v['label'], v['label']])
+
+        if self.filter_checkbutton.get_active():
+            # remove unchecked terms
+            g = g.subgraph(g.vs.select(label_in=self.selected_terms))
+            print len(g.vs)
 
         if self.isolated_button.get_active():
-            # keep only non isolated vertex (except terms)
-            g4 = g3 - g3.vs.select(_degree_eq=0, is_term_eq=False)
-            self.igraph_drawing_area.change_graph(g4)
+            # remove non isolated vertex (except terms)
+            g = g - g.vs.select(_degree_eq=0, is_term_eq=False)
+            print len(g.vs)
+            
+        self.igraph_drawing_area.change_graph(g)
+
+    def on_filter_checkbutton_changed(self, widget):
+        if widget.get_active():
+            # open list
+            try:
+                already_selected_terms = self.selected_terms
+                d = MMSelectDialog('Terms', self.terms_list, already_selected_terms)
+            except:
+                d = MMSelectDialog('Terms', self.terms_list, None)
+            
+            if d.run() == gtk.RESPONSE_CANCEL:
+                #logging.debug('User canceled terms selection dialog, unchecking filter checkbutton')
+                widget.set_active(0)
+            else:
+                if d.return_id_list == []:
+                    #logging.debug('User selected None, unchecking filter checkbutton')
+                    widget.set_active(0)
+                elif len(d.return_id_list) == len(self.terms_list):
+                    #logging.debug("User selected all sources, selecting 'all'")
+                    widget.set_active(0)
+                else:
+                    #logging.debug('User selected sources: %s' % ', '.join(d.return_id_list))
+                    self.selected_terms = d.return_id_list
         else:
-            self.igraph_drawing_area.change_graph(g3)
+            # do nothing, checkbutton state is enough
+            pass
+        
+        # refresh visualization
+        self.cb_threshold_changed(None)
 
     def clear(self):
         self.igraph_drawing_area.change_graph(None)
