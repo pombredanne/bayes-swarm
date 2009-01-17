@@ -116,11 +116,9 @@ class MMResultGraph():
     def cb_threshold_changed(self, adj):
         # keep only edges where weight > threshold
         g = self.g - self.g.es.select(weight_lt=log_scale(self.adj.value))
-        print len(g.vs)
         
         # keep only vertex where size > threshold
         g = g.subgraph(g.vs.select(size_gt=log_scale(self.adj2.value)))
-        print len(g.vs)
         
         self.terms_list = []
         for v in g.vs:
@@ -129,12 +127,10 @@ class MMResultGraph():
         if self.filter_checkbutton.get_active():
             # remove unchecked terms
             g = g.subgraph(g.vs.select(label_in=self.selected_terms))
-            print len(g.vs)
 
         if self.isolated_button.get_active():
             # remove non isolated vertex (except terms)
             g = g - g.vs.select(_degree_eq=0, is_term_eq=False)
-            print len(g.vs)
             
         self.igraph_drawing_area.change_graph(g)
 
