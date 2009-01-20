@@ -22,8 +22,8 @@ from .ui.graph import MMResultGraph
 class MMSearchComponent(MMComponent):
     is_mm_component = True
     name = "graph"
-    description = """Graphs the net given by a set of documents where
-                   the given term is most relevant"""
+    description = """Graphs the net obtained by a set of documents where
+the given terms are most relevant"""
     
     ui = MMResultGraph
     
