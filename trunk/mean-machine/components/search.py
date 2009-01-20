@@ -23,7 +23,7 @@ class MMSearchComponent(MMComponent):
     is_mm_component = True
     name = "search"
     description = """Searchs for given terms and returns matching documents
-                   together with the cloud of most frequent terms"""
+together with the cloud of most frequent terms"""
     
     ui = MMResultSearch
     
