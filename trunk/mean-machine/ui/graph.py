@@ -131,7 +131,8 @@ class MMResultGraph():
         if self.isolated_button.get_active():
             # remove non isolated vertex (except terms)
             g = g - g.vs.select(_degree_eq=0, is_term_eq=False)
-            
+        
+        self.changed_graph = g
         self.igraph_drawing_area.change_graph(g)
 
     def on_filter_checkbutton_changed(self, widget):
@@ -165,3 +166,7 @@ class MMResultGraph():
 
     def clear(self):
         self.igraph_drawing_area.change_graph(None)
+
+    def export(self):
+        print 'export!!'
+        print len(self.changed_graph.vs)

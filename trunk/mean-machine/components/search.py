@@ -24,8 +24,8 @@ class MMSearchComponent(MMComponent):
     name = "search"
     description = """Searchs for given terms and returns matching documents
 together with the cloud of most frequent terms"""
-    
     ui = MMResultSearch
+    has_additional_actions = False
     
     def __init__(self, n_result_docs = 100, n_result_cloud = 50):
         self.n_result_docs = n_result_docs

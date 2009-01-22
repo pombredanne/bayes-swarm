@@ -24,8 +24,9 @@ class MMSearchComponent(MMComponent):
     name = "graph"
     description = """Graphs the net obtained by a set of documents where
 the given terms are most relevant"""
-    
     ui = MMResultGraph
+
+    has_additional_actions = True
     
     def __init__(self, n_mset = 10, n_eset = 50):
         self.n_mset = n_mset
@@ -144,3 +145,29 @@ the given terms are most relevant"""
 
     def clear_results(self):
         self.ui.clear()
+
+    def export_cb(self, action):
+        self.ui.export()
+
+    def set_additional_actions(self, actiongroup):
+        actiongroup.add_actions([('ExportGraph%i' % self.id, 
+                           gtk.STOCK_SAVE,
+                           '_Export Graph', 
+                           '<Control>e',
+                           'Exports the current graph to file', 
+                           self.export_cb)])
+                           
+    def set_uimanager_for_additional_actions(self, uimanager):
+        ui = '''<ui>
+<menubar name="MenuBar">
+  <menu action="Components">
+  </menu>
+</menubar>
+<toolbar name="Toolbar">
+  <placeholder name="Additional Actions">
+    <toolitem action="%s"/>
+  </placeholder>
+  <separator/>
+</toolbar>
+</ui>'''
+        return uimanager.add_ui_from_string(ui % 'ExportGraph%i' % self.id)
