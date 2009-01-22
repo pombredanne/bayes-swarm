@@ -30,7 +30,8 @@ class MMMainFrame(gtk.VBox):
 
         self.resultbox = gtk.VBox(False, 0)
         self.searchform = MMSearchForm()
-        self.set_component(component)
+        self.component = component
+        self.component.ui = self.component.ui(self.resultbox, self.searchform)
 
         self.pack_start(self.resultbox, True, True, 0)
         self.pack_start(self.searchform, False, False, 0)
@@ -53,10 +54,6 @@ class MMMainFrame(gtk.VBox):
         # assign self.db, self.sources_list, self.allsources
         self.on_db_selected(self.searchform.comboboxentry_db, self.selected_localdb)
         self.on_combobox_sources_changed(self.searchform.combobox_sources)
-
-    def set_component(self, component):
-        self.component = component()
-        self.component.ui = self.component.ui(self.resultbox, self.searchform)
 
     def on_entry_changed(self, entry):
         self.clear_results()
@@ -305,8 +302,10 @@ class MainMachine(object):
     </menubar>
     <toolbar name="Toolbar">
       <placeholder name="Components">
-      </placeholder>
+      </placeholder>      
       <separator/>
+      <placeholder name="Additional Actions">
+      </placeholder>      
       <toolitem action="Quit"/>
     </toolbar>
     </ui>'''
@@ -323,7 +322,7 @@ class MainMachine(object):
       </placeholder>
     </toolbar>
     </ui>'''
-    
+
     def __init__(self):
         logging.info("Starting Mean-Machine")
         self.components = get_components()
@@ -336,22 +335,23 @@ class MainMachine(object):
 
         # Create a UIManager instance
         self.uimanager = gtk.UIManager()
+        self.merge_id = 0        
         # Add the accelerator group to the toplevel window
         accelgroup = self.uimanager.get_accel_group()
         w.add_accel_group(accelgroup)
 
         # Create an ActionGroup
-        actiongroup = gtk.ActionGroup('MMUIManager')
+        self.actiongroup = gtk.ActionGroup('MMUIManager')
 
         # Create actions
-        actiongroup.add_actions([('Quit', gtk.STOCK_QUIT, '_Quit', None,
+        self.actiongroup.add_actions([('Quit', gtk.STOCK_QUIT, '_Quit', None,
                                   'Quit the Program', self.quit_cb),
                                  ('File', None, '_File'),
                                  ('Components', None, '_Components')])
-        actiongroup.get_action('Quit').set_property('short-label', '_Quit')
+        self.actiongroup.get_action('Quit').set_property('short-label', '_Quit')
 
         # Add the actiongroup to the uimanager
-        self.uimanager.insert_action_group(actiongroup, 0)
+        self.uimanager.insert_action_group(self.actiongroup, 0)
         # Add a UI description
         self.uimanager.add_ui_from_string(self.ui)
         # Create a MenuBar
@@ -361,8 +361,9 @@ class MainMachine(object):
         toolbar = self.uimanager.get_widget('/Toolbar')
         vbox.pack_start(toolbar, False)
 
+        self.new_component_id = 0
         for component_name, component_class in self.components.items():
-            actiongroup.add_actions([(component_name, 
+            self.actiongroup.add_actions([(component_name, 
                                       gtk.STOCK_NEW, 
                                       '_' + component_name, 
                                       '<Control>%s' % component_name[0],
@@ -373,18 +374,20 @@ class MainMachine(object):
         self.notebook = NotebookWithCloseButtonOnTabs()
         self.notebook.set_scrollable(True)
         self.notebook.set_property('homogeneous', True)
+        self.notebook.connect('switch-page', self.switch_page)
+#        self.notebook.connect('page-added', self.on_page_added)
         vbox.pack_start(self.notebook, True, True, 0)
 
         w.add(vbox)
         w.show_all()
         gtk.main()
 
-    def new_tab(self, component_class):
-        child = MMMainFrame(component_class)
+    def new_tab(self, component):
+        child = MMMainFrame(component)
         child.show_all()
 
         # TODO: change tab label according to what user types in search
-        tab_label = gtk.Label(component_class.name)
+        tab_label = gtk.Label(component.name)
         tab_label.show()
 
         nbpages = self.notebook.get_n_pages()
@@ -392,7 +395,28 @@ class MainMachine(object):
         self.notebook.set_current_page(nbpages)
 
     def start_component_cb(self, action):
-        self.new_tab(self.components[action.get_name()])
+        component = self.components[action.get_name()]()
+        self.new_component_id += 1
+        component.id = self.new_component_id
+        if component.has_additional_actions:
+            logging.debug('Loading additional actions for %s component' % component.name)
+            component.set_additional_actions(self.actiongroup)
+        self.new_tab(component)
+        
+#    def on_page_added(self, notebook, child, page_num):
+#        pass
+
+    def switch_page(self, notebook, page, page_num):
+        active_component = notebook.get_nth_page(page_num).component
+        logging.debug('Selecting page %i (%s)' % (page_num, active_component.name))
+
+        # remove any previous left addictional actions
+        if self.merge_id:
+            self.uimanager.remove_ui(self.merge_id)
+            self.merge_id = 0
+        # set additional actions if present
+        if active_component.has_additional_actions:
+            self.merge_id = active_component.set_uimanager_for_additional_actions(self.uimanager)
 
     def quit_cb(self, b):
         logging.info("Quitting Mean-Machine")
