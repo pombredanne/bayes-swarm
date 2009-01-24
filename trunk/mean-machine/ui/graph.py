@@ -12,6 +12,11 @@ import igraph
 from igraphdrawingarea import IGraphDrawingArea
 from selectdialog import MMSelectDialog
 
+import logging
+format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+logging.basicConfig(level=logging.DEBUG, format=format)
+logging = logging.getLogger('ui.graph')
+
 def log_scale(x):
     return (exp(x)-1)/(exp(1)-1)
 
@@ -168,5 +173,24 @@ class MMResultGraph():
         self.igraph_drawing_area.change_graph(None)
 
     def export(self):
-        print 'export!!'
-        print len(self.changed_graph.vs)
+        dialog = gtk.FileChooserDialog(title='Save as..', action=gtk.FILE_CHOOSER_ACTION_SAVE,
+                                        buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
+        dialog.set_default_response(gtk.RESPONSE_OK)
+
+        response = dialog.run()
+        if response == gtk.RESPONSE_OK:
+            f = dialog.get_filename()
+            try:
+                self.changed_graph.write(f)
+                logging.info('%s saved' % f)
+            except IOError, e:
+                logging.error(e)
+                message = 'Error: %s\n\nIf you specified and invalid format, use one of the following extensions:\n\n%s' % (e, '\n'.join(igraph.Graph._format_mapping.keys()))
+                errordialog = gtk.MessageDialog(dialog, type=gtk.MESSAGE_ERROR,                
+                                       buttons=gtk.BUTTONS_CLOSE, message_format=message)
+                errordialog.run()
+                errordialog.destroy()
+        elif response == gtk.RESPONSE_CANCEL:
+            pass
+        dialog.destroy()
+        
