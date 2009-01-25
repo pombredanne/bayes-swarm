@@ -1,18 +1,13 @@
-#summary Mean-Machine is the indexing of Bayes-Swarm db via xapian
+#summary Mean-Machine is a graphical tool for bayes-swarm data visualization
 
 = Introduction =
 
-Mean Machine is an experimental sub-project, named as the famous Sugar Ray's song, that consists in indexing the Bayes-Swarm [FreeDataset pagestore] with the [http://www.xapian.org Xapian] library.
+Mean Machine is an experimental sub-project, named as the famous Sugar Ray's song, that allows to perform queries on the database and plot data accordingly. 
 
 = Details =
 
-Mean-Machine, like every xapian program consists of two distinct phases:
-  * Indexing
-  * Searching
-
-= Indexing =
-
-That's what bs-xapian-index.py does. Just indicate the path to a pagestore and it will do the rest. Xapian can index text in a very smart way, i.e. remembers each word position so that when you search you can find pattern like "clinton NEAR health" or even more complex.
+Before using the graphical frontend, data has to be indexed with the [http://www.xapian.org Xapian] library, this can be performed with xapian_index.rb script, found in our spidering library name *Pulsar*.
+*Xapian* not only saves which words belong to which text, but also their position in the text, this allows to patterns like "clinton NEAR health" or even more complex ones.
 
 = Searching =
 
