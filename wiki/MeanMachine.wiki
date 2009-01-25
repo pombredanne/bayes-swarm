@@ -2,7 +2,7 @@
 
 = Introduction =
 
-Mean Machine is an experimental sub-project, named as the famous Sugar Ray's song, that allows to perform queries on the database and plot data accordingly. 
+Mean Machine is an experimental sub-project, named as the famous Sugar Ray's song, it allows to perform queries on the database and plot data accordingly. 
 
 = Details =
 
