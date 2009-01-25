@@ -19,11 +19,11 @@ We have currently two different components, which perform different plots.
 The user can insert terms to be searched, as a result the most relevant documents are presented together with a cloud of the most relevant words. Clicking on the words allows to deepen the search and find the documents which match both words (to be precise the two terms are ORed, so documents which match both are given a higher score).
 
 == graph ==
-[http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_obama.png http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_obama_small.png]
+[http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_obama.png http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_obama_small.png] [http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_mccain-iraq.png http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_mccain-iraq_small.png]
 
-The user can insert terms to be searched, the program paints a graph of the 10 most connected words, ie the words which are more likely found with what the user entered. By typing more words (or by clicking on one of the nodes), the program searchs for matching words for each of the terms which are entered.
+The user can insert terms to be searched, the program plots a graph of the most connected words, ie the words which are more likely found with what the user entered. By adjusting the two sliders, it is possible to include/exclude other terms according to their weight in the search or the strenght to which they are connected to others.
 
-Based on [http://code.google.com/p/jrfonseca/wiki/XDot XDot].
+Graphs can be exported in different formats.
 
 = What do I need to try it? =
   * Mean-Machine source from svn
