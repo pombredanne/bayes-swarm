@@ -29,12 +29,12 @@ Graphs can be exported in different formats.
   * Mean-Machine source from svn
   * xapian indexed db (can be found at [http://www.battlehorse.net/swarm_sample/ this url])
   * xapian library with python bindings
-  * pygtk
+  * pygtk, gtkhtml2 (search component), [http://cneurocvs.rmki.kfki.hu/igraph/ igraph] (graph component)
 
 == Ubuntu ==
-Install xapian, its python bindings, pydot and graphviz
+Install xapian, its python bindings, gtkhml2 and igraph (enable Ubuntu repository from igraph homepage)
 {{{
-sudo apt-get install python-xapian python-gtk2 python-pyparsing python-pydot graphviz
+sudo apt-get install python-xapian python-gtkhtml2 python-igraph
 }}}
 
 Get the source code
@@ -55,11 +55,5 @@ tar xvf 2008_01xap.tar.bz2
 Finally run it!
 {{{
 cd ~/mean-machine
-python ./bs-xapian-search-gtk.py ../xapian-pagestore
-}}}
-
-or if you want to try bs-xapian-graph.py
-{{{
-cd ~/mean-machine
-python ./bs-xapian-graph.py ../xapian-pagestore
+python mean-machine.py
 }}}
