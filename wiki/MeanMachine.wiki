@@ -9,18 +9,17 @@ Mean Machine is an experimental sub-project, named as the famous Sugar Ray's son
 Before using the graphical frontend, data has to be indexed with the [http://www.xapian.org Xapian] library, this can be performed with xapian_index.rb script, found in our spidering library name *Pulsar*.
 *Xapian* not only saves which words belong to which text, but also their position in the text, this allows to patterns like "clinton NEAR health" or even more complex ones.
 
-= Searching =
+= Visualization =
 
-We have currently two search GUIs: bs-xapian-search-gtk.py and bs-xapian-graph.py
+We have currently two different components, which perform different plots.
 
-== bs-xapian-search-gtk.py ==
-[http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_en_small.png]
-[http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-search-gtk_it_small.png]
+== search ==
+[http://bayes-swarm.googlecode.com/svn/images/mm_svn437_search_obama20080828.png http://bayes-swarm.googlecode.com/svn/images/mm_svn437_search_obama20080828_small.png]
 
-The user can insert terms to be searched, as a result the most relevant documents are presented together with a cloud of the most relevant words. Clicking on the words allows to deepen the search and find the documents which match both words.
+The user can insert terms to be searched, as a result the most relevant documents are presented together with a cloud of the most relevant words. Clicking on the words allows to deepen the search and find the documents which match both words (to be precise the two terms are ORed, so documents which match both are given a higher score).
 
-== bs-xapian-graph.py ==
-[http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph.png http://bayes-swarm.googlecode.com/svn/images/bs-xapian-graph_small.png]
+== graph ==
+[http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_obama.png http://bayes-swarm.googlecode.com/svn/images/mm_svn437_graph_obama_small.png]
 
 The user can insert terms to be searched, the program paints a graph of the 10 most connected words, ie the words which are more likely found with what the user entered. By typing more words (or by clicking on one of the nodes), the program searchs for matching words for each of the terms which are entered.
 
