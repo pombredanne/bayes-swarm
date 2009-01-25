@@ -6,12 +6,13 @@ Mean Machine is an experimental sub-project, named as the famous Sugar Ray's son
 
 = Details =
 
-Before using the graphical frontend, data has to be indexed with the [http://www.xapian.org Xapian] library, this can be performed with xapian_index.rb script, found in our spidering library name *Pulsar*.
+Before using the graphical frontend, data has to be indexed with the [http://www.xapian.org Xapian] library, this can be performed with xapian_index.rb script, found in our spidering library named [Pulsar].
+
 *Xapian* not only saves which words belong to which text, but also their position in the text, this allows to patterns like "clinton NEAR health" or even more complex ones.
 
 = Visualization =
 
-We have currently two different components, which perform different plots.
+There are currently two different components, which perform different plots.
 
 == search ==
 [http://bayes-swarm.googlecode.com/svn/images/mm_svn437_search_obama20080828.png http://bayes-swarm.googlecode.com/svn/images/mm_svn437_search_obama20080828_small.png]
