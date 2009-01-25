@@ -58,3 +58,12 @@ Finally run it!
 cd ~/mean-machine
 python mean-machine.py
 }}}
+
+== Windows ==
+Install python, pygtk (and all that is needed for it to run), gtkhtml2 and igraph:
+  * [http://www.python.org/ftp/python/2.6.1/python-2.6.1.msi python]
+  * pygtk ([http://heanet.dl.sourceforge.net/sourceforge/gladewin32/gtk-dev-2.12.9-win32-1.exe gtk-dev], [http://ftp.gnome.org/pub/GNOME/binaries/win32/pygobject/2.14/pygobject-2.14.2-2.win32-py2.6.exe pygobject], [http://ftp.gnome.org/pub/GNOME/binaries/win32/pycairo/1.4/pycairo-1.4.12-2.win32-py2.6.exe pycairo], [http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.12/pygtk-2.12.1-3.win32-py2.6.exe pygtk])
+  * [http://pkg.promotux.it/python-win-gtkhtml2-py25.zip gtkhtml]
+  * [http://pypi.python.org/packages/2.5/p/python-igraph/python-igraph-0.5.1.win32-py2.5.exe igraph]
+
+Download and uncompress the sample db, run it!
