@@ -7,8 +7,7 @@ The engine will search correlations both in space (correlation among different s
 
 The engine will extract relevant informations from correlation analysis, such as quantitative measurement of difference in opinions among sources which deal with the same argument. 
 
-http://bayes-swarm.googlecode.com/svn/images/fed.png
-http://bayes-swarm.googlecode.com/svn/images/primarie.png
+[http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125.png http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125_small.png] [http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125_obama.png http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125_obama_small.png] [http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125_obama2.png http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125_obama2_small.png] [http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125_uselections.png http://bayes-swarm.googlecode.com/svn/images/bayes-swarm_com_20080125_uselections_small.png]
 
 === Architecture ===
 The [Architecture] document describes the architecture used by the *bayes-swarm* engine.
