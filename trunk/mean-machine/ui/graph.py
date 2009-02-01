@@ -7,6 +7,7 @@ __copyright__ = 'BayesFor Association'
 __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
 from math import exp
+import datetime
 import gtk
 import igraph
 from igraphdrawingarea import IGraphDrawingArea
@@ -19,6 +20,73 @@ logging = logging.getLogger('ui.graph')
 
 def log_scale(x):
     return (exp(x)-1)/(exp(1)-1)
+
+def MMWritePajek(g, filename):
+    '''Writes graph g to filename in pajek format
+    
+    Note: arcs are directed edges
+    References: 
+      - http://iv.slis.indiana.edu/lm/lm-pajek.html
+      - http://netwiki.amath.unc.edu/DataFormats/PajekNetAndPajFormats
+    
+    Example:
+    *Vertices 3
+    1 "Doc1" 0.0 0.0 0.0 ic Green bc Brown
+    2 "Doc2" 0.0 0.0 0.0 ic Green bc Brown
+    3 "Doc3" 0.0 0.0 0.0 ic Green bc Brown 
+    *Arcs
+    1 2 3 c Green
+    2 3 5 c Black
+    *Edges
+    1 3 4 c Green'''
+    
+    f = open(filename, 'w')
+    
+    f.write('*Vertices %i\n' % len(g.vs))
+    for v in g.vs:
+        f.write('%i "%s" %f %f\n' % (v.index+1, v['label'], v['fr_seed_coords'][0], v['fr_seed_coords'][1]))
+        #f.write('%i "%s" %f %f\n' % (v.index+1, v['label'], 0, 0))
+    
+    f.write('*Arcs\n')
+    
+    f.write('*Edges\n')
+    for e in g.es:
+        f.write('%i %i %f\n' % (e.source+1, e.target+1, e['weight']))
+
+    f.close()
+
+def MMWriteCondor(g, filename):
+    '''Write graph g to filename in condor format
+    
+    Example:
+    //dataset 
+    test_bayesfor 
+    //char 
+    obama,N 
+    mccain,N 
+    iraq,N 
+    //com 
+    obama,mccain,2/15/2005 15:42:01,,to 
+    obama,mccain,2/15/2005 15:42:01,,to 
+    obama,mccain,2/15/2005 15:42:01,,to'''
+    
+    f = open(filename, 'w')
+    
+    f.write('//dataset\ntest_bayesfor\n')
+
+    f.write('//char\n')
+    for v in g.vs:
+        f.write('%s,N\n' % v['label'])
+    
+    f.write('//com\n')
+    for e in g.es:
+        # the more you repeat, the more it weights..
+        for i in range(int(e['weight']*100)):
+            f.write('%s,%s,%s,,to\n' % (g.vs[e.source]['label'], 
+                                        g.vs[e.target]['label'], 
+                                        datetime.datetime.now().strftime("%m/%d/%Y %I:%M:%S")))
+
+    f.close()
 
 class MMResultGraph():
     def __init__(self, box, searchform):
@@ -181,7 +249,12 @@ class MMResultGraph():
         if response == gtk.RESPONSE_OK:
             f = dialog.get_filename()
             try:
-                self.changed_graph.write(f)
+                if f.endswith('pajek'):
+                    MMWritePajek(self.changed_graph, f)
+                elif f.endswith('condor'):
+                    MMWriteCondor(self.changed_graph, f)
+                else:
+                    igraph.save(self.changed_graph, f)
                 logging.info('%s saved' % f)
             except IOError, e:
                 logging.error(e)

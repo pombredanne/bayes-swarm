@@ -28,7 +28,7 @@ the given terms are most relevant"""
 
     has_additional_actions = True
     
-    def __init__(self, n_mset = 10, n_eset = 50):
+    def __init__(self, n_mset = 20, n_eset = 50):
         self.n_mset = n_mset
         self.n_eset = n_eset
     
@@ -116,11 +116,11 @@ the given terms are most relevant"""
                                                f(distances), 
                                                keyword.weight,
                                                other.weight])
-                        distances_list.append([other.term, 
-                                               keyword.term, 
-                                               f(distances),
-                                               other.weight,
-                                               keyword.weight])
+                        #distances_list.append([other.term, 
+                        #                       keyword.term, 
+                        #                       f(distances),
+                        #                       other.weight,
+                        #                       keyword.weight])
                 if progressbar is not None:
                     fraction = progressbar.get_fraction() + 0.125/float(self.n_eset * self.n_eset)
                     progressbar.set_fraction(fraction)
