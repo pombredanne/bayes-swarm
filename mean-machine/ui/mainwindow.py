@@ -177,13 +177,13 @@ class MMMainFrame(gtk.VBox):
                     iter_full_model = model.convert_iter_to_child_iter(iter_filtered_model)
                     self.searchform.model_db.set_value(iter_full_model, MODEL_DB_VALIDITY, FLAG_DB_IS_VALID)
                 self.sources_list = self.get_sources_list(self.selected_db)
-                self.searchform.set_controls_sensitive(True)
+                self.searchform.set_all_controls_sensitive_except(True, combobox)
                 self.set_image_connected(True)
             else:
-                self.searchform.set_controls_sensitive(False)
+                self.searchform.set_all_controls_sensitive_except(False, combobox)
                 self.set_image_connected(False)
         else:
-            self.searchform.set_controls_sensitive(False)
+            self.searchform.set_all_controls_sensitive_except(False, combobox)
             self.set_image_connected(False)
 
     def on_db_selected(self, combobox, do_check=False):
@@ -284,7 +284,12 @@ class MMMainFrame(gtk.VBox):
         enquire = xapian.Enquire(db)
         enquire.set_query(query)
 
-        self.component.run_and_display(enquire, self.selected_language, db, self.searchform.progressbar)
+        self.component.run_and_display(enquire, 
+                                       self.selected_language, 
+                                       int(self.searchform.mset_entry.get_text()), 
+                                       int(self.searchform.eset_entry.get_text()), 
+                                       db, 
+                                       self.searchform.progressbar)
 
     def clear_results(self):
         self.component.clear_results()
@@ -302,7 +307,10 @@ class MainMachine(object):
     </menubar>
     <toolbar name="Toolbar">
       <placeholder name="Components">
-      </placeholder>      
+      </placeholder>
+      <separator/>
+      <placeholder name="Common Actions">
+      </placeholder>
       <separator/>
       <placeholder name="Additional Actions">
       </placeholder>      
@@ -318,6 +326,18 @@ class MainMachine(object):
     </menubar>
     <toolbar name="Toolbar">
       <placeholder name="Components">
+        <toolitem action="%s"/>
+      </placeholder>
+    </toolbar>
+    </ui>'''
+
+    common_action_ui = '''<ui>
+    <menubar name="MenuBar">
+      <menu action="Components">
+      </menu>
+    </menubar>
+    <toolbar name="Toolbar">
+      <placeholder name="Common Actions">
         <toolitem action="%s"/>
       </placeholder>
     </toolbar>
@@ -385,6 +405,7 @@ class MainMachine(object):
     def new_tab(self, component):
         child = MMMainFrame(component)
         child.show_all()
+        child.searchform.advancedbox.hide()
 
         # TODO: change tab label according to what user types in search
         tab_label = gtk.Label(component.name)
@@ -396,12 +417,15 @@ class MainMachine(object):
 
     def start_component_cb(self, action):
         component = self.components[action.get_name()]()
+
         self.new_component_id += 1
         component.id = self.new_component_id
+        self.new_tab(component)
+
         if component.has_additional_actions:
             logging.debug('Loading additional actions for %s component' % component.name)
             component.set_additional_actions(self.actiongroup)
-        self.new_tab(component)
+
         
 #    def on_page_added(self, notebook, child, page_num):
 #        pass

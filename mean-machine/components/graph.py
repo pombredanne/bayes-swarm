@@ -28,17 +28,13 @@ the given terms are most relevant"""
 
     has_additional_actions = True
     
-    def __init__(self, n_mset = 20, n_eset = 50):
-        self.n_mset = n_mset
-        self.n_eset = n_eset
-    
-    def run(self, enquire, lang, db, progressbar=None):
+    def run(self, enquire, lang, n_mset, n_eset, db, progressbar=None):
         logging.debug('Getting MSet')
         progressbar.set_text('0%')
         while gtk.events_pending():
             gtk.main_iteration()
         mset = enquire.get_mset(0,
-                                self.n_mset,
+                                n_mset,
                                 0,
                                 None,
                                 #MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_mset + self.n_eset + self.n_eset*self.n_eset)))
@@ -59,7 +55,7 @@ the given terms are most relevant"""
         progressbar.set_text('50%')
         while gtk.events_pending():
             gtk.main_iteration()
-        eset = enquire.get_eset(self.n_eset, 
+        eset = enquire.get_eset(n_eset, 
                                 rset, 
                                 xapian.Enquire.INCLUDE_QUERY_TERMS, 
                                 1, 
@@ -85,7 +81,7 @@ the given terms are most relevant"""
             positions_matrix[ki] = positions_arrays
 
             if progressbar is not None: 
-                fraction = progressbar.get_fraction() + 0.125/float(self.n_eset)
+                fraction = progressbar.get_fraction() + 0.125/float(n_eset)
                 progressbar.set_fraction(fraction)
                 progressbar.set_text('%.0f%%' % (fraction*100))
                 while gtk.events_pending():
@@ -108,7 +104,7 @@ the given terms are most relevant"""
                     if distances != []:
                         #print ",".join([keyword, other, "%f" % (sum(distances)/float(len(distances)))])
                         
-                        f = lambda x: sum(x)/float(self.n_mset)
+                        f = lambda x: sum(x)/float(n_mset)
                         #f = lambda x: sum(x)/float(len(x))
                         
                         distances_list.append([keyword.term, 
@@ -122,7 +118,7 @@ the given terms are most relevant"""
                         #                       other.weight,
                         #                       keyword.weight])
                 if progressbar is not None:
-                    fraction = progressbar.get_fraction() + 0.125/float(self.n_eset * self.n_eset)
+                    fraction = progressbar.get_fraction() + 0.125/float(n_eset * n_eset)
                     progressbar.set_fraction(fraction)
                     progressbar.set_text('%.0f%%' % (fraction*100))
                     while gtk.events_pending():
@@ -135,9 +131,9 @@ the given terms are most relevant"""
         if distances_list != []:
             self.ui.display(distances_list, terms)
 
-    def run_and_display(self, enquire, lang, db, progressbar):
+    def run_and_display(self, enquire, lang, n_mset, n_eset, db, progressbar=None):
         progressbar.set_fraction(0.0)       
-        distances_list = self.run(enquire, lang, db, progressbar)
+        distances_list = self.run(enquire, lang, n_mset, n_eset, db, progressbar)
         terms = [term for pos, term in enumerate(enquire.get_query())]
         self.display(distances_list, terms)
         progressbar.set_fraction(1.0)
@@ -145,6 +141,9 @@ the given terms are most relevant"""
 
     def clear_results(self):
         self.ui.clear()
+
+    def toggle_advanced_box(self, action):
+        self.ui.toggle_advanced_box(action.get_active())
 
     def export_cb(self, action):
         self.ui.export()
@@ -156,6 +155,12 @@ the given terms are most relevant"""
                            '<Control>e',
                            'Exports the current graph to file', 
                            self.export_cb)])
+        actiongroup.add_toggle_actions([('ToggleAdvancedBox%i' % self.id, 
+                           gtk.STOCK_PREFERENCES,
+                           '_Advanced options', 
+                           '<Control>a',
+                           'Show advanced options', 
+                           self.toggle_advanced_box)])
                            
     def set_uimanager_for_additional_actions(self, uimanager):
         ui = '''<ui>
@@ -166,8 +171,11 @@ the given terms are most relevant"""
 <toolbar name="Toolbar">
   <placeholder name="Additional Actions">
     <toolitem action="%s"/>
+    <separator/>
+    <toolitem action="%s"/>
   </placeholder>
   <separator/>
 </toolbar>
 </ui>'''
-        return uimanager.add_ui_from_string(ui % 'ExportGraph%i' % self.id)
+        return uimanager.add_ui_from_string(ui % ('ToggleAdvancedBox%i' % self.id,
+                                                  'ExportGraph%i' % self.id))

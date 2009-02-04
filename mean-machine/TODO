@@ -2,20 +2,19 @@ TODO:
 
 * merge every component in a single slick killer application:
   - add search options: number of docs to retrieve, n. of docs for rset,
-    n. of terms for eset, keywords black list for eset)
+    n. of terms for eset, keywords white list for eset)
   - handle possible errors with queries/timeouts of the server
   - add a stop button
   - share db ListStore at app level
-  - freeze component specific parameters when doing searches or when
-    result frame is cleared
+  - freeze component specific controls when doing searches or when
+    result frame is not realized
   - add proper log messages
   - show error/warning messages in statusbar
   - show progressbar progress during mset, rset, eset
 
 * graph component
-  - filter eset terms with a specific dialog
-  - add an export button
-  - add a save graph image button
+  - add a save graph image button (include search parameters in picture
+    metada)
   - use seed in order to stabilize graphs
   - center the searched term in the graph
   - allow to switch between distance graph and matching graph (current

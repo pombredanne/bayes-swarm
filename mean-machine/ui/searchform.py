@@ -16,10 +16,13 @@ logging = logging.getLogger('ui.searchform')
 MODEL_DB_URL, MODEL_DB_PORT, MODEL_DB_IS_LOCAL, MODEL_DB_VALIDITY = range(4)
 FLAG_DB_NOT_CHECKED, FLAG_DB_IS_VALID, FLAG_DB_IS_NOT_VALID = [gtk.STOCK_DIALOG_QUESTION, gtk.STOCK_YES, gtk.STOCK_NO]
 
-class MMSearchForm(gtk.VBox):
+class MMSearchForm(gtk.Frame):
     def __init__(self):
-        gtk.VBox.__init__(self, False, 6)
-
+        gtk.Frame.__init__(self)
+        self.set_label("Search options")
+        vbox = gtk.VBox(False, 6)
+        vbox.set_border_width(3)
+        
         self.upperbox = gtk.HBox(False, 12)
         self.set_border_width(6)
 
@@ -99,16 +102,33 @@ class MMSearchForm(gtk.VBox):
         lowerbox.pack_start(self.image_connected, False, False, 0)
         lowerbox.pack_start(self.connect_button, False, False, 0)
 
-        self.pack_start(self.upperbox, False, False, 0)
-        self.pack_start(lowerbox, False, False, 0)
+        self.advancedbox = gtk.HBox(False, 12)
+        self.advancedbox.pack_start(gtk.Label('Max matching documents:'), False, False, 0)
+        self.mset_entry = gtk.Entry()
+        self.mset_entry.set_text('20')
+        self.mset_entry.set_width_chars(3)
+        self.mset_entry.connect('changed', self.on_mset_entry_changed)
+        self.advancedbox.pack_start(self.mset_entry, False, False, 0)
+        self.advancedbox.pack_start(gtk.Label('Max expansion terms:'), False, False, 0)
+        self.eset_entry = gtk.Entry()
+        self.eset_entry.set_text('50')
+        self.eset_entry.set_width_chars(3)
+        self.eset_entry.connect('changed', self.on_eset_entry_changed)
+        self.advancedbox.pack_start(self.eset_entry, False, False, 0)
 
-    def set_controls_sensitive(self, sensitivity):
+        vbox.pack_start(self.upperbox, False, False, 0)
+        vbox.pack_start(self.advancedbox, False, False, 0)
+        vbox.pack_start(lowerbox, False, False, 0)
+        self.add(vbox)
+
+    def set_all_controls_sensitive_except(self, sensitivity, skipped_control):
         if sensitivity == False:
             self.progressbar.set_text('Error')
-        self.entry.set_sensitive(sensitivity)
-        self.combobox.set_sensitive(sensitivity)
-        self.start_button.set_sensitive(sensitivity)
-        self.combobox_sources.set_sensitive(sensitivity)
+        controls = [self.entry, self.combobox, self.start_button, self.combobox_sources, 
+                    self.mset_entry, self.eset_entry, self.combobox_dblocal, self.comboboxentry_db]
+        for control in controls:
+            if control != skipped_control:
+                control.set_sensitive(sensitivity)
 
     def set_local_or_remote(self, tvcolumn, cell, model, iter):
         is_local = model.get_value(iter, 0)
@@ -127,3 +147,17 @@ class MMSearchForm(gtk.VBox):
             label = 'select'
         cell.set_property('text', label)
         return
+
+    def on_mset_entry_changed(self, entry):
+        try:
+            int(entry.get_text())
+            self.set_all_controls_sensitive_except(True, entry)
+        except:
+            self.set_all_controls_sensitive_except(False, entry)
+
+    def on_eset_entry_changed(self, entry):
+        try:
+            int(entry.get_text())
+            self.set_all_controls_sensitive_except(True, entry)
+        except:
+            self.set_all_controls_sensitive_except(False, entry)

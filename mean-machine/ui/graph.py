@@ -90,6 +90,7 @@ def MMWriteCondor(g, filename):
 
 class MMResultGraph():
     def __init__(self, box, searchform):
+        self.searchform = searchform
         vbox = gtk.VBox(False, 0)
         vbox.set_border_width(6)
         
@@ -108,29 +109,32 @@ class MMResultGraph():
         #self.cb_threshold_changed(self.adj)
 
         hbox_buttons = gtk.HBox(True, 0)
-        self.filter_checkbutton = gtk.CheckButton("Filter vertex manually")
+        self.filter_checkbutton = gtk.CheckButton("Filter manually")
         self.filter_checkbutton.connect("toggled", self.on_filter_checkbutton_changed)
-        self.isolated_button = gtk.CheckButton("Show only not-isolated vertex")
+        self.isolated_button = gtk.CheckButton("Show only not-isolated")
         self.isolated_button.connect("toggled", self.cb_threshold_changed)
-        hbox_buttons.pack_start(self.filter_checkbutton, False, True, 0)
-        hbox_buttons.pack_end(self.isolated_button, False, True, 0)
         
-        table = gtk.Table(2, 2, False)
-        table.set_row_spacings(6)
-        table.set_col_spacings(12)
+        table = gtk.Table(3, 3, False)
+        table.set_row_spacings(3)
+        table.set_col_spacings(6)
         # child, left_attach, right_attach, top_attach, bottom_attach, xoptions=gtk.EXPAND|gtk.FILL, yoptions=gtk.EXPAND|gtk.FILL, xpadding=0, ypadding=0)
-        label1 = gtk.Label("Edge weight")
-        label1.set_alignment(0, 0.5)
-        table.attach(label1, 0, 1, 0, 1, gtk.FILL)
-        table.attach(self.slider, 1, 2, 0, 1)
-        label2 = gtk.Label("Vertex size")
-        label2.set_alignment(0, 0.5)
-        table.attach(label2, 0, 1, 1, 2, gtk.FILL)
-        table.attach(self.slider2, 1, 2, 1, 2)
+        table.attach(gtk.Label("Minumum edges weight:"), 0, 1, 0, 1, gtk.FILL)
+        table.attach(self.slider, 0, 1, 1, 3, gtk.EXPAND|gtk.FILL)
+        table.attach(gtk.Label("Minimum vertices size:"), 1, 2, 0, 1, gtk.FILL)
+        table.attach(self.slider2, 1, 2, 1, 3, gtk.EXPAND|gtk.FILL)
+        
+        table.attach(gtk.Label('Vertices:'), 2, 3, 0, 1, gtk.FILL)
+        table.attach(self.filter_checkbutton, 2, 3, 1, 2, gtk.FILL)
+        table.attach(self.isolated_button, 2, 3, 2, 3, gtk.FILL)
         
         vbox.pack_start(self.igraph_drawing_area, True, True, 0)
-        vbox.pack_start(table, False, True, 0)
-        vbox.pack_start(hbox_buttons, False, False, 0)
+        inner_vbox = gtk.VBox(False, 6)
+        inner_vbox.set_border_width(3)
+        inner_vbox.pack_start(table, False, True, 0)
+        #inner_vbox.pack_start(hbox_buttons, False, False, 0)
+        frame = gtk.Frame('Graph parameters')
+        frame.add(inner_vbox)
+        vbox.pack_start(frame, False, False, 0)
         
         box.add(vbox)
 
@@ -239,6 +243,12 @@ class MMResultGraph():
 
     def clear(self):
         self.igraph_drawing_area.change_graph(None)
+
+    def toggle_advanced_box(self, state):
+        if state==False:
+            self.searchform.advancedbox.hide()
+        else:
+            self.searchform.advancedbox.show()
 
     def export(self):
         dialog = gtk.FileChooserDialog(title='Save as..', action=gtk.FILE_CHOOSER_ACTION_SAVE,
