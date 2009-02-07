@@ -7,12 +7,15 @@ __copyright__ = 'BayesFor Association'
 __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
 import gtk
+from selectdialog import MMSelectDialog
 
+import xapian
 import logging
 format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 logging.basicConfig(format=format)
 logging = logging.getLogger('ui.searchform')
 
+MODEL_DOC_LANG, MODEL_DOC_HASH, MODEL_DOC_DATE, MODEL_DOC_DIR, MODEL_DOC_SOURCEID, MODEL_DOC_SOURCE = range(6)
 MODEL_DB_URL, MODEL_DB_PORT, MODEL_DB_IS_LOCAL, MODEL_DB_VALIDITY = range(4)
 FLAG_DB_NOT_CHECKED, FLAG_DB_IS_VALID, FLAG_DB_IS_NOT_VALID = [gtk.STOCK_DIALOG_QUESTION, gtk.STOCK_YES, gtk.STOCK_NO]
 
@@ -115,11 +118,239 @@ class MMSearchForm(gtk.Frame):
         self.eset_entry.set_width_chars(3)
         self.eset_entry.connect('changed', self.on_eset_entry_changed)
         self.advancedbox.pack_start(self.eset_entry, False, False, 0)
+        self.filterterms_checkbutton = gtk.CheckButton("Set expansion terms white list")
+        self.advancedbox.pack_start(self.filterterms_checkbutton, False, False, 0)
+        
+        # assign self.selected_language, self.selected_localdb
+        self.search_options = {}
+        self.on_lang_selected(self.combobox)
+        self.on_dblocal_changed(self.combobox_dblocal)
 
+        self.entry.connect('changed', self.on_entry_changed)
+        self.combobox.connect('changed', self.on_lang_selected)
+        self.combobox_dblocal.connect('changed', self.on_dblocal_changed)
+        self.comboboxentry_db.connect('changed', self.on_db_selected)
+        self.comboboxentry_db.child.connect('changed', self.on_db_manually_entered)
+        self.combobox_sources.connect('changed', self.on_combobox_sources_changed)
+        self.start_button.connect('clicked', self.on_start_button_clicked)
+        self.connect_button.connect('clicked', self.on_connect_button_clicked)
+        self.filtered_model_db.set_visible_func(self.visible_dbs_cb)
+        self.filtered_model_db.refilter()
+        #self.filterterms_checkbutton.connect("toggled", self.on_filterterms_checkbutton_changed)
+
+        # assign self.db, self.sources_list, self.allsources
+        self.on_db_selected(self.comboboxentry_db, self.search_options['selected_localdb'])
+        self.on_combobox_sources_changed(self.combobox_sources)
+        self.on_mset_entry_changed(self.mset_entry)
+        self.on_eset_entry_changed(self.eset_entry)
+        
         vbox.pack_start(self.upperbox, False, False, 0)
         vbox.pack_start(self.advancedbox, False, False, 0)
         vbox.pack_start(lowerbox, False, False, 0)
         self.add(vbox)
+
+    def clear_results(self):
+        if self.get_parent() != None:
+            self.get_parent().clear_results()
+
+    def clear_progressbar(self):
+        self.progressbar.set_fraction(0.0)
+        self.progressbar.set_text('Ready')
+
+    def on_entry_changed(self, entry):
+        self.clear_progressbar()
+        self.search_options['entry_text'] = entry.get_text()
+        self.clear_results()
+
+    def on_lang_selected(self, combobox):
+        self.clear_results()
+        model = combobox.get_model()
+        index = combobox.get_active()
+        self.search_options['selected_language'] = model[index][0]
+
+    def visible_dbs_cb(self, model, iter):
+        #logging.debug('Is db %s local? %s, therefore is db shown? %s' % (model.get_value(iter, MODEL_DB_URL), model.get_value(iter, MODEL_DB_IS_LOCAL), model.get_value(iter, MODEL_DB_IS_LOCAL) == self.search_options['selected_localdb']))
+        return model.get_value(iter, MODEL_DB_IS_LOCAL) == self.search_options['selected_localdb']
+
+    def on_dblocal_changed(self, combobox):
+        self.clear_results()
+        model = combobox.get_model()
+        index = combobox.get_active()
+        self.search_options['selected_localdb'] = model[index][0]
+        if self.search_options['selected_localdb'] == True:
+            logging.debug('Selecting local db')
+        else:
+            logging.debug('Selecting remote db')
+        self.connect_button.set_sensitive(not self.search_options['selected_localdb']) # set sensitive only if remote selected
+        self.filtered_model_db.refilter() # show only local/remote dbs in comboboxentry
+
+        # Filter dbs according to what user selected
+        model = self.comboboxentry_db.get_model()
+        iter = model.get_iter_root()
+        while (iter):
+            # FIXME: this works only if one entry for each type (local, remote) is always present
+            if model.get_value(iter, MODEL_DB_IS_LOCAL) == self.search_options['selected_localdb']:
+                #print self.model_db.get_value(iter, MODEL_DB_URL)
+                break
+            iter = model.iter_next(iter)
+        self.comboboxentry_db.set_active(model.get_path(iter)[0])
+
+    def get_sources_list(self, db_url):
+        if self.search_options['selected_localdb']:
+            db = xapian.Database(db_url)
+        else:
+            db_host, port = db_url.split(':')
+            db = xapian.remote_open(db_host, int(port))
+        query = xapian.Query(xapian.Query.OP_VALUE_RANGE, 0, 'a', 'z')
+        qp = xapian.QueryParser()
+        qp.set_database(db)
+        enquire = xapian.Enquire(db)
+        enquire.set_query(query)
+        enquire.set_collapse_key(MODEL_DOC_SOURCEID)
+        mset = enquire.get_mset(0, 100, 0)
+        list = []
+        for m in mset:
+            list.append([m[xapian.MSET_DOCUMENT].get_value(4), m[xapian.MSET_DOCUMENT].get_value(5)])
+        return list
+        #return [['1', 'quotidiani'], ['2', 'aggregatori'], ['3', 'pagine personali']]
+        
+    def is_db_valid(self, entered_db):
+        # - returns True if db can be opened by Xapian
+        # - changes image_connected
+        try:
+            logging.debug('Checking if db %s is valid' % entered_db)
+            # FIXME: use self.db instead of db, so that we avoid repeating
+            # the opening. use keep_alive if remote
+            if self.search_options['selected_localdb']:
+                db = xapian.Database(entered_db)
+            else:
+                db_host, port = entered_db.split(':')
+                db = xapian.remote_open(db_host, int(port))
+        except xapian.DatabaseOpeningError, e:
+            logging.error('Error while opening %s (%s)' % (entered_db, e))
+            return False
+        except xapian.NetworkError, e:
+            logging.error('Error while opening %s (%s)' % (entered_db, e))
+            return False
+        #except:
+        #    logging.error('Error while opening %s' % entered_db)
+        #    self.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
+        #    return False
+        else:
+            logging.info('Db %s is valid' % entered_db)
+            return True
+
+    def add_db_to_model(self, model, entered_db):
+        'adds user specified db to model only if not already present'
+        iter = model.get_iter_root()
+        unique = True
+        while (iter):
+            unique = unique and model.get_value(iter, MODEL_DB_URL) != entered_db
+            iter = model.iter_next(iter)
+        if unique == True:
+            model.append([entered_db, 0, self.search_options['selected_localdb'], FLAG_DB_IS_VALID])
+
+    def check_db_if_needed(self, combobox, do_check, entry=None):
+        model = combobox.get_model()
+        index = combobox.get_active()
+
+        # if we're editing comboboxentry set MODEL_DB_IS_LOCAL = self.search_options['selected_localdb']
+        if index == -1:
+            if entry is not None:
+                selected_db_is_local = self.search_options['selected_localdb']
+                db_url = entry.get_text()
+                #logging.debug("Running 'check_db_if_needed' on %s, triggered by manual insertion (entry=%s)." % (db_url, entry))
+            else:
+                return
+        else:
+            selected_db_is_local = model[index][MODEL_DB_IS_LOCAL]
+            db_url = model[index][MODEL_DB_URL]
+            #logging.debug("Running 'check_db_if_needed' on %s, triggered by combobox selection (entry=%s)." % (db_url, entry))
+
+        # Avoid stupid timeouts, check only if we pass True to do_check (triggered by connect button)
+        # or local is selected. In any case, check only current type (local or remote) of dbs
+        #logging.debug('index: %d, do_check: %s, selected_localdb: %s, is_local: %s' % (index, do_check, self.search_options['selected_localdb'], selected_db_is_local))
+        if (do_check or self.search_options['selected_localdb']) and (selected_db_is_local == self.search_options['selected_localdb']):
+            # check if db is valid and disable search button accordingly
+            if self.is_db_valid(db_url):
+                self.search_options['selected_db'] = db_url
+                if index == -1:
+                    self.add_db_to_model(self.model_db, db_url)
+                else:
+                    iter_filtered_model = model.get_iter((index,))
+                    iter_full_model = model.convert_iter_to_child_iter(iter_filtered_model)
+                    self.model_db.set_value(iter_full_model, MODEL_DB_VALIDITY, FLAG_DB_IS_VALID)
+                self.search_options['sources_list'] = self.get_sources_list(self.search_options['selected_db'])
+                self.set_all_controls_sensitive_except(True, combobox)
+                self.set_image_connected(True)
+            else:
+                self.set_all_controls_sensitive_except(False, combobox)
+                self.set_image_connected(False)
+        else:
+            self.set_all_controls_sensitive_except(False, combobox)
+            self.set_image_connected(False)
+
+    def on_db_selected(self, combobox, do_check=False):
+        # on_db_selected is triggered when user selects something with the
+        # combobox, but after calling on_db_manually_entered
+        self.clear_results()
+        self.check_db_if_needed(combobox, do_check, None)
+
+    def on_db_manually_entered(self, entry, do_check=False):
+        # on_db_manually_entered is triggered when user edits the 
+        # comboboxentry, but after calling on_db_selected
+        self.clear_results()
+        self.check_db_if_needed(self.comboboxentry_db, do_check, entry)
+
+    def on_start_button_clicked(self, button):
+        self.set_sensitive(False)
+        self.get_parent().refresh_results(self.search_options)
+        self.set_sensitive(True)
+
+    def set_image_connected(self, state):
+        # state = True (connected), False (disconnected)
+        tooltips = gtk.Tooltips()
+        if state == True:
+            self.image_connected.set_from_stock(gtk.STOCK_CONNECT, gtk.ICON_SIZE_MENU)
+            tooltips.set_tip(self.image_connected, 'Connected')
+        else:
+            self.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
+            tooltips.set_tip(self.image_connected, 'Disconnected')
+
+    def on_combobox_sources_changed(self, combobox):
+        self.clear_results()
+        model = combobox.get_model()
+        index = combobox.get_active()
+        self.search_options['allsources'] = model[index][0]
+        if self.search_options['allsources'] == True:
+            logging.debug('Selecting all sources')
+        else:
+            logging.debug('Selecting selected sources')
+            
+            try:
+                already_selected_ids = self.search_options['selected_sources']
+                d = MMSelectDialog('Sources', self.search_options['sources_list'], already_selected_ids)
+            except:
+                d = MMSelectDialog('Sources', self.search_options['sources_list'], None)
+            
+            if d.run() == gtk.RESPONSE_CANCEL:
+                logging.debug('User canceled sources selection dialog')
+                combobox.set_active(0)
+            else:
+                if d.return_id_list == []:
+                    logging.debug('User selected None, selecting all sources')
+                    combobox.set_active(0)
+                elif len(d.return_id_list) == len(self.search_options['sources_list']):
+                    logging.debug("User selected all sources, selecting 'all'")
+                    combobox.set_active(0)
+                else:
+                    logging.debug('User selected sources: %s' % ', '.join(d.return_id_list))
+                    self.search_options['selected_sources'] = d.return_id_list
+
+    def on_connect_button_clicked(self, button):
+        # TODO: set_sensitive(False) on remote/local combo + db combo
+        # trigger db check (force avoidcheck as True)
+        self.on_db_manually_entered(self.comboboxentry_db.child, True)
 
     def set_all_controls_sensitive_except(self, sensitivity, skipped_control):
         if sensitivity == False:
@@ -152,14 +383,14 @@ class MMSearchForm(gtk.Frame):
 
     def on_mset_entry_changed(self, entry):
         try:
-            int(entry.get_text())
+            self.search_options['n_mset'] = int(entry.get_text())
             self.set_all_controls_sensitive_except(True, entry)
         except:
             self.set_all_controls_sensitive_except(False, entry)
 
     def on_eset_entry_changed(self, entry):
         try:
-            int(entry.get_text())
+            self.search_options['n_eset'] = int(entry.get_text())
             self.set_all_controls_sensitive_except(True, entry)
         except:
             self.set_all_controls_sensitive_except(False, entry)
