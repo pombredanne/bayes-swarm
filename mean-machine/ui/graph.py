@@ -244,12 +244,6 @@ class MMResultGraph():
     def clear(self):
         self.igraph_drawing_area.change_graph(None)
 
-    def toggle_advanced_box(self, state):
-        if state==False:
-            self.searchform.advancedbox.hide()
-        else:
-            self.searchform.advancedbox.show()
-
     def export(self):
         dialog = gtk.FileChooserDialog(title='Save as..', action=gtk.FILE_CHOOSER_ACTION_SAVE,
                                         buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))

@@ -142,9 +142,6 @@ the given terms are most relevant"""
     def clear_results(self):
         self.ui.clear()
 
-    def toggle_advanced_box(self, action):
-        self.ui.toggle_advanced_box(action.get_active())
-
     def export_cb(self, action):
         self.ui.export()
 
@@ -155,12 +152,6 @@ the given terms are most relevant"""
                            '<Control>e',
                            'Exports the current graph to file', 
                            self.export_cb)])
-        actiongroup.add_toggle_actions([('ToggleAdvancedBox%i' % self.id, 
-                           gtk.STOCK_PREFERENCES,
-                           '_Advanced options', 
-                           '<Control>a',
-                           'Show advanced options', 
-                           self.toggle_advanced_box)])
                            
     def set_uimanager_for_additional_actions(self, uimanager):
         ui = '''<ui>
@@ -169,13 +160,15 @@ the given terms are most relevant"""
   </menu>
 </menubar>
 <toolbar name="Toolbar">
-  <placeholder name="Additional Actions">
-    <toolitem action="%s"/>
-    <separator/>
+  <placeholder name="Common Actions">
     <toolitem action="%s"/>
   </placeholder>
-  <separator/>
+  <placeholder name="Additional Actions">
+    <toolitem action="%s"/>
+  </placeholder>
 </toolbar>
 </ui>'''
+        # FIXME: this is ugly, common actions should be added in mainwindow.py
+        # when selecting the right tab
         return uimanager.add_ui_from_string(ui % ('ToggleAdvancedBox%i' % self.id,
                                                   'ExportGraph%i' % self.id))
