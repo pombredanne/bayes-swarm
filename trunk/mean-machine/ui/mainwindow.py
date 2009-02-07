@@ -314,6 +314,7 @@ class MainMachine(object):
       <separator/>
       <placeholder name="Additional Actions">
       </placeholder>      
+      <separator/>
       <toolitem action="Quit"/>
     </toolbar>
     </ui>'''
@@ -426,7 +427,14 @@ class MainMachine(object):
             logging.debug('Loading additional actions for %s component' % component.name)
             component.set_additional_actions(self.actiongroup)
 
-        
+        current_searchform = self.notebook.get_nth_page(self.notebook.get_current_page()).searchform
+        self.actiongroup.add_toggle_actions([('ToggleAdvancedBox%i' % component.id, 
+                                              gtk.STOCK_PREFERENCES,
+                                              '_Advanced options', 
+                                              '<Control>a',
+                                              'Show advanced options', 
+                                              current_searchform.toggle_show_advancedbox)])
+
 #    def on_page_added(self, notebook, child, page_num):
 #        pass
 
@@ -438,9 +446,15 @@ class MainMachine(object):
         if self.merge_id:
             self.uimanager.remove_ui(self.merge_id)
             self.merge_id = 0
-        # set additional actions if present
+        
         if active_component.has_additional_actions:
+            # set additional actions if present and common actions
+            # FIXME: common actions should be entirely handled here and not inside each
+            # component
             self.merge_id = active_component.set_uimanager_for_additional_actions(self.uimanager)
+        else:
+            # set only common actions
+            self.merge_id = self.uimanager.add_ui_from_string(self.common_action_ui % ('ToggleAdvancedBox%i' % active_component.id))
 
     def quit_cb(self, b):
         logging.info("Quitting Mean-Machine")

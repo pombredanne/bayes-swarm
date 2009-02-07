@@ -124,6 +124,8 @@ class MMSearchForm(gtk.Frame):
     def set_all_controls_sensitive_except(self, sensitivity, skipped_control):
         if sensitivity == False:
             self.progressbar.set_text('Error')
+        else:
+            self.progressbar.set_text('Ready')
         controls = [self.entry, self.combobox, self.start_button, self.combobox_sources, 
                     self.mset_entry, self.eset_entry, self.combobox_dblocal, self.comboboxentry_db]
         for control in controls:
@@ -161,3 +163,9 @@ class MMSearchForm(gtk.Frame):
             self.set_all_controls_sensitive_except(True, entry)
         except:
             self.set_all_controls_sensitive_except(False, entry)
+
+    def toggle_show_advancedbox(self, action):
+        if action.get_active()==False:
+            self.advancedbox.hide()
+        else:
+            self.advancedbox.show()
