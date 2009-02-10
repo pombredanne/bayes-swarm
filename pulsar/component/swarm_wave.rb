@@ -41,10 +41,11 @@ log "File storage is active" if Pulsar::PageStore.active?
 
 total_bytes = 0
 
-with_connection do
+with_connection do |connection|
   pages = Page.find(:all)
   log "Found #{pages.size} pages"  
   pages.each_with_index do |page, i|
+    connection.reconnect!
     log "Elaborating page #{i+1} out of #{pages.size}"
     
     # Skip pages if requested.
@@ -70,6 +71,7 @@ with_connection do
     begin
       # Get the work done
       extracted_page = extractor.extract(page)
+      connection.reconnect!
     
       if extracted_page && extracted_page.content.size > 0
         total_bytes += extracted_page.content.size
