@@ -62,7 +62,7 @@ warn_log "Intwords cache is disabled!" if save_popular_stems || disable_cache
 intwords_cache = {}
 
 # And start working ...
-with_connection do
+with_connection do |connection|
   
   # Extract all the top-level META files
   lister = Pulsar::Lister.new(directory, /META$/)
@@ -102,6 +102,7 @@ with_connection do
         # Load the page.
         # This works both for url and rssitem because rssitems share the same
         # id as their parent feed.
+        connection.reconnect!
         p = Page.find_by_id(id)
         
         # Sanity checks
