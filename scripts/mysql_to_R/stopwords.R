@@ -11,7 +11,11 @@ find_id <- function(name) {
     data
 }
 
-stopwords = c('ad', 'a', 'e', 'i', 'o', 'con', 'da', 'di', 'in', 'su', 'per', 'tra', 'è', 'sono', 'lo', 'la', 'li', 'le', 'gli', 'ne', 'il', 'un', 'uno', 'una', 'ed', 'se', 'perché', 'come', 'che', 'chi', 'cui', 'non', 'quale', 'quanto', 'quanti', 'quanta', 'quante', 'quello', 'quelli', 'quella', 'quelle', 'questo', 'questi', 'questa', 'queste', 'si', 'no', 'sono')
+# ita
+#stopwords = c('ad', 'a', 'e', 'i', 'o', 'con', 'da', 'di', 'in', 'su', 'per', 'tra', 'è', 'sono', 'lo', 'la', 'li', 'le', 'gli', 'ne', 'il', 'un', 'uno', 'una', 'ed', 'se', 'perché', 'come', 'che', 'chi', 'cui', 'non', 'quale', 'quanto', 'quanti', 'quanta', 'quante', 'quello', 'quelli', 'quella', 'quelle', 'questo', 'questi', 'questa', 'queste', 'si', 'no', 'sono')
+
+# end
+stopwords =  c('a', 'did', 'her', 'do', 'him', 'after', 'his', 'down', 'to', 'for', 'and', 'from', 'are', 'get', 'up', 'as', 'go', 'man', 'see', 'us', 'at', 'she', 'very', 'was', 'be', 'some', 'because', 'we', 'if', 'went', 'but', 'in', 'not', 'that', 'of', 'the', 'what', 'is', 'off', 'their', 'when', 'came', 'it', 'on', 'them', 'will', 'can', 'had', 'one', 'then', 'with', 'could', 'have', 'there', 'would', 'he', 'out', 'they')
 
 stopwords_ids = data.frame(NA)
 count = 1
