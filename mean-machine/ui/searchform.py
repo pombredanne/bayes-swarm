@@ -136,13 +136,14 @@ class MMSearchForm(gtk.Frame):
         self.connect_button.connect('clicked', self.on_connect_button_clicked)
         self.filtered_model_db.set_visible_func(self.visible_dbs_cb)
         self.filtered_model_db.refilter()
-        #self.filterterms_checkbutton.connect("toggled", self.on_filterterms_checkbutton_changed)
+        self.filterterms_checkbutton.connect("toggled", self.on_filterterms_checkbutton_changed)
 
         # assign self.db, self.sources_list, self.allsources
         self.on_db_selected(self.comboboxentry_db, self.search_options['selected_localdb'])
         self.on_combobox_sources_changed(self.combobox_sources)
         self.on_mset_entry_changed(self.mset_entry)
         self.on_eset_entry_changed(self.eset_entry)
+        self.on_filterterms_checkbutton_changed(self.filterterms_checkbutton)
         
         vbox.pack_start(self.upperbox, False, False, 0)
         vbox.pack_start(self.advancedbox, False, False, 0)
@@ -394,6 +395,43 @@ class MMSearchForm(gtk.Frame):
             self.set_all_controls_sensitive_except(True, entry)
         except:
             self.set_all_controls_sensitive_except(False, entry)
+
+    def on_filterterms_checkbutton_changed(self, widget):
+        if widget.get_active():
+            # show file opener
+            dialog = gtk.FileChooserDialog(title='Open eset white list..', 
+                                           action=gtk.FILE_CHOOSER_ACTION_OPEN,
+                                           buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_OPEN,gtk.RESPONSE_OK))
+            dialog.set_default_response(gtk.RESPONSE_OK)
+
+            response = dialog.run()
+            if response == gtk.RESPONSE_OK:
+                filename = dialog.get_filename()
+                try:
+                    f = file(filename)
+                except IOError, e:
+                    logging.error(e)
+                    message = 'Error while reading %s\n\n%s' % (f, e)
+                    errordialog = gtk.MessageDialog(dialog, type=gtk.MESSAGE_ERROR,                
+                                           buttons=gtk.BUTTONS_CLOSE, message_format=message)
+                    errordialog.run()
+                    errordialog.destroy()
+                    widget.set_active(0)
+                finally:
+                    eset_white_list = []
+                    for line in f:
+                        if line.startswith('#'): continue
+                        keys = line.split()
+                        eset_white_list.append(keys[0])
+                    self.search_options['eset_white_list'] = eset_white_list
+                    logging.info('%i terms loaded in eset white list' % len(eset_white_list))
+            elif response == gtk.RESPONSE_CANCEL:
+                widget.set_active(0)
+            dialog.destroy()
+        
+        # double check and set as empty list if necessary
+        if not widget.get_active():
+            self.search_options['eset_white_list'] = []
 
     def toggle_show_advancedbox(self, action):
         if action.get_active()==False:

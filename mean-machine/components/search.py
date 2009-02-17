@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.DEBUG, format=format)
 logging = logging.getLogger('components.search')
 
 import gtk
-from core import MMComponent, MMRsetFilter, MMMatchDeciderAlwaysTrue, stopwords
+from core import MMComponent, MMEsetFilter, stopwords
 from .ui.search import MMResultSearch
 
 class MMSearchComponent(MMComponent):
@@ -27,13 +27,13 @@ together with the cloud of most frequent terms"""
     ui = MMResultSearch
     has_additional_actions = False
     
-    def run(self, enquire, lang, n_mset, n_eset, db, progressbar=None):
+    def run(self, search_options, progressbar=None):
         logging.debug('Getting MSet')
         progressbar.set_text('0%')
         while gtk.events_pending():
             gtk.main_iteration()
-        mset = enquire.get_mset(0,
-                                n_mset,
+        mset = search_options['enquire'].get_mset(0,
+                                search_options['n_mset'],
                                 0,
                                 None,
                                 #MMMatchDeciderAlwaysTrue(progressbar, 1/float(n_mset + n_eset)))
@@ -49,7 +49,7 @@ together with the cloud of most frequent terms"""
         while gtk.events_pending():
             gtk.main_iteration()
         for y, m in enumerate(mset):
-            if y < n_mset:
+            if y < search_options['n_mset']:
                 rset.add_document(m[xapian.MSET_DID])
             name = m[xapian.MSET_DOCUMENT].get_data()
             docs.append([m[xapian.MSET_PERCENT], name, m, ''])
@@ -61,12 +61,12 @@ together with the cloud of most frequent terms"""
         progressbar.set_text('66%')
         while gtk.events_pending():
             gtk.main_iteration()
-        eset = enquire.get_eset(n_eset, 
+        eset = search_options['enquire'].get_eset(search_options['n_eset'], 
                                 rset, 
                                 #xapian.Enquire.INCLUDE_QUERY_TERMS, 
                                 #1, 
                                 #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(n_mset + n_eset)))
-                                MMRsetFilter(stopwords[lang], []))
+                                MMEsetFilter(stopwords[search_options['selected_language']], search_options['eset_white_list']))
         
         # Read the "Expansion set" and scan tags and their score
         tagscores = dict()
@@ -89,9 +89,9 @@ together with the cloud of most frequent terms"""
         logging.debug('Display results')
         self.ui.display(docs, tags)        
 
-    def run_and_display(self, enquire, lang, n_mset, n_eset, db, progressbar=None):
+    def run_and_display(self, search_options, progressbar=None):
         progressbar.set_fraction(0.0)
-        docs, tags = self.run(enquire, lang, n_mset, n_eset, db, progressbar)
+        docs, tags = self.run(search_options, progressbar)
         self.display(docs, tags)
         progressbar.set_fraction(1.0)
         progressbar.set_text('Done')

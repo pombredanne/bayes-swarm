@@ -1,8 +1,10 @@
 TODO:
 
 * merge every component in a single slick killer application:
-  - add search options: number of docs to retrieve, n. of docs for rset,
-    n. of terms for eset, keywords white list for eset)
+  - code cleanup:
+    - move xapian code from mainwindow.py to core.py
+    - add db to search_options when is_valid is triggered
+    - send keep alives in case of remote db
   - handle possible errors with queries/timeouts of the server
   - add a stop button
   - share db ListStore at app level
@@ -10,7 +12,6 @@ TODO:
     result frame is not realized
   - add proper log messages
   - show error/warning messages in statusbar
-  - show progressbar progress during mset, rset, eset
 
 * graph component
   - add a save graph image button (include search parameters in picture
