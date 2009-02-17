@@ -45,23 +45,15 @@ class MMComponent(object):
     def __init__(self):
         pass
 
-class MMRsetFilter(xapian.ExpandDecider):
-    def __init__(self, stopwords, keywords=[], progressbar=None, step=0):
+class MMEsetFilter(xapian.ExpandDecider):
+    def __init__(self, stopwords, keywords=[]):
         xapian.ExpandDecider.__init__(self)
         self.stopwords = stopwords
         self.keywords = keywords
-        self.progressbar = progressbar
-        self.step = step
         
     def __call__(self, term):
-        #logging.debug('Filtering terms in ESet')
         if self.keywords == []:
             if term[0].islower() and term not in self.stopwords and '_' not in term:
-                if self.progressbar is not None:
-                    self.progressbar.set_fraction(self.progressbar.get_fraction() + self.step)
-                    while gtk.events_pending():
-                        gtk.main_iteration()
-                    #print term, self.progressbar.get_fraction()
                 return True
         else:
             return term in self.keywords

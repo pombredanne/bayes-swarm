@@ -245,7 +245,7 @@ class MMResultGraph():
         self.igraph_drawing_area.change_graph(None)
 
     def export(self):
-        dialog = gtk.FileChooserDialog(title='Save as..', action=gtk.FILE_CHOOSER_ACTION_SAVE,
+        dialog = gtk.FileChooserDialog(title='Export graph as..', action=gtk.FILE_CHOOSER_ACTION_SAVE,
                                         buttons=(gtk.STOCK_CANCEL,gtk.RESPONSE_CANCEL,gtk.STOCK_SAVE,gtk.RESPONSE_OK))
         dialog.set_default_response(gtk.RESPONSE_OK)
 

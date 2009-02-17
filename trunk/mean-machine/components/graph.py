@@ -11,13 +11,8 @@ logging.basicConfig(level=logging.DEBUG, format=format)
 logging = logging.getLogger('components.graph')
 
 import gtk
-from core import MMComponent, MMRsetFilter, MMMatchDeciderAlwaysTrue, stopwords
+from core import MMComponent, MMEsetFilter, stopwords
 from .ui.graph import MMResultGraph
-
-#keywords = ['mccain', 'war', 'iraq', 'jobs', 'health'
-#  'afghanistan', 'poverty', 'security', 'hope', 'change', 'middle-class', 
-#  'care', 'people', 'terrorist', 'retirement', 'market', 'patriotism',
-#  'dignity', 'homes', 'wages', 'future', 'families', 'education']
 
 class MMSearchComponent(MMComponent):
     is_mm_component = True
@@ -28,13 +23,13 @@ the given terms are most relevant"""
 
     has_additional_actions = True
     
-    def run(self, enquire, lang, n_mset, n_eset, db, progressbar=None):
+    def run(self, search_options, progressbar=None):
         logging.debug('Getting MSet')
         progressbar.set_text('0%')
         while gtk.events_pending():
             gtk.main_iteration()
-        mset = enquire.get_mset(0,
-                                n_mset,
+        mset = search_options['enquire'].get_mset(0,
+                                search_options['n_mset'],
                                 0,
                                 None,
                                 #MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_mset + self.n_eset + self.n_eset*self.n_eset)))
@@ -55,12 +50,12 @@ the given terms are most relevant"""
         progressbar.set_text('50%')
         while gtk.events_pending():
             gtk.main_iteration()
-        eset = enquire.get_eset(n_eset, 
+        eset = search_options['enquire'].get_eset(search_options['n_eset']+1, 
                                 rset, 
                                 xapian.Enquire.INCLUDE_QUERY_TERMS, 
                                 1, 
-                                MMRsetFilter(stopwords[lang]))
-                                #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(self.n_mset + self.n_eset + self.n_eset*self.n_eset)))
+                                MMEsetFilter(stopwords[search_options['selected_language']],
+                                    search_options['eset_white_list']))
 
         logging.debug('Calculating distances on %i terms' % len(eset))
         progressbar.set_fraction(0.75)
@@ -74,14 +69,14 @@ the given terms are most relevant"""
             for m in mset:
                 docid = m[xapian.MSET_DID]
                 try:
-                    positions_array = set(db.positionlist(docid, keyword.term))
+                    positions_array = set(search_options['db'].positionlist(docid, keyword.term))
                 except xapian.RangeError:
                     positions_array = []
                 positions_arrays[docid] = positions_array
             positions_matrix[ki] = positions_arrays
 
             if progressbar is not None: 
-                fraction = progressbar.get_fraction() + 0.125/float(n_eset)
+                fraction = progressbar.get_fraction() + 0.125/float(search_options['n_eset'])
                 progressbar.set_fraction(fraction)
                 progressbar.set_text('%.0f%%' % (fraction*100))
                 while gtk.events_pending():
@@ -104,7 +99,7 @@ the given terms are most relevant"""
                     if distances != []:
                         #print ",".join([keyword, other, "%f" % (sum(distances)/float(len(distances)))])
                         
-                        f = lambda x: sum(x)/float(n_mset)
+                        f = lambda x: sum(x)/float(search_options['n_mset'])
                         #f = lambda x: sum(x)/float(len(x))
                         
                         distances_list.append([keyword.term, 
@@ -118,7 +113,7 @@ the given terms are most relevant"""
                         #                       other.weight,
                         #                       keyword.weight])
                 if progressbar is not None:
-                    fraction = progressbar.get_fraction() + 0.125/float(n_eset * n_eset)
+                    fraction = progressbar.get_fraction() + 0.125/float(search_options['n_eset'] * search_options['n_eset'])
                     progressbar.set_fraction(fraction)
                     progressbar.set_text('%.0f%%' % (fraction*100))
                     while gtk.events_pending():
@@ -131,10 +126,10 @@ the given terms are most relevant"""
         if distances_list != []:
             self.ui.display(distances_list, terms)
 
-    def run_and_display(self, enquire, lang, n_mset, n_eset, db, progressbar=None):
-        progressbar.set_fraction(0.0)       
-        distances_list = self.run(enquire, lang, n_mset, n_eset, db, progressbar)
-        terms = [term for pos, term in enumerate(enquire.get_query())]
+    def run_and_display(self, search_options, progressbar=None):
+        progressbar.set_fraction(0.0)
+        distances_list = self.run(search_options, progressbar)
+        terms = [term for pos, term in enumerate(search_options['enquire'].get_query())]
         self.display(distances_list, terms)
         progressbar.set_fraction(1.0)
         progressbar.set_text('Done')

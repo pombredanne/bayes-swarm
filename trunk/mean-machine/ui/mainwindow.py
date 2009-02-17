@@ -71,11 +71,10 @@ class MMMainFrame(gtk.VBox):
         enquire = xapian.Enquire(db)
         enquire.set_query(query)
 
-        self.component.run_and_display(enquire, 
-                                       search_options['selected_language'], 
-                                       search_options['n_mset'], 
-                                       search_options['n_eset'], 
-                                       db, 
+        search_options['enquire'] = enquire
+        search_options['db'] = db
+
+        self.component.run_and_display(search_options,
                                        self.searchform.progressbar)
 
     def clear_results(self):
