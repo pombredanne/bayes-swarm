@@ -28,8 +28,8 @@ module Pulsar
       # strips away inline scripts and inline stylesheets.
       # This should leave us with a relatively clean webpage
       # (only semantic-ish tags)
-      (@doc/"script").each { |script| script.inner_html = '' }
-      (@doc/"style").each { |style| style.inner_html = '' }
+      (@doc/"script").each { |script| script.inner_html = nil }
+      (@doc/"style").each { |style| style.inner_html = nil }
     end
     
     def plain_text(xpath)
