@@ -23,15 +23,12 @@ TODO:
   - show vertex connected to [at least one/all] term vertex
   
 * search component
-  - add time-machine like functionality
+  - add time-machine like functionality (display original page in 
+    browser)
   
 * info component?
   - display: total n. of indexed docs, n. of docs per source, n. of
     languages, date range
-  
-* bs-xapian-index.py:
-  - add source info as document value, so that it can be used for
-    filtering during visualization
 
 * bs-xapian-graph.py:
   - integrate clicking functionality with nearest-plotter and remove
