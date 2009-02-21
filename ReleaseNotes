@@ -1,4 +1,4 @@
-Bayes-Swarm 0.4 (2009-02-21), svn xxx
+Bayes-Swarm 0.4 (2009-02-21), svn 461
     * Pulsar: updated for ruby 1.8.7 and hpricot 0.6.207, new Xapian indexer
     * Mean-Machine: major ui rewrite, all-in-one application with different
         components (at the moment: search and graph)
