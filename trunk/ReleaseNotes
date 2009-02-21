@@ -1,43 +1,49 @@
+Bayes-Swarm 0.4 (2009-02-21), svn xxx
+    * Pulsar: updated for ruby 1.8.7 and hpricot 0.6.207, new Xapian indexer
+    * Mean-Machine: major ui rewrite, all-in-one application with different
+        components (at the moment: search and graph)
+
 Bayes-Swarm 0.3 (2008-11-25), svn 390
-	* Released pulsar, the new extraction and parsing engine
-	* Added MeanMachine, an alternative approach to data indexing, best suited for SNA
-	* Released the new BayesFor.eu homepage and wiki template
-	* Added csv_cloud, new website action to extract the intword cloud in a csv form
-	* Added new csv_perpage action
-	* Added US Presidential Election featured page on the website
-	* Added a new featured content: Ali-Italian Researchers
+    * Released pulsar, the new extraction and parsing engine
+    * Added MeanMachine, an alternative approach to data indexing, best suited for SNA
+    * Released the new BayesFor.eu homepage and wiki template
+    * Added csv_cloud, new website action to extract the intword cloud in a csv form
+    * Added new csv_perpage action
+    * Added US Presidential Election featured page on the website
+    * Added a new featured content: Ali-Italian Researchers
+
 Bayes-Swarm 0.2.3 (2008-04-29), svn 289
-	* Added wiki link (show bayesfor.eu wiki pages in bayes-swarm.com domain)
-	* Added TimeMachine (browse, show, highlight saved pages)
-	* Added igoogle support for u.s.primaries and italian elections pie charts
-	* Removed gruff and sparklines, introduced openflashchart
-        * Added new/edit/destroy/csv for pages and sources, restricted
-          to registered users only
-        * Added users table with login/logout views
-        * Added admin section with translation page (inline edit)
+    * Added wiki link (show bayesfor.eu wiki pages in bayes-swarm.com domain)
+    * Added TimeMachine (browse, show, highlight saved pages)
+    * Added igoogle support for u.s.primaries and italian elections pie charts
+    * Removed gruff and sparklines, introduced openflashchart
+    * Added new/edit/destroy/csv for pages and sources, restricted
+      to registered users only
+    * Added users table with login/logout views
+    * Added admin section with translation page (inline edit)
 
 Bayes-Swarm 0.2.2 (2008-03-15), svn 259
-        * Added intword controller 'csv' for retrieving time series in csv 
-          format
-        * Added notvisible_cloud view and upgraded ETL so that also
-          possible interesting words are loaded
-        * Added file storage capabilities to prototype1 ETL
+    * Added intword controller 'csv' for retrieving time series in csv 
+      format
+    * Added notvisible_cloud view and upgraded ETL so that also
+      possible interesting words are loaded
+    * Added file storage capabilities to prototype1 ETL
 
 Bayes-Swarm 0.2.1 (2007-12-09), svn 225
-        * Added most correlated stem in show view
-        * Added multi-id support for show and plot intword view
-        * Added Globalize support for multi-language ROR website
+    * Added most correlated stem in show view
+    * Added multi-id support for show and plot intword view
+    * Added Globalize support for multi-language ROR website
 
 Bayes-Swarm 0.2 (2007-11-10), svn 191
-        * Added ActiveRecord support in ETL process
-        * First draft of new ROR website
-        * Added support for RSS pages
-        * First release of prototype2
-        * Added support for other languages other than english
+    * Added ActiveRecord support in ETL process
+    * First draft of new ROR website
+    * Added support for RSS pages
+    * First release of prototype2
+    * Added support for other languages other than english
 
 Bayes-Swarm 0.1 (2007-09-08), svn 92
-        * Added very basic website written with webpy
-        * Added interesting words concept
+    * Added very basic website written with webpy
+    * Added interesting words concept
         
 Bayes-Swarm 0.0.1 (2007-07-20)
-        * Initial release
+    * Initial release
