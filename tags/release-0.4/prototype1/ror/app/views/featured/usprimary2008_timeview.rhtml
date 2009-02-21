@@ -1,0 +1,40 @@
+<h1>US Primary 2008 </h1>
+<p>We are currently monitoring the US Primaries 2008. Here you can see our updated data on candidates media coverage.</p>
+
+<table> <tr> 
+	<td>
+		 <% if ( params[:id] != @candidate["all"]) %>  
+	     <%= link_to "All", { :action => "usprimary2008_timeview",
+	                               :id => @candidate["all"] } %>
+	     <% else %>  All  <% end %>
+    </td>
+	<td> 
+		 <% if ( params[:id] != @candidate["dem"]) %> 
+		 <%= link_to "Democrats", { :action => "usprimary2008_timeview",
+		                           :id => @candidate["dem"] } %>
+		  <% else %>  Democrats  <% end %>
+		 </td>
+	<td>  
+	     <% if ( params[:id] != @candidate["rep"]) %>
+	     <%= link_to "Republicans", { :action => "usprimary2008_timeview",
+							       :id => @candidate["rep"] } %>
+		 <% else %>  Republicans  <% end %>					
+		 </td>	
+	</tr>	
+</table>
+	
+<p align="center">
+    <%= @ofcgraph %>
+</p>
+
+<table>
+	<tr> <td> <%= link_to "Popularity Pie",
+	                { :action => "usprimary2008",
+				      :id => params[:id] } %> </td>  
+	     <td> Time Series </td>	 
+	</tr>
+</table>
+<p></p>
+
+
+	

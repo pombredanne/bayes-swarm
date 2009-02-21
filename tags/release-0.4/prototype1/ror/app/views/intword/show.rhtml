@@ -1,0 +1,50 @@
+
+    <%= @ofcgraph %>
+
+    <%= render :partial => "show_intervals", :locals => { :iws => @iws,
+                                                          :intervals => @intervals } %>
+<br>
+<p>In this graph, words' count is plotted for the chosen period. You can change the interval
+by clicking on the period you would like to plot.</p>
+
+<p><sup class="new">new</sup> Click on a dot in the above graph to see how various media sources contributed to the values</p>
+<div id="breakdown">
+</div>
+
+
+<% if (@iws.length>1) -%>
+    <h2>Words currently displayed</h2>
+    <table>
+      <tr>
+        <td>Name</td><td>Language</td>
+      </tr>
+    <% @iws.each do |iw| %>
+      <tr>
+        <td><%= iw.name %></td>
+        <td><%= iw.language %></td>
+      </tr>
+    <% end %>
+    </table>
+<% else -%>  
+  <% corr_iws = @iws[0].find_most_correlated(params[:period]) %>
+     <% if (corr_iws != nil) -%>
+    <h2>Most correlated words</h2>
+    <table width=100% style="text-align: center;">
+      <tr>
+        <td width=33%><b>Name</b></td>
+        <td width=33%><b>Correlation</b></td>
+        <td width=33%><b>Time series plot</b></td>
+      </tr>
+    <% corr_iws.each do |iw| %>
+      <tr>
+        <td><%= iw.name %></td>
+        <td><%= [(iw.corr.to_f*100).round, '%'].join %></td>
+        <td><%= link_to "show", {:id => [@iws[0].id, '-', iw.id].join,
+                                 :period => params[:period] } %></td>
+      </tr>
+    <% end %>
+    </table>
+    <p>In this table, words with highest correlation coefficient are shown, so that
+it is possible to easily graph them together and have a picture of their comovements.</p>
+  <% end -%>
+<% end -%>

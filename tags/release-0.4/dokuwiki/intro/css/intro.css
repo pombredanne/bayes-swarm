@@ -1,0 +1,128 @@
+.bayes-intro-header H1 {
+	margin: 0 0 0 30px;
+}
+
+.bayes-intro-header H2 {
+	margin: 0 0 0 30px;
+}
+
+.clearer {
+  clear: both;
+}
+
+H2.team, H2.project, H2.docs {
+	padding: 0.2em 0 0 0;
+	margin: 0;			
+}
+
+H2.team A {
+	color: #265ED8;
+	text-decoration: none;
+}
+
+H2.project A {
+	text-decoration: none;
+	color: #F9790B;
+}
+
+H2.docs A {
+	color: #299831;
+	text-decoration: none;
+}
+
+UL.headlines {
+	list-style-position: inside;
+	padding: 0;
+	margin: 0 1em 0 0;
+}
+
+UL.headlines LI {
+	padding: 0.2em 0;
+	color: #000;
+	border-bottom: 1px dashed #ccc;
+	font-size: 80%;
+}
+
+UL a, UL a:visited {
+	text-decoration: none;
+	color: #000;
+}
+
+UL.team a:hover {
+	color: #265ED8;
+}
+
+UL.docs a:hover {
+	color: #299831;
+}
+
+UL.project a:hover {
+	color: #F9790B;
+}
+
+#whoweare {
+	margin: 0 0.5em 0.5em 2em;
+	padding: 0.5em 0.2em 0.2em 0.2em;
+	width: 80%;
+	font-size: 85%;
+	color: #000;
+	border-left: 3px dotted #FCFEA2;
+	text-align: center;
+}
+
+
+#news {
+	border: 2px solid #aaa;
+	background-color: rgb(255,255,255);
+	width: 250px;
+	margin: 1.5em 0 0 0 ;			
+}
+
+#newsheader {
+	margin: 0em 1em;
+}
+
+#newsheader H1 {
+	font-size: 110%;
+	color: #000;
+	margin: 0 0 0.2em 0;
+	padding: 0;
+	display: inline;
+}
+
+#newscontent H1 {
+	font-size: 80%;
+	color: #265ED8;
+	margin: 0.3em 0 0 0;
+	padding: 0 0 0.1em 0;			
+}
+
+.archive A, .archive A:visited {
+	padding-left: 1em;
+	color: #265ED8;
+	font-size: 75%;
+}
+
+#newsheader P {
+	line-height: 1.2;
+	font-size: 80%;
+	margin: 0;
+	padding: 0;
+}
+
+
+TD.tt {
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-left: 1px solid #ccc;
+	background-color: #fff;
+	margin: 0.1em 0 0.1em 0.1em;
+}
+
+TD.uu {
+	border-top: 1px solid #ccc;
+	border-bottom: 1px solid #ccc;
+	border-right: 1px solid #ccc;
+	background-color: #fff;
+	margin: 0.1em 0.1em 0.1em 0;
+}		

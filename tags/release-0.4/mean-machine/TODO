@@ -1,0 +1,34 @@
+TODO:
+
+* merge every component in a single slick killer application:
+  - code cleanup:
+    - move xapian code from mainwindow.py to core.py
+    - add db to search_options when is_valid is triggered
+    - send keep alives in case of remote db
+  - handle possible errors with queries/timeouts of the server
+  - add a stop button
+  - share db ListStore at app level
+  - freeze component specific controls when doing searches or when
+    result frame is not realized
+  - add proper log messages
+  - show error/warning messages in statusbar
+
+* graph component
+  - add a save graph image button (include search parameters in picture
+    metada)
+  - use seed in order to stabilize graphs
+  - center the searched term in the graph
+  - allow to switch between distance graph and matching graph (current
+    bs-xapian-graph view based on xapian weight only)
+  - show vertex connected to [at least one/all] term vertex
+  
+* search component
+  - add time-machine like functionality (display original page in 
+    browser)
+  
+* info component?
+  - display: total n. of indexed docs, n. of docs per source, n. of
+    languages, date range
+
+* bs-xapian-graph.py:
+  - integrate clicking functionality with nearest-plotter and remove

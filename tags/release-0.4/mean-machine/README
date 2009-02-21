@@ -1,0 +1,12 @@
+Requirements:
+
+* bs-xapian-index.py: 
+  - xapian
+
+* mean-machine.py:
+  - xapian, pygtk
+  - search component: gtkhtml2
+  - graph component: igraph
+  
+* bs-xapian-graph.py:
+  - xapian, pygtk, xdot, pydot
