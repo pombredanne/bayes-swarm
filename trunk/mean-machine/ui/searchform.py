@@ -422,7 +422,10 @@ class MMSearchForm(gtk.Frame):
                     for line in f:
                         if line.startswith('#'): continue
                         keys = line.split()
-                        eset_white_list.append(keys[0])
+                        try:
+                            eset_white_list.append(keys[0])
+                        except IndexError:
+                            continue
                     self.search_options['eset_white_list'] = eset_white_list
                     logging.info('%i terms loaded in eset white list' % len(eset_white_list))
             elif response == gtk.RESPONSE_CANCEL:
