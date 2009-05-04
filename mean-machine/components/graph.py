@@ -99,8 +99,7 @@ the given terms are most relevant"""
                     if distances != []:
                         #print ",".join([keyword, other, "%f" % (sum(distances)/float(len(distances)))])
                         
-                        f = lambda x: sum(x)/float(search_options['n_mset'])
-                        #f = lambda x: sum(x)/float(len(x))
+                        f = lambda x: 1/float(sum(x)/float(search_options['n_mset']))
                         
                         distances_list.append([keyword.term, 
                                                other.term, 

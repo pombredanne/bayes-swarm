@@ -94,12 +94,17 @@ class MMResultGraph():
         vbox = gtk.VBox(False, 0)
         vbox.set_border_width(6)
         
+        def scale_format_value(scale, value):
+            return '%f' % log_scale(value)
+        
         self.adj = gtk.Adjustment(0.50, 0, 1, 0.01, 0.1, 0)
         self.slider = gtk.HScale(self.adj)
+        self.slider.connect('format-value', scale_format_value)
         self.slider.set_digits(2)
 
         self.adj2 = gtk.Adjustment(0.50, 0, 1, 0.01, 0.1, 0)
         self.slider2 = gtk.HScale(self.adj2)
+        self.slider2.connect('format-value', scale_format_value)
         self.slider2.set_digits(2)
 
         self.adj.connect("value_changed", self.cb_threshold_changed)
@@ -147,7 +152,7 @@ class MMResultGraph():
 
         count = 0
         for i, row in enumerate(distances_list):
-            w = 1/float(row[2])
+            w = row[2]
             keyword1 = row[0]
             keyword2 = row[1]
             if not labels_id.has_key(keyword1):
