@@ -109,7 +109,7 @@ with_connection do |connection|
         warn_log "Page with id #{id} and url #{url} no longer exists " +
                  "in the database" unless p
         warn_log "Page with id #{id} is out-of-sync between PageStore " +
-                 "and database" if p.url != url && p.kind == 'url'
+                 "and database" if p && p.url != url && p.kind == 'url'
         
         # Load the contents
         if p
