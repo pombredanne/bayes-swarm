@@ -86,6 +86,7 @@ the given terms are most relevant"""
         for ki, keyword in enumerate(eset):
             for oi, other in enumerate(eset):
                 if ki < oi:
+                    distance = 0
                     doc_distances = []
                     for m in mset:
                         docid = m[xapian.MSET_DID]
@@ -100,15 +101,15 @@ the given terms are most relevant"""
                         num_kept_distances = max(tl.skip_to(keyword.term).wdf, tl.skip_to(other.term).wdf)
                         if doc_distances != []:
                             doc_distances.sort()
-                            distances = doc_distances[:num_kept_distances]
+                            distance += sum(doc_distances[:num_kept_distances])
 
-                    if distances != []:
+                    if distance != 0:
                         # FIXME: divide also by Fmax = max(term.termfreq)
-                        f = lambda x: sum(x) #/float(search_options['n_mset'])
+                        f = lambda x: x #/float(search_options['n_mset'])
                         
                         full_distances_list.append([keyword.term, 
                                                other.term, 
-                                               f(distances), 
+                                               f(distance), 
                                                keyword.weight,
                                                other.weight])
                         #distances_list.append([other.term, 
