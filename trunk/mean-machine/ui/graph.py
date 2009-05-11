@@ -51,7 +51,7 @@ def MMWritePajek(g, filename):
     
     f.write('*Edges\n')
     for e in g.es:
-        f.write('%i %i %f\n' % (e.source+1, e.target+1, e['weight']))
+        f.write('%i %i %f\n' % (e.source+1, e.target+1, e['realweight']))
 
     f.close()
 
@@ -81,7 +81,7 @@ def MMWriteCondor(g, filename):
     f.write('//com\n')
     for e in g.es:
         # the more you repeat, the more it weights..
-        for i in range(int(e['weight']*100)):
+        for i in range(int(e['realweight']*100)):
             f.write('%s,%s,%s,,to\n' % (g.vs[e.source]['label'], 
                                         g.vs[e.target]['label'], 
                                         datetime.datetime.now().strftime("%m/%d/%Y %I:%M:%S")))
@@ -172,6 +172,7 @@ class MMResultGraph():
         min_w = min(weights)
         max_w = max(weights)    
         g.es['weight'] = [(i - min_w) / float(max_w - min_w) for i in weights]
+        g.es['realweight'] = weights
         g.vs['label'] = labels
 
         min_size = min(sizes)
