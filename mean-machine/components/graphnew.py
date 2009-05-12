@@ -92,7 +92,7 @@ the given terms are most relevant"""
                         docid = m[xapian.MSET_DID]
                         for i in positions_matrix[ki][docid]:
                             for j in positions_matrix[oi][docid]:
-                                doc_distances.append(1/float(abs(i-j)))
+                                doc_distances.append(abs(i-j))
                         # doc_distances contiene le distanze di tutte le
                         # possibili coppie di occorrenze di i e j nel documento.
                         # Noi teniamo solo le max(wdf_i, wdf_j) coppie che hanno
@@ -101,7 +101,8 @@ the given terms are most relevant"""
                         num_kept_distances = max(tl.skip_to(keyword.term).wdf, tl.skip_to(other.term).wdf)
                         if doc_distances != []:
                             doc_distances.sort()
-                            distance += sum(doc_distances[:num_kept_distances])
+                            distance += sum([1/float(i) for i in doc_distances[:num_kept_distances]])
+                            #print "%s, %s: dist=%s, kept=%i, kept_dist=%s, dist=%f" % (keyword.term, other.term, doc_distances, num_kept_distances, doc_distances[:num_kept_distances], distance)
 
                     if distance != 0:
                         # FIXME: divide also by Fmax = max(term.termfreq)
