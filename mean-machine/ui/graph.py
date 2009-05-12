@@ -200,8 +200,8 @@ class MMResultGraph():
         # keep only edges where weight > threshold
         g = self.g - self.g.es.select(weight_lt=log_scale(self.adj.value))
         
-        # keep only vertex where size > threshold
-        g = g.subgraph(g.vs.select(size_gt=log_scale(self.adj2.value)))
+        # keep only vertex where size >= threshold
+        g = g.subgraph(g.vs.select(size_ge=log_scale(self.adj2.value)))
         
         self.terms_list = []
         for v in g.vs:

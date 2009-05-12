@@ -64,8 +64,10 @@ the given terms are most relevant"""
             gtk.main_iteration()
 
         positions_matrix = {}
+        freq_dict = {}
         for ki, keyword in enumerate(eset):
             positions_arrays = {}
+            freq = 0
             for m in mset:
                 docid = m[xapian.MSET_DID]
                 try:
@@ -73,7 +75,9 @@ the given terms are most relevant"""
                 except xapian.RangeError:
                     positions_array = []
                 positions_arrays[docid] = positions_array
+                freq += len(positions_array)
             positions_matrix[ki] = positions_arrays
+            freq_dict[ki] = freq
 
             if progressbar is not None: 
                 fraction = progressbar.get_fraction() + 0.125/float(search_options['n_eset'])
@@ -106,7 +110,7 @@ the given terms are most relevant"""
 
                     if distance != 0:
                         # FIXME: divide also by Fmax = max(term.termfreq)
-                        f = lambda x: x #/float(search_options['n_mset'])
+                        f = lambda x: x/float(max(freq_dict.values())) #float(search_options['n_mset'])
                         
                         full_distances_list.append([keyword.term, 
                                                other.term, 
