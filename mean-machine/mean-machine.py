@@ -1,7 +1,7 @@
 #!/usr/bin/python
 # -*- coding: UTF-8 -*-
 
-# Licensed under the Apache2 License.
+# Licensed under the GNU General Public License v22 License.
 
 """Mean Machine
 
