@@ -8,7 +8,7 @@
 #
 # == Copyright
 # Copyright(c) 2008 - bayes-swarm project.
-# Licensed under the GNU General Public License v22 License.
+# Licensed under the GNU General Public License v2.
 
 require 'util/storage'
 
