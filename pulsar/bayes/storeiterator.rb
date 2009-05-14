@@ -14,7 +14,7 @@
 #
 # == Copyright
 # Copyright(c) 2009 - bayes-swarm project.
-# Licensed under the GNU General Public License v22 License.
+# Licensed under the GNU General Public License v2.
 
 require 'util/log'
 require 'util/lister'
