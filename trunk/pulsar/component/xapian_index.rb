@@ -33,7 +33,7 @@
 #
 # == Copyright
 # Copyright(c) 2009 - bayes-swarm project.
-# Licensed under the Apache2 License.
+# Licensed under the GNU General Public License v22 License.
 
 require 'xapian'
 require 'tmpdir'
