@@ -12,7 +12,7 @@
 #
 # == Copyright
 # Copyright(c) 2008 - bayes-swarm project.
-# Licensed under the Apache2 License.
+# Licensed under the GNU General Public License v22 License.
 
 require 'util/log'
 require 'util/ar'
