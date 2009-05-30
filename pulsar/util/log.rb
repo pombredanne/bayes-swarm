@@ -16,26 +16,31 @@ module Pulsar
     # Prints a message on the standard output. The message is enriched
     # with infos about the originating class and object id.
     def log(message)
-      puts "#{self.class.name}(#{object_id}):: " + message.to_s
+      puts "#{self.class.name}(#{object_id}) #{now}:: " + message.to_s
     end
   
     # Prints a message on the standard output if verbose mode is enabled. The message is enriched
     # with infos about the originating class and object id.
     def verbose_log(message)
-      puts "#{self.class.name}(#{object_id}):: " + message.to_s if $-v
+      puts "#{self.class.name}(#{object_id}) #{now}:: " + message.to_s if $-v
     end
     
     def warn_log(message)
-      log "(WARN) #{message}"
+      log "(WARN) #{now} #{message}"
     end
     
     def dry_log(message)
-      log "(DRYRUN) #{message}" if Pulsar::Runner.dryRun?
+      log "(DRYRUN) #{now} #{message}" if Pulsar::Runner.dryRun?
     end
   
     # Returns whether verbose mode is enabled
     def verbose?
       $-v
+    end
+    
+    def now
+      t = Time.now
+      "#{t.strftime('%Y%m%d %H:%M:%S')}.#{t.usec}"
     end
   end
 end
