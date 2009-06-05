@@ -27,6 +27,22 @@ class Intword < ActiveRecord::Base
     res
   end
   
+  # Creates a map of intwords whose names contains 'troublesome' characters,
+  # that is, characters that I'm not yet able to push successfully over the
+  # wire to Amazon SDB.
+  # A cursory check over the excluded words shows that, as of June 2009, we
+  # are excluding only spurious words (often with leading or trailing accents
+  # that should have been removed) with a negligible total count.
+  def self.get_i18n_unsafe_words_hash
+    iws = find(:all, :conditions => 
+      ["name not regexp '^([a-zA-Z0-9]|[[:space:]]|[[:blank:]]|-|\\'|[.,_&/])*$'"])
+    res = Hash.new
+    iws.each do |iw|
+      res[iw.id] = iw.name.clone
+    end
+    res
+  end
+  
   # Creates new intwords for a given +language_id+ from a list
   # of +popular_stems+. Each element of the list is supposed to
   # be an instance of +StemData+ (as defined in +stemmer.rb+).
