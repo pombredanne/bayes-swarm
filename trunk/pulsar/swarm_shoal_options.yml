@@ -8,6 +8,10 @@ database:
     :pass:   
     :db:     battleho_bayes_test
     
+sdb:
+    :access_key: 
+    :secret_key: 
+    
 # These stopwords are used by the swarm normalization and are therefore preserved
 # when appliying the stopwords filter.
 keep_stopwords:

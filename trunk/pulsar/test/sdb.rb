@@ -6,12 +6,19 @@
 # This test uses SdbInterface directly, without using an ActiveSdb facade.
 # Run with
 #
-#   ruby runner.rb -t test/active_sdb -a your_access_key -s your_secret_key
+#   ruby runner.rb -c swarm_shoal_options.yml -t test/sdb
 #
 # Additional flags:
 #   --create: To empty and create a new Test sdb domain and load it with 1000
-#       items. If this flag is not provided, the items will be only read from
-#       the domain without creating it.
+#       items, one at a time.
+#   --batchcreate: To empty and create a new Test sdb domain and load it with 
+#       1000 items, using batch insertions.
+#
+# Make sure your Amazon access key and secret key are included in the configuration
+# file you'll use to run the script.
+#
+# If no flag is provided, the items will be only read from the domain without
+# creating and populating it beforehand.
 #
 # If everything is fine, it should connect to Amazon SimpleDB, optionally load
 # 1000 items, read them back and produce some basic performance metrics.
@@ -30,17 +37,10 @@ require 'util/sdb_batchput'
 
 include Pulsar::Log
 
-access_key = get_opt("-a")
-
-secret_key = get_opt("-s")
-if !access_key || !secret_key
-  warn_log "You must specify both the AWS access key and AWS secret key"
-  exit(1)
-end
-
 # connect to SDB
 log "Connecting to SDB..."
-sdb = RightAws::SdbInterface.new(access_key, secret_key)
+sdb_opts = Pulsar::Runner.opts['sdb']
+sdb = RightAws::SdbInterface.new(sdb_opts[:access_key], sdb_opts[:secret_key])
 log "Connected."
 
 if flag?("--create")
