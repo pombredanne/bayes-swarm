@@ -75,6 +75,9 @@ module Pulsar
       rescue Timeout::Error
         warn_log "timeout from #{page.url}" # $! is not defined for timeouts
         nil
+      rescue Timeout::ExitException
+        warn_log "timeout from #{page.url}"
+        nil        
       end
     end
   end
