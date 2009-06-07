@@ -1,0 +1,165 @@
+<html>
+  <head>
+    <%= stylesheet_link_tag "quasar" %>
+    <title>BayesFor : Words <%= @iws.map { |iw| iw.name}.join(', ') %></title>
+
+    <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+
+      // Load the Visualization API and the piechart package.
+      google.load('visualization', '1', {'packages':['annotatedtimeline', 'imagesparkline', 'piechart']});
+
+      // Set a callback to run when the API is loaded.
+      google.setOnLoadCallback(drawChart);
+
+      // Callback that fires as many Gviz requests as needed to populate
+      // the page graphs.
+      function drawChart() {
+        var query = new google.visualization.Query(
+          '<%= url_for :escape => false, :only_path => false, :controller => :gviz, :action => :poptrend, :id => @iws.map { |iw| iw.id}.join("-"), :params => { :entity => "count"} %>');
+        query.setTimeout(15);          
+        query.send(sparklineResponse('sparkline_div'));
+
+        <% if @iws.size > 1 -%>
+        var query = new google.visualization.Query(
+          '<%= url_for :escape => false, :only_path => false, :controller => :gviz, :action => :marketshare, :id => @iws.map { |iw| iw.id}.join("-"), :params => { :entity => "count", :period => "7d"} %>');
+        query.setTimeout(15);          
+        query.send(pieChartResponse('piechart7d_div', 'right', '7-day Media share'));
+        
+        var query = new google.visualization.Query(
+          '<%= url_for :escape => false, :only_path => false, :controller => :gviz, :action => :marketshare, :id => @iws.map { |iw| iw.id}.join("-"), :params => { :entity => "count", :period => "2w"} %>');
+        query.setTimeout(15);          
+        query.send(pieChartResponse('piechart2w_div', 'right', '2-Week Media share'));
+        
+        var query = new google.visualization.Query(
+          '<%= url_for :escape => false, :only_path => false, :controller => :gviz, :action => :marketshare, :id => @iws.map { |iw| iw.id}.join("-"), :params => { :entity => "count", :period => "1m"} %>');
+        query.setTimeout(15);          
+        query.send(pieChartResponse('piechart1m_div', 'right', '1-Month Media share'));
+        
+        var query = new google.visualization.Query(
+          '<%= url_for :escape => false, :only_path => false, :controller => :gviz, :action => :marketshare, :id => @iws.map { |iw| iw.id}.join("-"), :params => { :entity => "count", :period => "3m"} %>');
+        query.setTimeout(15);          
+        query.send(pieChartResponse('piechart3m_div', 'right', '3-Month Media share'));
+        <% end -%>
+        
+        <% if @focuspage -%>
+        var query = new google.visualization.Query(
+          '<%= url_for :escape => false, :only_path => false, :controller => :gviz, :action => :ts, :id => @iws.map { |iw| iw.id}.join("-"), :params => { :entity => "count", :interval => "6m", :pages => @focuspage } %>');
+        query.setTimeout(15);          
+        query.send(timelineResponse('timeline_div2'));
+        <% end -%>
+        
+        var query = new google.visualization.Query(
+          '<%= url_for :escape => false, :only_path => false, :controller => :gviz, :action => :ts, :id => @iws.map { |iw| iw.id}.join("-"), :params => { :entity => "count", :interval => "6m" } %>');
+        query.setTimeout(15);
+        query.send(timelineResponse('timeline_div'));
+      }
+      
+      function initResponseArea(response, id) {
+        var elem = document.getElementById(id);
+        while (elem.firstChild) { elem.removeChild(elem.firstChild); }
+        if (response.isError()) {
+          var timeout = false;
+          errorReasons = response.getReasons()
+          for (var i = 0, l = errorReasons.length; i < l; i++) {
+            if (errorReasons[i] == 'timeout') {
+              timeout = true;
+              break;
+            }
+          }
+          if (timeout) {
+            elem.innerHTML = '<span class="qs-description">This visualization is taking a long time, please wait...</span>';
+          } else {
+           elem.innerHTML = '<span class="qs-description">Error in query: ' + response.getMessage() + '</span>';
+          }
+        }
+        return !response.isError();
+      }
+
+      function timelineResponse(id) {
+        return function(response) {
+          if (!initResponseArea(response, id)) {
+            return;
+          }
+
+          var data = response.getDataTable();
+          var chart = new google.visualization.AnnotatedTimeLine(document.getElementById(id));
+          chart.draw(data);
+        };
+      }
+
+      function sparklineResponse(id) {
+        return function(response) {
+          if (!initResponseArea(response, id)) {
+            return;
+          }
+
+          var data = response.getDataTable();    
+          var chart = new google.visualization.ImageSparkLine(document.getElementById(id));
+          chart.draw(data, {width: 120, height: <%= @iws.size * 30 %>, showAxisLines: true,  showValueLabels: false, labelPosition: 'left'});           
+        };
+      }
+
+      function pieChartResponse(id, legend, title) {
+        return function(response) {
+          if (!initResponseArea(response, id)) {
+            return;
+          }
+
+          var data = response.getDataTable();    
+          var chart = new google.visualization.PieChart(document.getElementById(id));
+          chart.draw(data, {width: 250, height: 200, is3D: true, legend: legend, title: title });
+        };
+      }
+
+    </script>
+  </head>
+
+  <body>
+    <h2 style="margin:0">PeopleWatch: 
+      <%= @iws.map { |iw| "<span class='qs-highlight'>#{iw.name.capitalize}</span>"}.join(',') %>
+    </h2>
+    <div style="float:right; width: 300px">
+      <h3 style="margin: 0">BayesFor</h3>
+      <p class="qs-description" style="margin: 0">
+        <%= image_tag "bayes_logo_small.png" , :alt => "BayesFor Logo", :style => "float: left" %>
+        <strong>BayesFor</strong> is a non-profit organization formed by a group of 
+        researchers whose purpose is to promote the understanding and adoption of 
+        statistical analysis. BayesFor performs research, analysis and 
+        consulting services in various fields of applied research.<br />
+        <strong>PeopleWatch</strong> is a dedicated report you can use to track
+        people popularity and media recognition.
+      </p>
+
+      <h3 style="margin-bottom: 0">Popularity Trends</h3>
+      <p class="qs-description" style="margin: 0; margin-bottom: 0.5em">
+        How recently did the person become popular? The sooner the curve raises to
+        the top, the earlier the person became popular. Time range spans from 
+        last week to last 6 months.
+      </p>
+      <div id="sparkline_div"><%= image_tag "spin.gif" , :alt => "Loading..." %></div>      
+    </div>
+    <div id="timeline_div" style='width: 600px; height: 200px;'  >
+      <%= image_tag "spin.gif" , :alt => "Loading..." %>
+    </div>
+    <% if @focuspage -%>
+      <h3 style="margin-bottom: 0">Focus on <span class="qs-highlight"><%= @focuspage.url %></span>:</h3>
+      <div id="timeline_div2" style='width: 600px; height: 200px;'  >
+        <%= image_tag "spin.gif" , :alt => "Loading..." %>
+      </div>
+    <% else -%>
+      <h3 style="margin-bottom: 0">Focus</h3>
+      <p style="margin: 0" class="qs-description">To see the page Focus, choose a page.</p>
+    <% end -%>
+    <h3 style="margin-bottom: 0">Media share</h3>
+    <% if @iws.size > 1 -%>
+      <p style="margin: 0" class="qs-description">How many times did each person appear in the last 7-day, 2-week, 1-month, 3-month, in respect to other ones?</p>
+      <div id="piechart7d_div" style="width: 250px; height: 200px; float:left"><%= image_tag "spin.gif" , :alt => "Loading..." %></div>
+      <div id="piechart2w_div" style="width: 250px; height: 200px; float:left"><%= image_tag "spin.gif" , :alt => "Loading..." %></div>
+      <div id="piechart1m_div" style="width: 250px; height: 200px; float:left"><%= image_tag "spin.gif" , :alt => "Loading..." %></div>
+      <div id="piechart3m_div" style="width: 250px; height: 200px; float:left"><%= image_tag "spin.gif" , :alt => "Loading..." %></div>            
+    <% else -%>
+      <p style="margin: 0" class="qs-description">To see the Media shares, analyze multiple keywords concurrently.</p>
+    <% end -%>
+  </body>
+</html>    
