@@ -1,0 +1,26 @@
+.qs-form {
+  border: 2px dashed #999;
+  padding: 5px;
+  font-size: 120%;
+}
+
+.qs-form INPUT {
+  font-size: 120%;
+}
+
+.qs-description {
+  color: #999;
+  font-size: 80%;
+}
+
+.qs-analysis {
+  width: 600px;
+  height: 200px;
+  margin-bottom: 5px;
+  float: left;
+}
+
+.qs-analysis-action {
+  float: right;
+  width: 250px;
+}

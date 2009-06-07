@@ -7,4 +7,12 @@ class ApplicationController < ActionController::Base
 
   # Scrub sensitive parameters from your log
   # filter_parameter_logging :password
+  
+  before_filter :load_configs
+  
+  private
+  
+  def load_configs
+    require 'config/environments/quasar_' + RAILS_ENV
+  end  
 end

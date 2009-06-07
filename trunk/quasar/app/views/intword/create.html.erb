@@ -1,0 +1,23 @@
+<% content_for :title do %>
+  Create your analysis
+<% end %>
+<% content_for :intro do %>
+  <h2>Create your analysis</h2>
+  <p class="intro">
+    Use this page to build your customized analysis, that you can then share with
+    your friends and peers.
+  </p>
+<% end %>
+<div id="analysis_container"></div>
+<div id="form_container"></div>
+<% content_for :footer do %>
+  <script type="text/javascript" charset="utf-8">
+    // Load the Visualization API and the relevant packages
+    quasar.createAnalysisForm($('form_container'), $('analysis_container'));
+    google.load('visualization', '1', {'packages':['annotatedtimeline', 'imagesparkline', 'piechart']});
+
+    // Set a callback to run when the API is loaded, and enable
+    // the analysis form.
+    google.setOnLoadCallback(quasar.enableAnalysisForm);
+  </script>
+<% end %>
