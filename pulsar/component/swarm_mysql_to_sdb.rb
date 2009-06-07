@@ -4,7 +4,7 @@
 # Run with
 #
 #   ruby runner.rb -c swarm_shoal_options.yml \
-#       -t component/swarm_mysql_to_sdb -d <scantime> [--delete_domain]
+#       -f component/swarm_mysql_to_sdb -d <scantime> [--delete_domain]
 #
 # The script reads all the words stored in a Swarm MySQL db for a given date
 # and uploads them onto an Amazon SDB instance (http://aws.amazon.com/simpledb/).
