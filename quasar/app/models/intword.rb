@@ -1,4 +1,5 @@
 class Intword < ActiveRecord::Base
+  belongs_to :language
     
   @@entities = [ 'count', 'bodycount', 'titlecount' , 'keywordcount' , 'anchorcount', 'headingcount' ]
   @@lowest_date = Date.civil(2007, 1, 1)
