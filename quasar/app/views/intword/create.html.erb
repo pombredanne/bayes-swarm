@@ -9,15 +9,20 @@
   </p>
 <% end %>
 <div id="analysis_container"></div>
-<div id="form_container"></div>
+<div id="form_container">
+  <%= image_tag "spin.gif" %>
+</div>
 <% content_for :footer do %>
   <script type="text/javascript" charset="utf-8">
+    $(document).ready(function() {
+      quasar.createAnalysisForm($('#form_container'), $('#analysis_container'));
+    });
+    
     // Load the Visualization API and the relevant packages
-    quasar.createAnalysisForm($('form_container'), $('analysis_container'));
     google.load('visualization', '1', {'packages':['annotatedtimeline', 'imagesparkline', 'piechart']});
 
     // Set a callback to run when the API is loaded, and enable
     // the analysis form.
-    google.setOnLoadCallback(quasar.enableAnalysisForm);
+    google.setOnLoadCallback(quasar.enableAnalysisForm);      
   </script>
 <% end %>
