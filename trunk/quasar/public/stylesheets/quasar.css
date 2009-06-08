@@ -1,5 +1,5 @@
 .qs-form {
-  border: 2px dashed #999;
+  border: 1px dotted #999;
   padding: 5px;
   font-size: 120%;
 }
@@ -14,9 +14,14 @@
 }
 
 .qs-analysis {
+  margin-bottom: 5px;
+  padding: 5px;
+  border: 1px dotted #999;
+}
+
+.qs-analysis-graph {
   width: 600px;
   height: 200px;
-  margin-bottom: 5px;
   float: left;
 }
 
@@ -24,3 +29,9 @@
   float: right;
   width: 250px;
 }
+
+.autocomplete-w1 { background:url(../images/ac_shadow.png) no-repeat bottom right; position:absolute; top:0px; left:0px; margin:8px 0 0 6px; /* IE6 fix: */ _background:none; _margin:0; }
+.autocomplete { border:1px solid #999; background:#FFF; cursor:default; text-align:left; max-height:350px; overflow:auto; margin:-6px 6px 6px -6px; /* IE6 specific: */ _height:350px;  _margin:0; _overflow-x:hidden; }
+.autocomplete .selected { background:#F0F0F0; }
+.autocomplete div { padding:2px 5px; white-space:nowrap; }
+.autocomplete strong { font-weight:normal; color:#3399FF; }
