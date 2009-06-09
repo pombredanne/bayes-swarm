@@ -68,6 +68,7 @@
 
 require 'date'
 require 'iconv'
+require 'mysql'
 require 'right_aws'
 require 'util/sdb_batchput'
 require 'util/log'
@@ -115,6 +116,8 @@ unless Pulsar::Runner.dryRun?
   log "Created domain Words#{scantime.year}"
 end
 
+unsafe_intwords = nil
+page_map = nil
 with_connection do |connection| 
   # Cache some data to avoid continuous db lookups
   unsafe_intwords = Intword.get_i18n_unsafe_words_hash
@@ -122,12 +125,18 @@ with_connection do |connection|
   Page.find(:all).each do |p|
     page_map[p.id] = {'url'=> p.url, 'kind'=> p.kind.kind}
   end
+end
+
+#begin
+  db_opts = Pulsar::Runner.opts['database']
+  dbh = Mysql.real_connect(db_opts[:host], db_opts[:user], db_opts[:pass], db_opts[:db])
   
   # Retry and global counters
   last_stored_intword = start_intword_id
   count = 0
   exception_count = 0
   success = false
+  res = nil
   begin
     if exception_count > 0
       log "Retrying... attempt #{exception_count}"
@@ -138,10 +147,14 @@ with_connection do |connection|
       item = {}
       item_id = nil
       log "Pulling MySQL words for date #{d}, start intword #{start_intword_id}..."
-      Word.find(:all, 
-                :conditions => [ "scantime = ? AND intword_id >= ?", 
-                                 scantime, start_intword_id],
-                :order => 'intword_id, page_id').each do |w|
+      res = dbh.query(
+        "SELECT w.intword_id, w.page_id, w.scantime, w.count, w.bodycount, w.titlecount, " +
+                "w.keywordcount, w.anchorcount, w.headingcount, iw.name, l.iso_639_1 " +
+        "FROM words w, intwords iw, globalize_languages l WHERE " +
+        "w.intword_id = iw.id AND iw.language_id = l.id AND " +
+        "w.scantime ='#{scantime}' AND w.intword_id >= #{start_intword_id} " +
+        "ORDER BY w.intword_id, w.page_id")
+      res.each_hash do |w|
         # Check for interruption
         if interrupted
           exception_count = max_exception_count + 1
@@ -150,21 +163,21 @@ with_connection do |connection|
         
         # Skip if we know we can't push the word into SDB because it contains
         # funny characters.
-        if unsafe_intwords.has_key?(w.intword.id)
-          warn_log "Skipping intword #{w.intword.id} because it has been marked unsafe"
+        if unsafe_intwords.has_key?(w["intword_id"].to_i)
+          warn_log "Skipping intword #{w['intword_id']} because it has been marked unsafe"
           next
         end
 
         # Compute the item unique id
-        read_item_id = "#{w.intword.id}_#{w.page_id}_#{d}"
+        read_item_id = "#{w['intword_id']}_#{w['page_id']}_#{d}"
         if read_item_id == item_id
-          # We are still elaborating the same item. Increase counters
-          item['count'] += w.count
-          item['bodycount'] += w.bodycount
-          item['titlecount'] += w.titlecount
-          item['keywordcount'] += w.keywordcount
-          item['anchorcount'] += w.anchorcount
-          item['headingcount'] += w.headingcount
+          # We are still elaborating the same item. Increase counters          
+          item['count'] += w['count'].to_i
+          item['bodycount'] += w['bodycount'].to_i
+          item['titlecount'] += w['titlecount'].to_i
+          item['keywordcount'] += w['keywordcount'].to_i
+          item['anchorcount'] += w['anchorcount'].to_i
+          item['headingcount'] += w['headingcount'].to_i
         else
           # The item changed. Store the current item, if we have one and its counters
           # are over threshold.
@@ -204,19 +217,20 @@ with_connection do |connection|
           # Ensure that everything is string, apart from counters (handled separately above)
           item_id = read_item_id
           item = {}
-          item['count'] = w.count
-          item['bodycount'] = w.bodycount
-          item['titlecount'] = w.titlecount
-          item['keywordcount'] = w.keywordcount
-          item['anchorcount'] = w.anchorcount
-          item['headingcount'] = w.headingcount
-          item['scantime'] = w.scantime.strftime('%Y-%m-%d')
-          item['id'] = w.intword.id.to_s
-          item['page_id'] = w.page_id.to_s
-          item['page_url'] = page_map[w.page_id]['url']
-          item['page_kind'] = page_map[w.page_id]['kind']
-          item['name'] = w.intword.name
-          item['language'] = w.intword.language.code      
+          item['count'] = w['count'].to_i
+          item['bodycount'] = w['bodycount'].to_i
+          item['titlecount'] = w['titlecount'].to_i
+          item['keywordcount'] = w['keywordcount'].to_i
+          item['anchorcount'] = w['anchorcount'].to_i
+          item['headingcount'] = w['headingcount'].to_i
+          item['scantime'] = w['scantime']  # should already be a str in the %Y-%m-%d format
+          raise "Malformed date. Expected #{d}, found #{item['scantime']}" if item['scantime'] != d
+          item['id'] = w['intword_id'].to_i
+          item['page_id'] = w['page_id'].to_i
+          item['page_url'] = page_map[w['page_id'].to_i]['url']
+          item['page_kind'] = page_map[w['page_id'].to_i]['kind']
+          item['name'] = w['name']
+          item['language'] = w['iso_639_1']
         end
       end
       # Store the last item
@@ -249,9 +263,10 @@ with_connection do |connection|
       success = true
     rescue Exception => e
       exception_count += 1
+      res.free if res
       warn_log "Uh oh, something wrong happened: #{e}"
       warn_log "Last thing I stored was: intword #{last_stored_intword}, date #{d}"
     end
   end while !success && exception_count < max_exception_count
   log success ? "Success!" : "Terminating because too many exceptions or interruption occurred."
-end
+#end
