@@ -269,4 +269,5 @@ end
     end
   end while !success && exception_count < max_exception_count
   log success ? "Success!" : "Terminating because too many exceptions or interruption occurred."
+  exit success ? 0 : 1
 #end
