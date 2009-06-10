@@ -263,7 +263,10 @@ end
       success = true
     rescue Exception => e
       exception_count += 1
-      res.free if res
+      begin
+        res.free if res
+      rescue Mysql::Error => me
+      end
       warn_log "Uh oh, something wrong happened: #{e}"
       warn_log "Last thing I stored was: intword #{last_stored_intword}, date #{d}"
     end
