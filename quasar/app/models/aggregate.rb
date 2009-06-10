@@ -4,7 +4,7 @@ class Aggregate
   @@lowest_date = Date.civil(2007, 1, 1)
   
   # TODO: should limit the number of intwords
-  def self.pie(sdb, from_date, to_date, intwords, entity='count')
+  def self.pie(sdb, from_date, to_date, intwords, kind=nil, entity='count', pages=nil)
     validate_entity(entity)
     low_date, high_date = validate_dates(from_date, to_date)
 
@@ -15,6 +15,8 @@ class Aggregate
     conditions = { 
       :scantime => low_date.strftime('%Y-%m-%d')..high_date.strftime('%Y-%m-%d'), 
       :id => ([] << intwords).flatten.map { |iw| iw.id } }
+    conditions[:page_id] = pages if pages      
+    conditions[:page_kind] = kind if kind
     points = {}
     sdb.select(domains, [ "id", "#{entity}"], conditions) do |item|
       p = points[item['id'].first]

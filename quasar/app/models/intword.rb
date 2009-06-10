@@ -5,14 +5,15 @@ class Intword < ActiveRecord::Base
   @@lowest_date = Date.civil(2007, 1, 1)
   
   # TODO: should limit the number of intwords  
-  def time_series(sdb, from_date, to_date, entity='count', page_id=nil)
+  def time_series(sdb, from_date, to_date, kind=nil, entity='count', pages=nil)
     validate_entity(entity)
     low_date, high_date = validate_dates(from_date, to_date)
     domains = ((low_date.year)..(high_date.year)).map { |y| "Words#{y}"}
     conditions = { 
       :scantime => low_date.strftime('%Y-%m-%d')..high_date.strftime('%Y-%m-%d'),
       :id => id }
-    conditions[:page_id] = page_id if page_id
+    conditions[:page_id] = pages if pages
+    conditions[:page_kind] = kind if kind    
 
     points = {}
     sdb.select(domains, ["#{entity}", "scantime"], conditions) do |item|

@@ -14,7 +14,12 @@
 </div>
 <% content_for :footer do %>
   <script type="text/javascript" charset="utf-8">
+    var sources = [{name: "All", id: 0}];
+    <% @sources.each do |source| -%>
+      sources[sources.length] = {name: "<%= source.name %>", id: <%= source.id %> };
+    <% end -%>
     $(document).ready(function() {
+      // quasar.setSources(sources);
       quasar.createAnalysisForm($('#form_container'), $('#analysis_container'));
     });
     
