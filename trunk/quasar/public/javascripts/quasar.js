@@ -81,24 +81,50 @@ quasar.initResponseArea = function (response, container) {
 // Fields
 // ****************
 
-quasar.form.Word = function() {};
+quasar.form.Word = function() {
+  this.language = 'English';
+  this.lang_code = 'en';
+};
 quasar.form.Word.prototype.render = function(formDiv) {
-  $("<label>Word:</label>").appendTo(formDiv);
   var that = this;
-  this.intword_ac = $("<input name='q' type='text' style='width: 300px' />").appendTo(formDiv);
+  var ac_label = $("<span>Word:</span>").appendTo(formDiv);
+  this.buildAc('en', ac_label);
+  this.it_input = $("<input type='radio' name='language' value='it'>");
+  $("<label />").append(this.it_input).append("&nbsp;Italian").appendTo(formDiv);
+  this.it_input.click(function (){
+    that.langauge = 'Italian';
+    that.lang_code = 'it';    
+    that.buildAc('it', ac_label);
+  })
+
+  this.en_input = $("<input type='radio' name='language' value='en' checked>");
+  $("<label />").append(this.en_input).append("&nbsp;English").appendTo(formDiv);  
+  this.en_input.click(function (){
+    that.language = 'English';
+    that.lang_code = 'en';        
+    that.buildAc('en', ac_label);    
+  })  
+};
+quasar.form.Word.prototype.buildAc = function(lang, placeHolder) {
+  var old_ac = this.intword_ac;
+  if (old_ac) {
+    old_ac.remove();
+  }
+  that = this;
+  this.intword_ac = $("<input name='q' type='text' style='width: 300px' />").insertAfter(placeHolder);
   this.intword_ac.data('suggestions', {});
   this.intword_ac.autocomplete({
     serviceUrl: "/intword/ac",   // TODO: remove absolute url
     minChars: 2,
     width: 300,
-    params: { lang: 'it'},
+    params: {lang: lang},
     delimiter: /,\s*/,
     onSelect: function(value, data) {
       that.intword_ac.data('suggestions')[value] = data;
     }
-  });  
+  });
 };
-quasar.form.Word.prototype.parse = function() {
+quasar.form.Word.prototype.populate = function() {
   var suggestions = this.intword_ac.data('suggestions');
   this.intword_names = $.map(this.intword_ac.val().split(','), 
                              function(name) { return $.trim(name); });
@@ -111,25 +137,40 @@ quasar.form.Word.prototype.parse = function() {
   this.intword_ids = intword_ids;
 };
 quasar.form.Word.prototype.params = function() {
-  return this.intword_ids.join('-');
+  return 'id=' + this.intword_ids.join('-') + '&language=' + this.lang_code ;
 };
 quasar.form.Word.prototype.to_s = function() {
   return this.intword_names.join(',');
 };
 
+quasar.form.Source = function() {};
+quasar.form.Source.prototype.render = function(formDiv) {
+  $("<span>Source:</span>").appendTo(formDiv);
+  source_select = $('<select />').appendTo(formDiv);
+  $.each(sources, function(i, source) {   // global variable hack
+    $("<option value='" + source.id + "'>" + source.name + "</option>").appendTo(source_select);
+  });
+  this.source_select = source_select;
+};
+quasar.form.Source.prototype.populate = function() {};
+quasar.form.Source.prototype.params = function() {
+  return 'source=' + this.source_select.val();
+};
+quasar.form.Source.prototype.to_s = function() {
+  return this.source_select.find(':selected').text();
+};
 
 quasar.form.DateRange = function() {};
 quasar.form.DateRange.prototype.render = function(formDiv) {
-  $("<label>From:</label>").appendTo(formDiv);
+  $("<span>From:</span>").appendTo(formDiv);
   this.from_date_dp = $("<input type='text' />").appendTo(formDiv).datepicker(
     { dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
   $("<span>&nbsp;&nbsp;</span>").appendTo(formDiv);
-  $("<label>To:</label>").appendTo(formDiv);
+  $("<span>To:</span>").appendTo(formDiv);
   this.to_date_dp = $("<input type='text' />").appendTo(formDiv).datepicker(
     { dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });  
 };
-quasar.form.DateRange.prototype.parse = function() {
-};
+quasar.form.DateRange.prototype.populate = function() {};
 quasar.form.DateRange.prototype.params = function() {
   return 'from_date=' + quasar.formatDate(this.from_date()) + '&to_date=' + quasar.formatDate(this.to_date());
 };
@@ -145,6 +186,54 @@ quasar.form.DateRange.prototype.to_date = function() {
   return to_date;
 };
 
+quasar.form.Entity = function() {};
+quasar.form.Entity.prototype.render = function(formDiv) {
+  $("<span>Found in:</span>").appendTo(formDiv);
+  this.entity_select = $('<select />').appendTo(formDiv);
+  $("<option value='count'>Overall count</option>").appendTo(this.entity_select);
+  $("<option value='headingcount'>Headings</option>").appendTo(this.entity_select);
+  $("<option value='anchorcount'>Anchors</option>").appendTo(this.entity_select);
+  $("<option value='titlecount'>Titles</option>").appendTo(this.entity_select);  
+  $("<option value='bodycount'>Body occurrences</option>").appendTo(this.entity_select);
+  $("<option value='keywordcount'>Keywords</option>").appendTo(this.entity_select);
+};
+quasar.form.Entity.prototype.populate = function() {};
+quasar.form.Entity.prototype.params = function() {
+  return 'entity=' + this.entity_select.val();
+};
+quasar.form.Entity.prototype.to_s = function() {
+  return this.entity_select.find(':selected').text();
+};
+
+quasar.form.Kind = function() {};
+quasar.form.Kind.prototype.render = function(formDiv) {
+  $("<span>Kind:</span>").appendTo(formDiv);
+  this.rss_input = $("<input type='radio' name='kind' value='rss'>");
+  $("<label />").append(this.rss_input).append("&nbsp;RSS Feed").appendTo(formDiv);
+  this.url_input = $("<input type='radio' name='kind' value='url'>");
+  $("<label />").append(this.url_input).append("&nbsp;Webpage").appendTo(formDiv);
+  this.both_input = $("<input type='radio' name='kind' value='both' checked>");
+  $("<label />").append(this.both_input).append("&nbsp;Both").appendTo(formDiv);  
+};
+quasar.form.Kind.prototype.populate = function() {};
+quasar.form.Kind.prototype.params = function() {
+  if (this.rss_input.is(':checked')) {
+    return 'kind=rss';
+  } else if (this.url_input.is(':checked')) {
+    return 'kind=url';
+  } else {
+    return 'kind=both';
+  }
+};
+quasar.form.Kind.prototype.to_s = function() {
+  if (this.rss_input.is(':checked')) {
+    return 'Rss Feed';
+  } else if (this.url_input.is(':checked')) {
+    return 'Webpage';
+  } else {
+    return 'both Rss Feeds and Webpages';
+  }  
+};
 
 // Actions
 // ****************
@@ -163,9 +252,9 @@ quasar.action.GoogleNewsArchive = function(intword_names, from_date, to_date) {
   return $("<a href='" + news_search_link + "' target='_blank' />").text("Google news search");  
 };
 
-quasar.action.DataTable = function() {
-  
-};
+// quasar.action.Permalink = function(permalink_url, type) {
+//   return $("<a href='" + permalink_url + '&type=' + type + "' />").text("Permalink");
+// };
 
 // Analysis
 // ****************
@@ -173,7 +262,11 @@ quasar.action.DataTable = function() {
 quasar.analysis.TimeSeries = function() {
   this.wordfield = new quasar.form.Word();
   this.datefield = new quasar.form.DateRange();
-  this.fields = [this.wordfield, this.datefield];
+  this.entityfield = new quasar.form.Entity();
+  this.sourcefield = new quasar.form.Source();
+  this.kindfield = new quasar.form.Kind();    
+  this.fields = [this.wordfield, this.datefield, this.entityfield, this.sourcefield,
+                 this.kindfield];
 };
 quasar.analysis.TimeSeries.prototype.renderForm = function(formDiv) {
   $.each(this.fields, function(i, field) {
@@ -181,18 +274,30 @@ quasar.analysis.TimeSeries.prototype.renderForm = function(formDiv) {
     field.render(fieldDiv);
   });
 };
-quasar.analysis.TimeSeries.prototype.parse = function() {
-  $.each(this.fields, function(i, field) { field.parse(); });
+quasar.analysis.TimeSeries.prototype.populate = function() {
+  $.each(this.fields, function(i, field) { field.populate(); });
 };
 quasar.analysis.TimeSeries.prototype.callback = quasar.timelineResponse;
 quasar.analysis.TimeSeries.prototype.url = function() {
-  return '/gviz/ts/' + this.wordfield.params() + '?entity=count&' + this.datefield.params();
+  return '/gviz/ts?' + this.wordfield.params() + 
+      '&' + this.entityfield.params() + 
+      '&' + this.datefield.params() +
+      '&' + this.sourcefield.params() +
+      '&' + this.kindfield.params();
 };
 quasar.analysis.TimeSeries.prototype.title = function() {
-  return 'Word:' + this.wordfield.to_s();
+  var title_div = $('<div />');
+  $('<h2 />').text(this.entityfield.to_s() + ' of ' + this.wordfield.to_s() + '(' + this.wordfield.language + ')').appendTo(title_div);
+  var txt = 'From <b>' + quasar.formatDate(this.datefield.from_date()) + '</b> to <b>' + quasar.formatDate(this.datefield.to_date()) + '</b>';
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+
+  var txt = 'on Source <b>' + this.sourcefield.to_s() + '</b> limited to kind <b>' + this.kindfield.to_s() + '</b>';
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+  return title_div;
 };
 quasar.analysis.TimeSeries.prototype.actions = function() {
-  return [ quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
+  return [ //quasar.action.Permalink(this.url().replace('/gviz/ts','/intword/show'), 'ts'),
+           quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
            quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
                                            this.datefield.from_date(),
                                            this.datefield.to_date()) ];
@@ -201,7 +306,11 @@ quasar.analysis.TimeSeries.prototype.actions = function() {
 quasar.analysis.PieChart = function() {
   this.wordfield = new quasar.form.Word();
   this.datefield = new quasar.form.DateRange();
-  this.fields = [this.wordfield, this.datefield];  
+  this.entityfield = new quasar.form.Entity();
+  this.sourcefield = new quasar.form.Source();
+  this.kindfield = new quasar.form.Kind();    
+  this.fields = [this.wordfield, this.datefield, this.entityfield, this.sourcefield,
+                 this.kindfield];
 };
 quasar.analysis.PieChart.prototype.renderForm = function(formDiv) {
   $.each(this.fields, function(i, field) {
@@ -209,18 +318,30 @@ quasar.analysis.PieChart.prototype.renderForm = function(formDiv) {
     field.render(fieldDiv);
   });
 };
-quasar.analysis.PieChart.prototype.parse = function() {
-  $.each(this.fields, function(i, field) { field.parse(); });
+quasar.analysis.PieChart.prototype.populate = function() {
+  $.each(this.fields, function(i, field) { field.populate(); });
 };
 quasar.analysis.PieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.PieChart.prototype.url = function() {
-  return '/gviz/pie/' + this.wordfield.params() + '?entity=count&' + this.datefield.params();
+  return '/gviz/pie?' + this.wordfield.params() + 
+      '&' + this.entityfield.params() + 
+      '&' + this.datefield.params() +
+      '&' + this.sourcefield.params() +
+      '&' + this.kindfield.params();
 };
 quasar.analysis.PieChart.prototype.title = function() {
-  return 'Word:' + this.wordfield.to_s();
+  var title_div = $('<div />');
+  $('<h2 />').text(this.entityfield.to_s() + ' of ' + this.wordfield.to_s() + '(' + this.wordfield.language + ')').appendTo(title_div);
+  var txt = 'From <b>' + quasar.formatDate(this.datefield.from_date()) + '</b> to <b>' + quasar.formatDate(this.datefield.to_date()) + '</b>';
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+
+  var txt = 'on Source <b>' + this.sourcefield.to_s() + '</b> limited to kind <b>' + this.kindfield.to_s() + '</b>';
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+  return title_div;  
 };
 quasar.analysis.PieChart.prototype.actions = function() {
-  return [ quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
+  return [ //quasar.action.Permalink(this.url().replace('/gviz/pie','/intword/show'), 'pie'), 
+           quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
            quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
                                            this.datefield.from_date(),
                                            this.datefield.to_date()) ];
@@ -231,7 +352,7 @@ quasar.analysis.PieChart.prototype.actions = function() {
 
 quasar.createAnalysisForm = function(form_container, analysis_container) {
   var formDiv = $("<div class='qs-form' style='display:none'></div>");
-  $("<label>Type:</label>").appendTo(formDiv);
+  $("<span>Type:</span>").appendTo(formDiv);
   var type_select = $('<select />').appendTo(formDiv)
   $("<option value='ts'>Time Series</option>").appendTo(type_select);
   $("<option value='pie'>Pie Chart</option>").appendTo(type_select);
@@ -261,7 +382,7 @@ quasar.createAnalysisForm = function(form_container, analysis_container) {
 };
 
 quasar.createAnalysis = function(container, analysis) { 
-  analysis.parse();
+  analysis.populate();
   var query = new google.visualization.Query(analysis.url());
   query.setTimeout(15);  
   
@@ -269,7 +390,7 @@ quasar.createAnalysis = function(container, analysis) {
   quasar.icon('close').attr('style', 'float:right').appendTo(analysis_div).click(function() {
     analysis_div.remove();
   });
-  $('<h2 />').text(analysis.title()).appendTo(analysis_div);
+  analysis.title().appendTo(analysis_div);
   var graph_div = $("<div class='qs-analysis-graph'></div>").appendTo(analysis_div);
   $("<img src='/images/spin.gif' alt='Loading...' />").appendTo(graph_div);
   
