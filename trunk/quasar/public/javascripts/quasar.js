@@ -67,6 +67,9 @@ quasar.createAnalysis = function(container, intword_ac, select, from_date, to_da
   var from_date = from_date.datepicker('getDate') || one_month_ago;
   var to_date = to_date.datepicker('getDate') || today;
   
+  var query = new google.visualization.Query('/gviz/' + type + '/' + intword_ids.join('-') + '?entity=count&from_date=' + quasar.formatDate(from_date) + '&to_date=' + quasar.formatDate(to_date));
+  query.setTimeout(15);  
+  
   var analysis_div = $("<div class='qs-analysis' style='display:none'/>");
   quasar.icon('close').attr('style', 'float:right').appendTo(analysis_div).click(function() {
     analysis_div.remove();
@@ -83,6 +86,7 @@ quasar.createAnalysis = function(container, intword_ac, select, from_date, to_da
   var action = $("<a href='" + csv_link + "' />").text("Export as CSV");
   $("<li />").append(action).appendTo(actions_list);
   
+  // TODO: remove this language once the language selector goes in.
   language = 'it';
   var news_search_link = 'http://news.google.com/archivesearch?' + 
     'as_user_ldate=' + quasar.formatDate(from_date) +
@@ -92,13 +96,19 @@ quasar.createAnalysis = function(container, intword_ac, select, from_date, to_da
   var action = $("<a href='" + news_search_link + "' target='_blank' />").text("Google news search");
   $("<li />").append(action).appendTo(actions_list);
   
-  
+  var action = $("<span class='qs-link' />").text("View Data table").click(function (){
+    if ($(graph_div).children('.qs-datatable').size() == 0) {
+      var table_div = $('<div class="qs-datatable"/>').appendTo(graph_div);
+      $("<img src='/images/spin.gif' alt='Loading...' />").appendTo(table_div);
+      query.send(quasar.tableResponse(table_div, this));
+    }
+  });
+  $("<li />").append(action).appendTo(actions_list);
+    
   $("<br clear='both' />").appendTo(analysis_div);
   container.append(analysis_div);
   analysis_div.fadeIn('fast');
-  
-  var query = new google.visualization.Query('/gviz/' + type + '/' + intword_ids.join('-') + '?entity=count&from_date=' + quasar.formatDate(from_date) + '&to_date=' + quasar.formatDate(to_date))
-  query.setTimeout(15);
+
   if (type == 'ts') {
     query.send(quasar.timelineResponse(graph_div));
   } else if (type == 'pie') {
@@ -118,10 +128,23 @@ quasar.timelineResponse = function(container) {
     }
 
     var data = response.getDataTable();
-    var chart = new google.visualization.AnnotatedTimeLine(container.get(0));
+    var graph_container = $("<div style='width: 600px; height: 200px;'/>").appendTo(container);
+    var chart = new google.visualization.AnnotatedTimeLine(graph_container.get(0));
     chart.draw(data);
   };
 };
+
+quasar.tableResponse = function(container) {
+  return function(response) {
+    if (!quasar.initResponseArea(response, container)) {
+      return;
+    }
+
+    var data = response.getDataTable();
+    var chart = new google.visualization.Table(container.get(0));
+    chart.draw(data);
+  };  
+}
 
 quasar.pieChartResponse = function(container) {
   return function(response) {
