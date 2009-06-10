@@ -30,6 +30,17 @@
   width: 250px;
 }
 
+.qs-icon-box {
+  width: 20px; 
+  height: 20px;
+}
+
+.qs-icon {
+  margin: 2px;
+}
+
+# Autocompleter
+# -------------
 .autocomplete-w1 { background:url(../images/ac_shadow.png) no-repeat bottom right; position:absolute; top:0px; left:0px; margin:8px 0 0 6px; /* IE6 fix: */ _background:none; _margin:0; }
 .autocomplete { border:1px solid #999; background:#FFF; cursor:default; text-align:left; max-height:350px; overflow:auto; margin:-6px 6px 6px -6px; /* IE6 specific: */ _height:350px;  _margin:0; _overflow-x:hidden; }
 .autocomplete .selected { background:#F0F0F0; }
