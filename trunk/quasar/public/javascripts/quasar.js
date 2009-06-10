@@ -54,7 +54,19 @@ quasar.pieChartResponse = function(container) {
 
     var data = response.getDataTable();    
     var chart = new google.visualization.PieChart(container.get(0));
-    chart.draw(data, {width: 250, height: 200, is3D: true });
+    chart.draw(data, {width: 300, height: 300, is3D: true, pieJoinAngle: 5, legendFontSize: 10 });
+  };
+}
+
+quasar.motionChartResponse = function(container) {
+  return function(response) {
+    if (!quasar.initResponseArea(response, container)) {
+      return;
+    }
+
+    var data = response.getDataTable();    
+    var chart = new google.visualization.MotionChart(container.get(0));
+    chart.draw(data, {width: 600, height: 400});
   };
 }
 
@@ -92,7 +104,7 @@ quasar.form.Word.prototype.render = function(formDiv) {
   this.it_input = $("<input type='radio' name='language' value='it'>");
   $("<label />").append(this.it_input).append("&nbsp;Italian").appendTo(formDiv);
   this.it_input.click(function (){
-    that.langauge = 'Italian';
+    that.language = 'Italian';
     that.lang_code = 'it';    
     that.buildAc('it', ac_label);
   })
@@ -323,7 +335,7 @@ quasar.analysis.PieChart.prototype.populate = function() {
 };
 quasar.analysis.PieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.PieChart.prototype.url = function() {
-  return '/gviz/pie?' + this.wordfield.params() + 
+  return '/gviz/wordpie?' + this.wordfield.params() + 
       '&' + this.entityfield.params() + 
       '&' + this.datefield.params() +
       '&' + this.sourcefield.params() +
@@ -340,12 +352,83 @@ quasar.analysis.PieChart.prototype.title = function() {
   return title_div;  
 };
 quasar.analysis.PieChart.prototype.actions = function() {
-  return [ //quasar.action.Permalink(this.url().replace('/gviz/pie','/intword/show'), 'pie'), 
+  return [ //quasar.action.Permalink(this.url().replace('/gviz/wordpie','/intword/show'), 'wordpie'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
            quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
                                            this.datefield.from_date(),
                                            this.datefield.to_date()) ];
 };
+
+quasar.analysis.MediaPieChart = function() {
+  this.wordfield = new quasar.form.Word();
+  this.datefield = new quasar.form.DateRange();
+  this.entityfield = new quasar.form.Entity();
+  this.sourcefield = new quasar.form.Source();
+  this.kindfield = new quasar.form.Kind();    
+  this.fields = [this.wordfield, this.datefield, this.entityfield, this.sourcefield,
+                 this.kindfield];  
+};
+quasar.analysis.MediaPieChart.prototype.renderForm = quasar.analysis.PieChart.prototype.renderForm;
+quasar.analysis.MediaPieChart.prototype.populate = quasar.analysis.PieChart.prototype.populate;
+quasar.analysis.MediaPieChart.prototype.callback = quasar.pieChartResponse;
+quasar.analysis.MediaPieChart.prototype.url = function() {
+  return '/gviz/pagepie?' + this.wordfield.params() + 
+      '&' + this.entityfield.params() + 
+      '&' + this.datefield.params() +
+      '&' + this.sourcefield.params() +
+      '&' + this.kindfield.params();
+};
+quasar.analysis.MediaPieChart.prototype.title = quasar.analysis.PieChart.prototype.title;
+quasar.analysis.MediaPieChart.prototype.actions =  function() {
+  return [ //quasar.action.Permalink(this.url().replace('/gviz/pagepie','/intword/show'), 'pagepie'), 
+           quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
+           quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
+                                           this.datefield.from_date(),
+                                           this.datefield.to_date()) ];
+};
+
+quasar.analysis.MotionChart = function() {
+  this.wordfield = new quasar.form.Word();
+  this.datefield = new quasar.form.DateRange();
+  this.entityfield = new quasar.form.Entity();
+  this.kindfield = new quasar.form.Kind();    
+  this.fields = [this.wordfield, this.datefield, this.entityfield,
+                 this.kindfield];  
+};
+quasar.analysis.MotionChart.prototype.renderForm = function(formDiv) {
+  $.each(this.fields, function(i, field) {
+    var fieldDiv = $('<div />').appendTo(formDiv);
+    field.render(fieldDiv);
+  });
+};
+quasar.analysis.MotionChart.prototype.populate = function() {
+  $.each(this.fields, function(i, field) { field.populate(); });
+};
+quasar.analysis.MotionChart.prototype.callback = quasar.motionChartResponse;
+quasar.analysis.MotionChart.prototype.url = function() {
+  return '/gviz/motion?' + this.wordfield.params() + 
+      '&' + this.entityfield.params() + 
+      '&' + this.datefield.params() +
+      '&' + this.kindfield.params();
+};
+quasar.analysis.MotionChart.prototype.title = function() {
+  var title_div = $('<div />');
+  $('<h2 />').text(this.entityfield.to_s() + ' of ' + this.wordfield.to_s() + '(' + this.wordfield.language + ')').appendTo(title_div);
+  var txt = 'From <b>' + quasar.formatDate(this.datefield.from_date()) + '</b> to <b>' + quasar.formatDate(this.datefield.to_date()) + '</b>';
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+
+  var txt = 'Limited to kind <b>' + this.kindfield.to_s() + '</b>';
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+  return title_div;  
+};
+quasar.analysis.MotionChart.prototype.actions =  function() {
+  return [ //quasar.action.Permalink(this.url().replace('/gviz/motion','/intword/show'), 'motion'), 
+           quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
+           quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
+                                           this.datefield.from_date(),
+                                           this.datefield.to_date()) ];
+};
+
 
 // Global functions (again?)
 // ****************
@@ -355,16 +438,22 @@ quasar.createAnalysisForm = function(form_container, analysis_container) {
   $("<span>Type:</span>").appendTo(formDiv);
   var type_select = $('<select />').appendTo(formDiv)
   $("<option value='ts'>Time Series</option>").appendTo(type_select);
-  $("<option value='pie'>Pie Chart</option>").appendTo(type_select);
+  $("<option value='wordpie'>Pie Chart</option>").appendTo(type_select);
+  $("<option value='pagepie'>Media Pie Chart</option>").appendTo(type_select);  
+  $("<option value='motion'>Motion Chart</option>").appendTo(type_select);    
   var subFormDiv = $("<div />").appendTo(formDiv);
   var analysis = null;  
   type_select.change(function() {
     subFormDiv.empty();
     if ($(this).val() == 'ts') {
       analysis = new quasar.analysis.TimeSeries();
-    } else if ($(this).val() == 'pie') {
+    } else if ($(this).val() == 'wordpie') {
       analysis = new quasar.analysis.PieChart();
-    }    
+    } else if ($(this).val() == 'pagepie') {
+      analysis = new quasar.analysis.MediaPieChart();
+    } else if ($(this).val() == 'motion') {
+      analysis = new quasar.analysis.MotionChart();
+    }
     analysis.renderForm(subFormDiv);
   });
   $("<br />").appendTo(formDiv);
