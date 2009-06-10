@@ -42,6 +42,15 @@ quasar.createAnalysisForm = function(form_container, analysis_container) {
   formDiv.fadeIn('fast');
 };
 
+quasar.icon = function(iconname) {
+  return $('<div />').addClass('ui-state-default ui-corner-all qs-icon-box').
+    append($("<span />").addClass('ui-icon ui-icon-' + iconname + ' qs-icon')).
+    hover(
+  		function() { $(this).addClass('ui-state-hover'); }, 
+  		function() { $(this).removeClass('ui-state-hover'); }
+  	);;
+}
+
 quasar.createAnalysis = function(container, intword_ac, select, from_date, to_date) {
   var suggestions = intword_ac.data('suggestions');
   var intword_names = $.map(intword_ac.val().split(','), function(name) { return $.trim(name); });
@@ -59,6 +68,9 @@ quasar.createAnalysis = function(container, intword_ac, select, from_date, to_da
   var to_date = to_date.datepicker('getDate') || today;
   
   var analysis_div = $("<div class='qs-analysis' style='display:none'/>");
+  quasar.icon('close').attr('style', 'float:right').appendTo(analysis_div).click(function() {
+    analysis_div.remove();
+  });
   $('<h2 />').text('Word:' + intword_names.join(',')).appendTo(analysis_div);
   var graph_div = $("<div class='qs-analysis-graph'></div>").appendTo(analysis_div);
   $("<img src='/images/spin.gif' alt='Loading...' />").appendTo(graph_div);
@@ -66,11 +78,6 @@ quasar.createAnalysis = function(container, intword_ac, select, from_date, to_da
   var actions_div = $("<div class='qs-analysis-action'></div>").appendTo(analysis_div);
   $('<h3>Actions</h3>').appendTo(actions_div);  
   var actions_list = $("<ul />").appendTo(actions_div);
-  
-  var action = $("<a href='#' />").text('Remove this chart').click(function() {
-    analysis_div.remove();
-  })
-  $("<li />").append(action).appendTo(actions_list);
 
   var csv_link = '/gviz/' + type + '/' + intword_ids.join('-') + '?entity=count&from_date=' + quasar.formatDate(from_date) + '&to_date=' + quasar.formatDate(to_date) + '&tqx=out:csv%3BreqId:0';
   var action = $("<a href='" + csv_link + "' />").text("Export as CSV");
