@@ -25,18 +25,24 @@ quasar.createAnalysisForm = function(form_container, analysis_container) {
   $("<option value='ts'>Time Series</option>").appendTo(type_select);
   $("<option value='pie'>Pie Chart</option>").appendTo(type_select);  
   $("<br />").appendTo(formDiv);
+  $("<label>From:</label>").appendTo(formDiv);
+  var from_date = $("<input type='text' />").appendTo(formDiv).datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
+  $("<span>&nbsp;&nbsp;</span>").appendTo(formDiv);
+  $("<label>To:</label>").appendTo(formDiv);
+  var to_date = $("<input type='text' />").appendTo(formDiv).datepicker({ dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
+  $("<br />").appendTo(formDiv);
   
   var submit_btn = $("<input type='submit' value='Analyze' id='qs-analysis-btn' />");
   submit_btn.appendTo(formDiv);
   submit_btn.click(function() {
-    quasar.createAnalysis(analysis_container, intword_ac, type_select);
+    quasar.createAnalysis(analysis_container, intword_ac, type_select, from_date, to_date);
   });
   
   form_container.empty().append(formDiv);
   formDiv.fadeIn('fast');
 };
 
-quasar.createAnalysis = function(container, intword_ac, select) {
+quasar.createAnalysis = function(container, intword_ac, select, from_date, to_date) {
   var suggestions = intword_ac.data('suggestions');
   var intword_names = $.map(intword_ac.val().split(','), function(name) { return $.trim(name); });
   var intword_ids = [];
@@ -45,7 +51,12 @@ quasar.createAnalysis = function(container, intword_ac, select) {
       intword_ids.push(suggestions[name]);
     }    
   });
-  var type = $(select).val()
+  var type = $(select).val();
+  var today = new Date();
+  var one_month_ago = new Date();
+  one_month_ago.setMonth(one_month_ago.getMonth()-1);
+  var from_date = from_date.datepicker('getDate') || one_month_ago;
+  var to_date = to_date.datepicker('getDate') || today;
   
   var analysis_div = $("<div class='qs-analysis' style='display:none'/>");
   $('<h2 />').text('Word:' + intword_names.join(',')).appendTo(analysis_div);
@@ -61,17 +72,14 @@ quasar.createAnalysis = function(container, intword_ac, select) {
   })
   $("<li />").append(action).appendTo(actions_list);
 
-  var csv_link = '/gviz/' + type + '/' + intword_ids.join('-') + '?entity=count&interval=6m&tqx=out:csv%3BreqId:0';
+  var csv_link = '/gviz/' + type + '/' + intword_ids.join('-') + '?entity=count&from_date=' + quasar.formatDate(from_date) + '&to_date=' + quasar.formatDate(to_date) + '&tqx=out:csv%3BreqId:0';
   var action = $("<a href='" + csv_link + "' />").text("Export as CSV");
   $("<li />").append(action).appendTo(actions_list);
   
-  high_date = new Date();
-  low_date = new Date();
-  low_date.setMonth(low_date.getMonth() -6);
   language = 'it';
   var news_search_link = 'http://news.google.com/archivesearch?' + 
-    'as_user_ldate=' + low_date.getFullYear() + '/' + (low_date.getMonth() +1) + '/' + low_date.getDate() +
-    '&as_user_hdate=' + high_date.getFullYear() + '/' + (high_date.getMonth() +1) + '/' + high_date.getDate() +
+    'as_user_ldate=' + quasar.formatDate(from_date) +
+    '&as_user_hdate=' + quasar.formatDate(to_date) +
     '&lr=lang_' + language + '&hl=' + language +
     '&q=' + intword_names.join('+');
   var action = $("<a href='" + news_search_link + "' target='_blank' />").text("Google news search");
@@ -82,7 +90,7 @@ quasar.createAnalysis = function(container, intword_ac, select) {
   container.append(analysis_div);
   analysis_div.fadeIn('fast');
   
-  var query = new google.visualization.Query('/gviz/' + type + '/' + intword_ids.join('-') + '?entity=count&interval=6m')
+  var query = new google.visualization.Query('/gviz/' + type + '/' + intword_ids.join('-') + '?entity=count&from_date=' + quasar.formatDate(from_date) + '&to_date=' + quasar.formatDate(to_date))
   query.setTimeout(15);
   if (type == 'ts') {
     query.send(quasar.timelineResponse(graph_div));
@@ -91,6 +99,10 @@ quasar.createAnalysis = function(container, intword_ac, select) {
   }
   intword_ac.val('').data('suggestions', {}).focus();
 }
+
+quasar.formatDate = function(date) {
+  return '' + date.getFullYear() + '/' + (date.getMonth() +1) + '/' + date.getDate();
+};
 
 quasar.timelineResponse = function(container) {
   return function(response) {
