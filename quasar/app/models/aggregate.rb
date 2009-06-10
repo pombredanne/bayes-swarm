@@ -1,17 +1,12 @@
 class Aggregate
   
   @@entities = [ 'count', 'bodycount', 'titlecount' , 'keywordcount' , 'anchorcount', 'headingcount' ]
-  @@periods = [ '7d', '2w', '1m', '3m', '6m', '1y' ]
   @@lowest_date = Date.civil(2007, 1, 1)
   
   # TODO: should limit the number of intwords
-  def self.pie(sdb, intwords, entity='count', period='1y')
+  def self.pie(sdb, from_date, to_date, intwords, entity='count')
     validate_entity(entity)
-    validate_period(period)
-    # TODO: should validate date like other entities
-    low_date = Date.from_interval(period)
-    low_date = @@lowest_date if low_date < @@lowest_date
-    high_date = Date.today()    
+    low_date, high_date = validate_dates(from_date, to_date)
 
     intword_name_map = {}
     intwords.each { |iw| intword_name_map[iw.id] = iw.name }
@@ -39,12 +34,32 @@ class Aggregate
       raise ArgumentError.new("Invalid entity #{entity}") 
     end
   end
-  
-  def self.validate_period(period)
-    unless @@periods.include?(period)
-      raise ArgumentError.new("Invalid period #{period}")
+    
+  def self.validate_dates(from_date, to_date)
+    if from_date
+      begin
+        from_date = Date.strptime(from_date, '%Y/%m/%d')
+        from_date = @@lowest_date if from_date < @@lowest_date
+      rescue ArgumentError
+        from_date = Date.today << 1  # 1 month ago
+      end
+    else
+      from_date = Date.today << 1  # 1 month ago
     end
+
+    if to_date
+      begin
+        to_date = Date.strptime(to_date, '%Y/%m/%d')
+        to_date = Date.today if to_date < from_date
+      rescue ArgumentError
+        to_date = Date.today
+      end
+    else
+      to_date = Date.today
+    end    
+    return from_date, to_date
   end
+  
 end
 
 class AggregatePoint

@@ -5,13 +5,9 @@ class Intword < ActiveRecord::Base
   @@lowest_date = Date.civil(2007, 1, 1)
   
   # TODO: should limit the number of intwords  
-  def time_series(sdb, interval, entity='count', page_id=nil)
+  def time_series(sdb, from_date, to_date, entity='count', page_id=nil)
     validate_entity(entity)
-    
-    # TODO: should validate date like other entities    
-    low_date = Date.from_interval(interval)
-    low_date = @@lowest_date if low_date < @@lowest_date
-    high_date = Date.today()
+    low_date, high_date = validate_dates(from_date, to_date)
     domains = ((low_date.year)..(high_date.year)).map { |y| "Words#{y}"}
     conditions = { 
       :scantime => low_date.strftime('%Y-%m-%d')..high_date.strftime('%Y-%m-%d'),
@@ -38,6 +34,32 @@ class Intword < ActiveRecord::Base
       raise ArgumentError.new("Invalid entity #{entity}") 
     end
   end  
+  
+  def validate_dates(from_date, to_date)
+    if from_date
+      begin
+        from_date = Date.strptime(from_date, '%Y/%m/%d')
+        from_date = @@lowest_date if from_date < @@lowest_date
+      rescue ArgumentError
+        from_date = Date.today << 1  # 1 month ago
+      end
+    else
+      from_date = Date.today << 1  # 1 month ago
+    end
+
+    if to_date
+      begin
+        to_date = Date.strptime(to_date, '%Y/%m/%d')
+        to_date = Date.today if to_date < from_date
+      rescue ArgumentError
+        to_date = Date.today
+      end
+    else
+      to_date = Date.today
+    end    
+    return from_date, to_date
+  end
+
 end
 
 class TimeSeriePoint
