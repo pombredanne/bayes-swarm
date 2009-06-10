@@ -21,8 +21,12 @@
 
 .qs-analysis-graph {
   width: 600px;
-  height: 200px;
   float: left;
+}
+
+.qs-datatable {
+  margin-top: 5px;
+  margin-left: 15px;
 }
 
 .qs-analysis-action {
@@ -38,6 +42,17 @@
 .qs-icon {
   margin: 2px;
 }
+
+.qs-link {
+  text-decoration: underline;
+  cursor: pointer;
+  color:#1666a3;
+}
+
+.qs-link:hover {
+  color:#0b4775;
+}
+
 
 # Autocompleter
 # -------------
