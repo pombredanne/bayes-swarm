@@ -3,8 +3,7 @@ class Intword < ActiveRecord::Base
     
   @@entities = [ 'count', 'bodycount', 'titlecount' , 'keywordcount' , 'anchorcount', 'headingcount' ]
   @@lowest_date = Date.civil(2007, 1, 1)
-  
-  # TODO: should limit the number of intwords  
+
   def time_series(sdb, from_date, to_date, kind=nil, entity='count', pages=nil)
     validate_entity(entity)
     low_date, high_date = validate_dates(from_date, to_date)

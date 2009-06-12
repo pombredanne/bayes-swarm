@@ -3,7 +3,6 @@ class Aggregate
   @@entities = [ 'count', 'bodycount', 'titlecount' , 'keywordcount' , 'anchorcount', 'headingcount' ]
   @@lowest_date = Date.civil(2007, 1, 1)
   
-  # TODO: should limit the number of intwords  
   def self.motion(sdb, from_date, to_date, intwords, kind=nil, entity='count', pages=nil)
     validate_entity(entity)
     low_date, high_date = validate_dates(from_date, to_date)
@@ -43,7 +42,6 @@ class Aggregate
     end
   end
   
-  # TODO: should limit the number of intwords
   def self.pie(sdb, by, from_date, to_date, intwords, kind=nil, entity='count', pages=nil)
     validate_entity(entity)
     low_date, high_date = validate_dates(from_date, to_date)
