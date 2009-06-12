@@ -57,6 +57,36 @@
   color:#0b4775;
 }
 
+.qs-chart {
+  cursor: pointer;
+  float: left;
+  width: 140px;
+  border: 1px solid #fff;
+}
+
+.qs-chart:hover, .qs-chart-selected {
+  border: 1px dotted #999;
+  background-color: rgb(252, 252, 252);
+}
+
+#qs-chart-description {
+  font-weight: bold;
+}
+
+.qs-form-controls {
+  margin-top: 5px;
+}
+
+.qs-form-control {
+  margin: 3px 0;
+}
+
+#qs-analysis-btn {
+  width: 100px;
+  height: 30px;
+  font-weight:bold;
+}
+
 
 # Autocompleter
 # -------------
