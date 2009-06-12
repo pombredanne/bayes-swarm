@@ -99,8 +99,7 @@ quasar.form.Word = function() {
 };
 quasar.form.Word.prototype.render = function(formDiv) {
   var that = this;
-  var ac_label = $("<span>Word:</span>").appendTo(formDiv);
-  this.buildAc('en', ac_label);
+  $("<span>Language:</span>").appendTo(formDiv);  
   this.it_input = $("<input type='radio' name='language' value='it'>");
   $("<label />").append(this.it_input).append("&nbsp;Italian").appendTo(formDiv);
   this.it_input.click(function (){
@@ -116,6 +115,9 @@ quasar.form.Word.prototype.render = function(formDiv) {
     that.lang_code = 'en';        
     that.buildAc('en', ac_label);    
   })  
+  $('<br />').appendTo(formDiv);
+  var ac_label = $("<span>Word:</span>").appendTo(formDiv);
+  this.buildAc('en', ac_label);
 };
 quasar.form.Word.prototype.buildAc = function(lang, placeHolder) {
   var old_ac = this.intword_ac;
@@ -282,7 +284,7 @@ quasar.analysis.TimeSeries = function() {
 };
 quasar.analysis.TimeSeries.prototype.renderForm = function(formDiv) {
   $.each(this.fields, function(i, field) {
-    var fieldDiv = $('<div />').appendTo(formDiv);
+    var fieldDiv = $('<div class="qs-form-control" />').appendTo(formDiv);
     field.render(fieldDiv);
   });
 };
@@ -326,7 +328,7 @@ quasar.analysis.PieChart = function() {
 };
 quasar.analysis.PieChart.prototype.renderForm = function(formDiv) {
   $.each(this.fields, function(i, field) {
-    var fieldDiv = $('<div />').appendTo(formDiv);
+    var fieldDiv = $('<div class="qs-form-control" />').appendTo(formDiv);
     field.render(fieldDiv);
   });
 };
@@ -397,7 +399,7 @@ quasar.analysis.MotionChart = function() {
 };
 quasar.analysis.MotionChart.prototype.renderForm = function(formDiv) {
   $.each(this.fields, function(i, field) {
-    var fieldDiv = $('<div />').appendTo(formDiv);
+    var fieldDiv = $('<div class="qs-form-control" />').appendTo(formDiv);
     field.render(fieldDiv);
   });
 };
@@ -433,40 +435,43 @@ quasar.analysis.MotionChart.prototype.actions =  function() {
 // Global functions (again?)
 // ****************
 
+quasar.createChartForm = function(formDiv, subFormDiv, analysis_container, analysis, title, image) {
+  var chart = $("<div class='qs-chart' />").appendTo(formDiv);
+  chart.append($("<img src='" + image + "'>"));
+  chart.click(function() {
+    $('.qs-chart').removeClass('qs-chart-selected');
+    $(this).addClass('qs-chart-selected');
+    subFormDiv.fadeOut('fast').empty();
+    subFormDiv.append('<p><b>' + title + '</b> parameters:</p>');
+    analysis.renderForm(subFormDiv); 
+
+    var submit_btn = $("<button id='qs-analysis-btn' />").text('Analyse!');
+    submit_btn.appendTo(subFormDiv);
+    submit_btn.click(function() {
+      quasar.createAnalysis(analysis_container, analysis);
+    });    
+    subFormDiv.fadeIn('fast');
+  });
+  chart.hover(function() {
+    $('#qs-chart-description').append(title);
+  }, function() {
+    $('#qs-chart-description').empty();
+  });
+  
+}
+
 quasar.createAnalysisForm = function(form_container, analysis_container) {
   var formDiv = $("<div class='qs-form' style='display:none'></div>");
-  $("<span>Type:</span>").appendTo(formDiv);
-  var type_select = $('<select />').appendTo(formDiv)
-  $("<option value='ts'>Time Series</option>").appendTo(type_select);
-  $("<option value='wordpie'>Pie Chart</option>").appendTo(type_select);
-  $("<option value='pagepie'>Media Pie Chart</option>").appendTo(type_select);  
-  $("<option value='motion'>Motion Chart</option>").appendTo(type_select);    
-  var subFormDiv = $("<div />").appendTo(formDiv);
-  var analysis = null;  
-  type_select.change(function() {
-    subFormDiv.empty();
-    if ($(this).val() == 'ts') {
-      analysis = new quasar.analysis.TimeSeries();
-    } else if ($(this).val() == 'wordpie') {
-      analysis = new quasar.analysis.PieChart();
-    } else if ($(this).val() == 'pagepie') {
-      analysis = new quasar.analysis.MediaPieChart();
-    } else if ($(this).val() == 'motion') {
-      analysis = new quasar.analysis.MotionChart();
-    }
-    analysis.renderForm(subFormDiv);
-  });
-  $("<br />").appendTo(formDiv);
+  $("<p>Choose a graph type: <span id='qs-chart-description'></span></p>").appendTo(formDiv);
+   var subFormDiv = $("<div class='qs-form-controls' />");
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.TimeSeries(), 'Time Series', '/images/timeline_chart.png');
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.PieChart(), 'Pie Chart', '/images/pie_chart.png');
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.MediaPieChart(), 'Media Pie Chart', '/images/media_chart.png');
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.MotionChart(), 'Motion Chart', '/images/motion_chart.png');      
   
-  var submit_btn = $("<input type='submit' value='Analyze' id='qs-analysis-btn' />");
-  submit_btn.appendTo(formDiv);
-  submit_btn.click(function() {
-    quasar.createAnalysis(analysis_container, analysis);
-  });
-  
+  $("<br clear='both' />").appendTo(formDiv);
+  subFormDiv.appendTo(formDiv);
   form_container.empty().append(formDiv);
-  type_select.val('ts');
-  type_select.change();
   formDiv.fadeIn('fast');
 };
 
