@@ -128,7 +128,7 @@ quasar.form.Word.prototype.buildAc = function(lang, placeHolder) {
   this.intword_ac = $("<input name='q' type='text' style='width: 300px' />").insertAfter(placeHolder);
   this.intword_ac.data('suggestions', {});
   this.intword_ac.autocomplete({
-    serviceUrl: "/intword/ac",   // TODO: remove absolute url
+    serviceUrl: root_path + "intword/ac",   // TODO: remove absolute url
     minChars: 2,
     width: 300,
     params: {lang: lang},
@@ -293,7 +293,7 @@ quasar.analysis.TimeSeries.prototype.populate = function() {
 };
 quasar.analysis.TimeSeries.prototype.callback = quasar.timelineResponse;
 quasar.analysis.TimeSeries.prototype.url = function() {
-  return '/gviz/ts?' + this.wordfield.params() + 
+  return root_path + 'gviz/ts?' + this.wordfield.params() + 
       '&' + this.entityfield.params() + 
       '&' + this.datefield.params() +
       '&' + this.sourcefield.params() +
@@ -337,7 +337,7 @@ quasar.analysis.PieChart.prototype.populate = function() {
 };
 quasar.analysis.PieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.PieChart.prototype.url = function() {
-  return '/gviz/wordpie?' + this.wordfield.params() + 
+  return root_path + 'gviz/wordpie?' + this.wordfield.params() + 
       '&' + this.entityfield.params() + 
       '&' + this.datefield.params() +
       '&' + this.sourcefield.params() +
@@ -374,7 +374,7 @@ quasar.analysis.MediaPieChart.prototype.renderForm = quasar.analysis.PieChart.pr
 quasar.analysis.MediaPieChart.prototype.populate = quasar.analysis.PieChart.prototype.populate;
 quasar.analysis.MediaPieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.MediaPieChart.prototype.url = function() {
-  return '/gviz/pagepie?' + this.wordfield.params() + 
+  return root_path + 'gviz/pagepie?' + this.wordfield.params() + 
       '&' + this.entityfield.params() + 
       '&' + this.datefield.params() +
       '&' + this.sourcefield.params() +
@@ -408,7 +408,7 @@ quasar.analysis.MotionChart.prototype.populate = function() {
 };
 quasar.analysis.MotionChart.prototype.callback = quasar.motionChartResponse;
 quasar.analysis.MotionChart.prototype.url = function() {
-  return '/gviz/motion?' + this.wordfield.params() + 
+  return root_path + 'gviz/motion?' + this.wordfield.params() + 
       '&' + this.entityfield.params() + 
       '&' + this.datefield.params() +
       '&' + this.kindfield.params();
@@ -464,10 +464,10 @@ quasar.createAnalysisForm = function(form_container, analysis_container) {
   var formDiv = $("<div class='qs-form' style='display:none'></div>");
   $("<p>Choose a graph type: <span id='qs-chart-description'></span></p>").appendTo(formDiv);
    var subFormDiv = $("<div class='qs-form-controls' />");
-  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.TimeSeries(), 'Time Series', '/images/timeline_chart.png');
-  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.PieChart(), 'Pie Chart', '/images/pie_chart.png');
-  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.MediaPieChart(), 'Media Pie Chart', '/images/media_chart.png');
-  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.MotionChart(), 'Motion Chart', '/images/motion_chart.png');      
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.TimeSeries(), 'Time Series', root_path + 'images/timeline_chart.png');
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.PieChart(), 'Pie Chart', root_path + 'images/pie_chart.png');
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.MediaPieChart(), 'Media Pie Chart', root_path + 'images/media_chart.png');
+  quasar.createChartForm(formDiv, subFormDiv, analysis_container, new quasar.analysis.MotionChart(), 'Motion Chart', root_path + 'images/motion_chart.png');      
   
   $("<br clear='both' />").appendTo(formDiv);
   subFormDiv.appendTo(formDiv);
@@ -486,7 +486,7 @@ quasar.createAnalysis = function(container, analysis) {
   });
   analysis.title().appendTo(analysis_div);
   var graph_div = $("<div class='qs-analysis-graph'></div>").appendTo(analysis_div);
-  $("<img src='/images/spin.gif' alt='Loading...' />").appendTo(graph_div);
+  $("<img src='" + root_path + "images/spin.gif' alt='Loading...' />").appendTo(graph_div);
   
   var actions_div = $("<div class='qs-analysis-action'></div>").appendTo(analysis_div);
   $('<h3>Actions</h3>').appendTo(actions_div);  
@@ -501,7 +501,7 @@ quasar.createAnalysis = function(container, analysis) {
   var action = $("<span class='qs-link' />").text("View Data table").click(function (){
     if ($(graph_div).children('.qs-datatable').size() == 0) {
       var table_div = $('<div class="qs-datatable"/>').appendTo(graph_div);
-      $("<img src='/images/spin.gif' alt='Loading...' />").appendTo(table_div);
+      $("<img src='" + root_path + "images/spin.gif' alt='Loading...' />").appendTo(table_div);
       query.send(quasar.tableResponse(table_div, this));
     }
   });
