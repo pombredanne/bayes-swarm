@@ -30,7 +30,13 @@
           <li <%= controller.controller_name == 'intword' ? "id=\"active\"" : ""%>>
             <%= link_to "Analyze", :controller => 'intword', :action => 'create' %>
           <li>
-          <li><a href="http://www.bayes-swarm.com">Old Website</a></li>
+          <li <%= controller.controller_name == 'info' && controller.action_name == 'developers' ? "id=\"active\"" : "" %>>
+            <%= link_to "For Developers", :controller => 'info', :action => 'developers' %>
+          </li>
+          <li <%= controller.controller_name == 'info' && controller.action_name == 'contacts' ? "id=\"active\"" : "" %>>
+            <%= link_to "Contacts", :controller => 'info', :action => 'contacts' %>
+          </li>          
+          <li><a href="http://www.bayes-swarm.com">Old Website</a></li>          
           <li><a href="http://www.bayesfor.eu">BayesFor Association</a></li>
 				</ul>
       </div> 
@@ -39,49 +45,12 @@
           <div id="intro">
             <div id="intro-in">
               <%= yield :intro %>
-            <!-- <h2>Welcome to our site</h2>
-            <p class="intro">
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident.
-            </p> -->
             </div>
           </div>
           <div id="obsah" class="content box">
           <div class="in">
             <%= yield %>
-            <!-- <div class="shadow">
-            <img src="./images/image.jpg" alt="image.jpg" title="image.jpg" class="thumb" />
-            </div>
-
-            <ul class="columns">
-              <li class="col1">
-                <h3>Lorem ipsum</h3>
-                <p>
-                  Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut 
-                  labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris 
-                  nisi ut aliquip ex ea commodo 
-                  <a href="#" class="more">Find out more</a>
-                </p>   
-              </li>
-              <li class="col2">
-                <h3>Dolor sit amet</h3>
-                <p>
-                  Commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore 
-                  eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui 
-                  officia deserunt mollit anim id est laborum.
-                  <a href="#" class="more">Find out more</a>
-                </p> 
-              </li>
-              <li class="col3">
-                <h3>Consectetur</h3>
-                <p>
-                  Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                  Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est 
-                  laborum. Lorem ipsum dolor sit amet, consectetur.
-                  <a href="#" class="more">Find out more</a>
-                </p> 
-              </li>
-            </ul> -->
-              <div class="clear"></div>
+            <div class="clear"></div>
           
             </div>
         </div>
@@ -101,7 +70,8 @@
             </span> by <a xmlns:cc="http://creativecommons.org/ns#" href="http://www.bayesfor.eu" property="cc:attributionName" rel="cc:attributionURL">BayesFor</a> <br />
             are licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/2.5/it/">Creative Commons Attribution-Share Alike 2.5 Italy License</a>.
         </div>
-        <div class="f-right">Website template by <a href="http://www.davidkohout.cz">David Kohout</a></div>
+        <div class="f-right">Website template by <a href="http://www.davidkohout.cz">David Kohout</a><br />
+          Photos by <a href="http://www.jaconatura.it/">JacoNatura.it</a></div>
       </div>
     </div>
     <!-- end/ Layout stránek -->

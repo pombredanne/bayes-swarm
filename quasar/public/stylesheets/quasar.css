@@ -87,6 +87,13 @@
   font-weight:bold;
 }
 
+.qs-logo {
+  margin: 0 70px;
+  padding: 3px; 
+  background: #fff; 
+  border: 1px solid #d1d1d1;
+}
+
 
 # Autocompleter
 # -------------

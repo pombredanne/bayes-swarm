@@ -1,0 +1,64 @@
+<% content_for :title do %>
+  Informations for developers
+<% end %>
+<% content_for :intro do %>
+  <h2>Informations for developers</h2>
+  <p class="intro">
+    Contribute to Bayes-Swarm development. Use Bayes-Swarm data in your tools.
+    Access free datasets. There are many ways you can use to get started with
+    Bayes-Swarm!
+  </p>
+<% end %>
+<ul class="columns">
+  <li class="col1">
+    <h3>Datasets</h3>
+    <p>
+      Bayes-Swarm offers sample datasets that you can explore and use as a testbed
+      for the tools you will create. Are you interested in accessing more data?
+      <%= link_to "Contact us", :controller => 'info', :action => 'contacts' %>.
+    </p>
+    <p><br />
+      <a href="http://www.battlehorse.net/swarm_sample/2009_01_new.tar.gz">Jan 2009 Pagestore</a> (230Mb):
+      A complete archive of almost 200 webpages and rss feeds we crawled in the month of January 2009.
+    </p>
+    <p><br />
+      <a href="http://www.battlehorse.net/swarm_sample/bayes_db_01_2009.sql.gz ">Jan 2009 Bayes db</a> (4M datapoints, 26Mb):
+      A MySQL database dump containing word occurrences extracted from the above pagestore, already divided
+      by source, language, date and position where the word was found in the original text.
+    </p>
+    <p><br />
+      <a href="http://code.google.com/p/bayes-swarm/wiki/FreeDataset">Find out more</a>
+    </p>
+    <p><br /><b>Note (June 12th, 2009)</b>: We want to make available a sample instance of the
+      <a href="http://code.google.com/p/bayes-swarm/wiki/MeanMachine">MeanMachine</a> too, but it is not quite ready yet. Stay tuned for updates!
+    </p>
+  </li>
+  <li class="col2">
+    <h3>APIs</h3>
+    <p>
+      Bayes-Swarm data are accessible in various forms. You can decide between a 
+      CSV format (available on each <%= link_to "graphical analysis", :controller => 'intword', :action => 'create' %>)
+      you can import into your tools, or access our data source programmatically
+      using the <a href="http://code.google.com/apis/visualization/">Google Visualization APIs</a>.
+      If you are a visualization writer, <%= link_to "contact us", :controller => 'info', :action => 'contacts' %>
+      to have you visualization embedded in Bayes-Swarm.
+    </p>
+    <br />
+    <p><b>Note (June 12th, 2009)</b>: the documentation to access our GViz datasource is not available
+      yet. Check again soon for updates! In the meanwhile, you can use the CSV export functionality
+      provided with every graphical analysis <%= link_to "you create", :controller => 'intword', :action => 'create'%>.
+    </p>
+  </li>
+  <li class="col3">
+    <h3>Contribute</h3>
+    <p>
+      Bayes-Swarm is an open-source project released under the <b>GNU GPL v2</b> License.
+      You can browse the project information and source code at 
+      <a href="http://code.google.com/p/bayes-swarm">the code project website</a>.
+      We are happy to discuss and integrate any useful idea you might have!
+    </p>
+    <p>
+      <a href="http://code.google.com/p/bayes-swarm">Find out more</a>
+    </p> 
+  </li>
+</ul>
