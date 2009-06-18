@@ -255,13 +255,11 @@ quasar.form.Kind.prototype.to_s = function() {
 quasar.action.CsvLink = function(csv_url) {
   return $("<a href='" + csv_url + "' />").text("Export as CSV");
 };
-quasar.action.GoogleNewsArchive = function(intword_names, from_date, to_date) {
-  // TODO: remove this language once the language selector goes in.
-  language = 'it';
+quasar.action.GoogleNewsArchive = function(intword_names, lang_code, from_date, to_date) {
   var news_search_link = 'http://news.google.com/archivesearch?' + 
     'as_user_ldate=' + quasar.formatDate(from_date) +
     '&as_user_hdate=' + quasar.formatDate(to_date) +
-    '&lr=lang_' + language + '&hl=' + language +
+    '&lr=lang_' + lang_code + '&hl=' + lang_code +
     '&q=' + intword_names.join('+');
   return $("<a href='" + news_search_link + "' target='_blank' />").text("Google news search");  
 };
@@ -313,6 +311,7 @@ quasar.analysis.TimeSeries.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/ts','/intword/show'), 'ts'),
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
            quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
+                                           this.wordfield.lang_code,             
                                            this.datefield.from_date(),
                                            this.datefield.to_date()) ];
 };
@@ -356,7 +355,8 @@ quasar.analysis.PieChart.prototype.title = function() {
 quasar.analysis.PieChart.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/wordpie','/intword/show'), 'wordpie'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
-           quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
+           quasar.action.GoogleNewsArchive(this.wordfield.intword_names,
+                                           this.wordfield.lang_code,
                                            this.datefield.from_date(),
                                            this.datefield.to_date()) ];
 };
@@ -385,6 +385,7 @@ quasar.analysis.MediaPieChart.prototype.actions =  function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/pagepie','/intword/show'), 'pagepie'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
            quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
+                                           this.wordfield.lang_code,             
                                            this.datefield.from_date(),
                                            this.datefield.to_date()) ];
 };
@@ -427,6 +428,7 @@ quasar.analysis.MotionChart.prototype.actions =  function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/motion','/intword/show'), 'motion'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
            quasar.action.GoogleNewsArchive(this.wordfield.intword_names, 
+                                           this.wordfield.lang_code,             
                                            this.datefield.from_date(),
                                            this.datefield.to_date()) ];
 };
