@@ -126,32 +126,20 @@ quasar.form.Word.prototype.buildAc = function(lang, placeHolder) {
   }
   that = this;
   this.intword_ac = $("<input name='q' type='text' style='width: 300px' />").insertAfter(placeHolder);
-  this.intword_ac.data('suggestions', {});
   this.intword_ac.autocomplete({
-    serviceUrl: root_path + "intword/ac",   // TODO: remove absolute url
+    serviceUrl: root_path + "intword/ac",
     minChars: 2,
     width: 300,
     params: {lang: lang},
     delimiter: /,\s*/,
-    onSelect: function(value, data) {
-      that.intword_ac.data('suggestions')[value] = data;
-    }
   });
 };
 quasar.form.Word.prototype.populate = function() {
-  var suggestions = this.intword_ac.data('suggestions');
   this.intword_names = $.map(this.intword_ac.val().split(','), 
                              function(name) { return $.trim(name); });
-  var intword_ids = [];
-  $.each(this.intword_names, function(i, name) {
-    if (suggestions[name]) {
-      intword_ids.push(suggestions[name]);
-    }    
-  });
-  this.intword_ids = intword_ids;
 };
 quasar.form.Word.prototype.params = function() {
-  return 'id=' + this.intword_ids.join('-') + '&language=' + this.lang_code ;
+  return 'id=' + this.intword_names.join(',') + '&language=' + this.lang_code ;
 };
 quasar.form.Word.prototype.to_s = function() {
   return this.intword_names.join(',');
@@ -161,7 +149,7 @@ quasar.form.Source = function() {};
 quasar.form.Source.prototype.render = function(formDiv) {
   $("<span>Source:</span>").appendTo(formDiv);
   source_select = $('<select />').appendTo(formDiv);
-  $.each(sources, function(i, source) {   // global variable hack
+  $.each(sources, function(i, source) {   // 'sources' global variable hack
     $("<option value='" + source.id + "'>" + source.name + "</option>").appendTo(source_select);
   });
   this.source_select = source_select;
