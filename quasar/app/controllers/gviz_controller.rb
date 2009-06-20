@@ -86,6 +86,9 @@ class GvizController < GvizBaseController
       iws = Intword.find_all_by_name(
           params[:id].split(','), 
           :include => [:language]).reject { |iw| iw.language.name != params[:language] }
+      if !iws || iws.size == 0
+        raise ArgumentError.new('None of the keywords you specified exist in our database')
+      end
       if iws.size > 10
         raise ArgumentError.new('Too many keywords. You can use 10 at most')
       end
