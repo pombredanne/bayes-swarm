@@ -40,6 +40,8 @@
 # Copyright(c) 2008 - bayes-swarm project.
 # Licensed under the GNU General Public License v2.
 #
+require 'set'
+
 class GvizBaseController < ApplicationController
   
   protected
@@ -72,7 +74,7 @@ class GvizBaseController < ApplicationController
         :filename => @csv_filename || csv_filename )
     else
       # html or invalid output format
-      render :action => 'debughtml'
+      render :action => 'debughtml', :layout => false
     end    
   end
   
@@ -131,6 +133,37 @@ class GvizBaseController < ApplicationController
       heap[dataitem[0]] ||= Array.new(datasources.size).fill(0)
       heap[dataitem[0]][i] += dataitem[1]      
     end
+  end
+  
+  # Trims a datasource horizontally if it exceeds a maximum number of rows,
+  # collapsing all the entries in excess into a single "Other" row.
+  # The datasource should have at least 2 columns: the firs one being the row
+  # key, all the subsequent ones associated numerical values.
+  # Each row is assigned an overall value by summing over all the associated
+  # values. If the number of rows exceeds +maxitems+, only the first 
+  # +maxitems-1+ are retained, and all the remaining ones are collapsed into
+  # a single row called "Other". The value of each cell in the "Other" row
+  # will be the column-wise sum of all the cells in the excluded rows.
+  def otherify(datasource, maxitems)
+    keep_keys = datasource.map do |dataitem|
+      [dataitem[0], dataitem[1, dataitem.length-1].reduce(:+)]
+    end.sort_by { |dataitem| -dataitem[1] }.take(maxitems-1).map do |dataitem|
+      dataitem[0]
+    end.to_set
+    
+    res = []
+    other_key = [ "Other" , Array.new(datasource[0].length-1).fill(0)].flatten
+    datasource.each do |dataitem|
+      if keep_keys.include?(dataitem[0])
+        res << dataitem
+      else
+        dataitem[1, dataitem.length-1].each_with_index do |datapoint, i|
+          other_key[i+1] += datapoint
+        end
+      end
+    end
+    res << other_key
+    res    
   end
   
 end
