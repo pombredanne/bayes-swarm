@@ -8,7 +8,10 @@ class Aggregate
     low_date, high_date = validate_dates(from_date, to_date)
     
     page_name_map = {}
-    (pages ? Page.find(pages) : Page.find(:all)).each { |page| page_name_map[page.id] = page.source.name }        
+    (pages ? Page.find(pages, :include => [:source]) : 
+             Page.find(:all, :include => [:source])).each do
+      |page| page_name_map[page.id] = page.source.name
+    end
 
     domains = ((low_date.year)..(high_date.year)).map { |y| "Words#{y}"}
     conditions = { 
@@ -53,7 +56,10 @@ class Aggregate
       intwords.each { |iw| key_name_map[iw.id] = iw.name }
     elsif by == :page
       key = 'page_id'
-      (pages ? Page.find(pages) : Page.find(:all)).each { |page| key_name_map[page.id] = page.source.name }        
+      (pages ? Page.find(pages, :include => [:source]) : 
+               Page.find(:all, :include => [:source])).each do 
+          |page| key_name_map[page.id] = page.source.name
+      end
     end
 
     domains = ((low_date.year)..(high_date.year)).map { |y| "Words#{y}"}
