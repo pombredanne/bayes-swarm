@@ -3,9 +3,9 @@ class GvizController < GvizBaseController
   def ts
     sdb = Sdb.new
     gvizifier do |gviz|
-      pages = fill_pages      
-      iws = fill_intwords
-      kind = fill_kind
+      pages = Page.fill_pages(params)
+      iws = Intword.fill_intwords(params)
+      kind = Kind.fill_kind(params)
       
       csv_filename(iws.map { |iw| iw.id }.join('-'), 
                    pages ? pages.join('-') : nil, 
@@ -24,11 +24,37 @@ class GvizController < GvizBaseController
     end
   end
   
+  def stacked
+    sdb = Sdb.new
+    gvizifier do |gviz|
+      iws = Intword.fill_intwords(params)
+      kind = Kind.fill_kind(params)
+      
+      csv_filename(iws.map { |iw| iw.id }.join('-'), 
+                   params[:entity], 
+                   params[:from_date], 
+                   params[:to_date]) 
+                   
+      gviz.add_col('string', :id => 'source', :label=> 'Source')
+      series = []    
+      iws.each do |iw|
+        # Always pass nil as the pages to select. 
+        # Even though Intword.media_share understands the parameter, 
+        # at this moment do not allow multiple selection of sources, so it's all
+        # or nothing. 
+        series << Aggregate.pie(sdb, :page, params[:from_date], params[:to_date],
+                      [iw], kind, params[:entity], nil)
+        gviz.add_col('number', :id => iw.id, :label => iw.name)
+      end
+      gviz.set_data(otherify(merge(series), 10))          
+    end
+  end  
+  
   def motion
     sdb = Sdb.new
     gvizifier do |gviz|
-      iws = fill_intwords
-      kind = fill_kind
+      iws = Intword.fill_intwords(params)
+      kind = Kind.fill_kind(params)
       
       csv_filename(iws.map { |iw| iw.id }.join('-'), 
                    params[:entity], 
@@ -63,9 +89,9 @@ class GvizController < GvizBaseController
   def pie(by)
     sdb = Sdb.new
     gvizifier do |gviz|
-      pages = fill_pages
-      iws = fill_intwords
-      kind = fill_kind
+      pages = Page.fill_pages(params)
+      iws = Intword.fill_intwords(params)
+      kind = Kind.fill_kind(params)
       
       csv_filename(iws.map { |iw| iw.id }.join('-'), 
                    pages ? pages.join('-') : nil,
@@ -80,35 +106,4 @@ class GvizController < GvizBaseController
                     iws, kind, params[:entity], pages))
     end
   end
-  
-  def fill_intwords
-    unless params[:id].blank?
-      iws = Intword.find_all_by_name(
-          params[:id].split(','), 
-          :include => [:language]).reject { |iw| iw.language.name != params[:language] }
-      if !iws || iws.size == 0
-        raise ArgumentError.new('None of the keywords you specified exist in our database')
-      end
-      if iws.size > 10
-        raise ArgumentError.new('Too many keywords. You can use 10 at most')
-      end
-    else
-      raise ArgumentError.new('You must specify at least one keyword')
-    end
-    iws
-  end
-  
-  def fill_kind
-    kind = Kind.find_by_kind(params[:kind])
-    if kind
-      kind.kind
-    else
-      nil
-    end
-  end
-  
-  def fill_pages
-    params[:source] && params[:source] != '0' ? Source.find(params[:source]).pages.map { |p| p.id } : nil    
-  end
-  
 end

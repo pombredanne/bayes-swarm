@@ -3,6 +3,23 @@ class Intword < ActiveRecord::Base
     
   @@entities = [ 'count', 'bodycount', 'titlecount' , 'keywordcount' , 'anchorcount', 'headingcount' ]
   @@lowest_date = Date.civil(2007, 1, 1)
+  
+  def self.fill_intwords(params)
+    unless params[:id].blank?
+      iws = Intword.find_all_by_name(
+          params[:id].split(','), 
+          :include => [:language]).reject { |iw| iw.language.name != params[:language] }
+      if !iws || iws.size == 0
+        raise ArgumentError.new('None of the keywords you specified exist in our database')
+      end
+      if iws.size > 10
+        raise ArgumentError.new('Too many keywords. You can request 10 at most')
+      end
+    else
+      raise ArgumentError.new('You must specify at least one keyword')
+    end
+    iws
+  end  
 
   def time_series(sdb, from_date, to_date, kind=nil, entity='count', pages=nil)
     validate_entity(entity)
