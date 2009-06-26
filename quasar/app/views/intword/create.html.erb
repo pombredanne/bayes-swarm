@@ -20,15 +20,14 @@
       sources[sources.length] = {name: "<%= source.name %>", id: <%= source.id %> };
     <% end -%>
     $(document).ready(function() {
-      // quasar.setSources(sources);
-      quasar.createAnalysisForm($('#form_container'), $('#analysis_container'));
+      quasar.createMasterForm($('#form_container'), $('#analysis_container'));
     });
     
     // Load the Visualization API and the relevant packages
-    google.load('visualization', '1', {'packages':['motionchart', 'annotatedtimeline', 'imagesparkline', 'piechart', 'table']});
+    google.load('visualization', '1', {'packages':['motionchart', 'annotatedtimeline', 'imagesparkline', 'piechart', 'table', 'barchart']});
 
     // Set a callback to run when the API is loaded, and enable
     // the analysis form.
-    google.setOnLoadCallback(function() {});      
+    google.setOnLoadCallback(function() {});
   </script>
 <% end %>

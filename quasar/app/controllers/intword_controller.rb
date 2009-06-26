@@ -10,6 +10,18 @@ class IntwordController < ApplicationController
     @sources = Source.find(:all).sort_by { |s| s.name }
   end
   
+  def wordlookup
+  end
+  
+  def search
+    iws = Intword.fill_intwords(params)
+    simplified_iws = iws.map do |iw|
+      { :id => iw.id, :name => iw.name, :language => iw.language.name }
+    end
+    puts simplified_iws.inspect
+    render :json => simplified_iws.to_json
+  end
+  
   def ac
     matches = {
       'query' => params[:query] ,
@@ -29,4 +41,5 @@ class IntwordController < ApplicationController
       end
     render :json => matches.to_json
   end
+  
 end
