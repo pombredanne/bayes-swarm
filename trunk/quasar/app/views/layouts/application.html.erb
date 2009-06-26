@@ -27,7 +27,7 @@
           <li <%= controller.controller_name == 'home' && controller.action_name == "intro" ? "id=\"active\"" : ""%>>
             <%= link_to "Home", root_path %>
           </li>
-          <li <%= controller.controller_name == 'intword' ? "id=\"active\"" : ""%>>
+          <li <%= controller.controller_name == 'intword' && controller.action_name == 'create' ? "id=\"active\"" : ""%>>
             <%= link_to "Analyze", :controller => 'intword', :action => 'create' %>
           <li>
           <li <%= controller.controller_name == 'info' && controller.action_name == 'developers' ? "id=\"active\"" : "" %>>

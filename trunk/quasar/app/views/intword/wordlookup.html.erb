@@ -1,0 +1,52 @@
+<% content_for :title do %>
+  Search the Word database
+<% end %>
+<% content_for :intro do %>
+  <h2>Search the Word database</h2>
+  <p class="intro">
+    Use this page to search our Word database.
+  </p>
+<% end %>
+<div id="analysis_container"><div class='qs-form' id='qs-form'></div></div>
+<% content_for :footer do %>
+  <script type="text/javascript" charset="utf-8">
+    var root_path = "<%= root_path %>";  
+
+    function createIntwordSearchUrl(models) {
+      var params = $.map(models, function(model) {
+        return model.instance.params();
+      }).join('&');
+      return root_path + "intword/search?" + params;
+    }
+    
+    $(document).ready(function() {
+      var fields =  [
+        {name: 'word', instance: new quasar.form.Word()}];
+      quasar.createFormFields($('#qs-form'), fields);
+      
+      var search_btn = $("<button id='qs-analysis-btn' />").text('Search Words');
+      search_btn.appendTo($('#qs-form'));
+      search_btn.click(function() {
+        var models = $.map(fields, function(field) { 
+          return {name: field.name, instance: field.instance.toModel()}; 
+        });
+        var url = createIntwordSearchUrl(models);
+        $.getJSON(url, function(intwords) {
+          $.each(intwords, function(i, intword) {
+            var intword_id = $('<b></b>').text(intword.id);
+            var intword_name = $('<b></b>').text(intword.name);
+            var intword_language = $('<b></b>').text(intword.language);
+            $('<p></p>').
+              append('<span>Intword ID:</span>').
+              append(intword_id).
+              append('<span>&nbsp;Languge:</span>').
+              append(intword_language).
+              append('<span>&nbsp;Name:<span>').
+              append(intword_name).
+              appendTo($('#analysis_container'));
+          });
+        });
+      });
+    });
+  </script>
+<% end %>
