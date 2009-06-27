@@ -21,14 +21,6 @@ quasar.formatDate = function(date) {
   return '' + date.getFullYear() + '/' + (date.getMonth() +1) + '/' + date.getDate();
 };
 
-quasar.setModels = function(modelsMap) {
-  var models = {};
-  $.each(modelsMap, function(i, model) {
-    models[model.name] = model.instance;
-  });
-  this.models = models;
-};
-
 quasar.gvizUrl = function() {
   var params = [];
   $.each(this.models, function(name, model) {
@@ -314,10 +306,56 @@ quasar.action.GoogleNewsArchive = function(intword_names, lang_code, from_date, 
     '&q=' + intword_names.join('+');
   return $("<a href='" + news_search_link + "' target='_blank' />").text("Google news search");  
 };
+quasar.action.GetDataTable = function(gvizPrefix, models) {
+  var action = $("<span class='qs-link' />").text("View Data table").click(function (){
+    var analysis = new quasar.analysis.DataTable(gvizPrefix);
+    var container = $('#analysis_container');  // TODO: the container id shouldn't be hardcoded
+    quasar.createAnalysis(container, analysis, models);
+  });
+  return action;
+};
+quasar.action.MediaPie = function(models) {
+  var action = $("<span class='qs-link' />").text("View Media Pie").click(function (){
+    var analysis = new quasar.analysis.MediaPieChart();
+    var container = $('#analysis_container');  // TODO: the container id shouldn't be hardcoded
+    quasar.createAnalysis(container, analysis, models);
+  });
+  return action;  
+};
 
 // quasar.action.Permalink = function(permalink_url, type) {
 //   return $("<a href='" + permalink_url + '&type=' + type + "' />").text("Permalink");
 // };
+
+// Analysis : DataTable
+// This is a 'lite' visualization, since it lacks the logic to display its own
+// form, back can only be invoked with an existing set of Models.
+// ****************
+quasar.analysis.DataTable = function(gvizPrefix) {
+  this.gvizPrefix = gvizPrefix;
+};
+quasar.analysis.DataTable.prototype.setModels = quasar.setModels;
+quasar.analysis.DataTable.prototype.callback = quasar.tableResponse;
+quasar.analysis.DataTable.prototype.url = quasar.gvizUrl;
+quasar.analysis.DataTable.prototype.visualizationTitle = function() {
+  var title_div = $('<div />');
+  $('<h2 />').text(this.models.entity.to_s() + ' of ' + this.models.word.to_s() + '(' + this.models.word.language + ')').appendTo(title_div);
+  var txt = 'From <b>' + quasar.formatDate(this.models.date.from_date) + '</b> to <b>' + quasar.formatDate(this.models.date.to_date) + '</b>';
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+  
+  var txt = '';
+  if (this.models.source) {
+    txt = 'on Source <b>' + this.models.source.to_s() + '</b> limited to kind <b>' + this.models.kind.to_s() + '</b>';
+  } else {
+    txt = 'Limited to kind <b>' + this.models.kind.to_s() + '</b>';
+  }
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+  return title_div;
+};
+quasar.analysis.DataTable.prototype.actions = function() {
+  return [ //quasar.action.Permalink(this.url().replace('/gviz/ts','/intword/show'), 'ts'),
+           quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0')];
+};
 
 // Analysis : TimeSeries
 // ****************
@@ -356,7 +394,8 @@ quasar.analysis.TimeSeries.prototype.actions = function() {
            quasar.action.GoogleNewsArchive(this.models.word.intword_names, 
                                            this.models.word.lang_code,             
                                            this.models.date.from_date,
-                                           this.models.date.to_date) ];
+                                           this.models.date.to_date),
+           quasar.action.GetDataTable(this.gvizPrefix, this.models)];
 };
 
 // Analysis : Stacked
@@ -396,7 +435,9 @@ quasar.analysis.StackedChart.prototype.actions = function() {
            quasar.action.GoogleNewsArchive(this.models.word.intword_names,
                                            this.models.word.lang_code,
                                            this.models.date.from_date,
-                                           this.models.date.to_date) ];
+                                           this.models.date.to_date),
+           quasar.action.GetDataTable(this.gvizPrefix, this.models),
+           quasar.action.MediaPie(this.models)];
 };
 
 // Analysis : PieChart
@@ -437,7 +478,8 @@ quasar.analysis.PieChart.prototype.actions = function() {
            quasar.action.GoogleNewsArchive(this.models.word.intword_names,
                                            this.models.word.lang_code,
                                            this.models.date.from_date,
-                                           this.models.date.to_date) ];
+                                           this.models.date.to_date),
+           quasar.action.GetDataTable(this.gvizPrefix, this.models) ];
 };
 
 // Analysis : MediaPieChart
@@ -445,31 +487,19 @@ quasar.analysis.PieChart.prototype.actions = function() {
 
 quasar.analysis.MediaPieChart = function() {
   this.gvizPrefix = 'gviz/pagepie';
-  this.icon = root_path + 'images/mediacoverage.png';
-  this.title = 'Media Coverage';
-  this.description = 'Take a look at how different media and news sources ' +
-                     'paid attention to the topics you are interested in. ';
-};
-quasar.analysis.MediaPieChart.prototype.createFields = function() {
-  return [
-    {name: 'word', instance: new quasar.form.Word()},
-    {name: 'date', instance: new quasar.form.DateRange()},
-    {name: 'entity', instance: new quasar.form.Entity()},
-    {name: 'source', instance: new quasar.form.Source()},
-    {name: 'kind', instance: new quasar.form.Kind()}
-  ];
 };
 quasar.analysis.MediaPieChart.prototype.setModels = quasar.setModels;
 quasar.analysis.MediaPieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.MediaPieChart.prototype.url = quasar.gvizUrl;
-quasar.analysis.MediaPieChart.prototype.visualizationTitle = quasar.analysis.PieChart.prototype.visualizationTitle;
-quasar.analysis.MediaPieChart.prototype.actions =  function() {
+quasar.analysis.MediaPieChart.prototype.visualizationTitle = quasar.analysis.StackedChart.prototype.visualizationTitle;
+quasar.analysis.MediaPieChart.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/pagepie','/intword/show'), 'pagepie'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
            quasar.action.GoogleNewsArchive(this.models.word.intword_names, 
                                            this.models.word.lang_code,             
                                            this.models.date.from_date,
-                                           this.models.date.to_date) ];
+                                           this.models.date.to_date),
+           quasar.action.GetDataTable(this.gvizPrefix, this.models) ];
 };
 
 // Analysis : MotionChart
@@ -509,7 +539,8 @@ quasar.analysis.MotionChart.prototype.actions =  function() {
            quasar.action.GoogleNewsArchive(this.models.word.intword_names, 
                                            this.models.word.lang_code,             
                                            this.models.date.from_date,
-                                           this.models.date.to_date) ];
+                                           this.models.date.to_date),
+           quasar.action.GetDataTable(this.gvizPrefix, this.models) ];
 };
 
 
@@ -521,7 +552,6 @@ quasar.createMasterForm = function(form_container, analysis_container) {
    var formControlsDiv = $("<div class='qs-form-controls' >Select one of the above icons</div>");
   quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.TimeSeries());
   quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.PieChart());
-  // quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.MediaPieChart());
   quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.StackedChart());
   quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.MotionChart());
   $("<div id='qs-chart-description' style='display:none'></div>").appendTo(formDiv);
@@ -545,8 +575,9 @@ quasar.createAnalysisForm = function(formDiv, formControlsDiv, analysis_containe
     var submit_btn = $("<button id='qs-analysis-btn' />").text('Analyse!');
     submit_btn.appendTo(formControlsDiv);
     submit_btn.click(function() {
-      var models = $.map(fields, function(field) { 
-        return {name: field.name, instance: field.instance.toModel()}; 
+      var models = {};
+      $.each(fields, function(i, field) { 
+        models[field.name] = field.instance.toModel();
       });
       quasar.createAnalysis(analysis_container, analysis, models);
     });
@@ -555,9 +586,10 @@ quasar.createAnalysisForm = function(formDiv, formControlsDiv, analysis_containe
     direct_csv_link.appendTo(formControlsDiv);
     direct_csv_link.click(function(evt) {
       evt.stopPropagation();
-      var models = $.map(fields, function(field) { 
-        return {name: field.name, instance: field.instance.toModel()}; 
-      });      
+      var models = {};
+      $.each(fields, function(i, field) { 
+        models[field.name] = field.instance.toModel();
+      });     
       quasar.grabCsv(analysis, models);
     })
     
@@ -589,8 +621,8 @@ quasar.grabCsv = function(analysis, models) {
   document.location.href = csvUrl;  // dirty hack to trigger the CSV download
 };
 
-quasar.createAnalysis = function(container, analysis, models) { 
-  analysis.setModels(models);
+quasar.createAnalysis = function(container, analysis, models) {
+  analysis.models = models;
   var query = new google.visualization.Query(analysis.url());
   query.setTimeout(15);  
   
@@ -609,17 +641,6 @@ quasar.createAnalysis = function(container, analysis, models) {
   $.each(analysis.actions(), function(i, action) {
     $("<li />").append(action).appendTo(actions_list);
   });
-
-  // Datatable action is separated from the other actions because it affects
-  // the layout directly
-  var action = $("<span class='qs-link' />").text("View Data table").click(function (){
-    if ($(graph_div).children('.qs-datatable').size() == 0) {
-      var table_div = $('<div class="qs-datatable"/>').appendTo(graph_div);
-      $("<img src='" + root_path + "images/spin.gif' alt='Loading...' />").appendTo(table_div);
-      query.send(quasar.tableResponse(table_div));
-    }
-  });
-  $("<li />").append(action).appendTo(actions_list);
     
   $("<br clear='both' />").appendTo(analysis_div);
   container.append(analysis_div);
