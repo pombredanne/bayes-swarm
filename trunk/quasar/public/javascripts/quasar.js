@@ -154,7 +154,7 @@ quasar.form.Word.prototype.buildAc = function(lang, placeHolder) {
     minChars: 2,
     width: 300,
     params: {lang: lang},
-    delimiter: /,\s*/,
+    delimiter: /,\s*/
   });
 };
 quasar.form.Word.prototype.toModel = function() {
