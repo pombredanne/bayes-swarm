@@ -18,12 +18,6 @@
 #
 require 'rubygems'
 
-# Ruby 1.8.7 requires a version of hpricot >= 0.6.164. As such version
-# is the last one to be hosted on rubyforge, we have to load the newer
-# version from github. This explicit gem require ensures that the github
-# version is loaded even if older ones are present in the local gem repository.
-gem 'why-hpricot'
-
 require 'yaml'
 require 'util/log'
 
