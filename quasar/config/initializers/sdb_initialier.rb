@@ -30,7 +30,7 @@ class Sdb
       next_token = nil
       begin
         RAILS_DEFAULT_LOGGER.info q.inspect
-        res = connection.select(q, next_token)
+        res = connection.select(Array.new(q), next_token)
         res[:items].each do |item|
           if block_given?
             yield item.values.first
