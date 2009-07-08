@@ -57,11 +57,12 @@ class GvizBaseController < ApplicationController
       begin
         yield @gviz
       rescue ActiveRecord::RecordNotFound => e
-        @gviz.add_error(:id, e.message)
+        @gviz.add_error(:internal_error, e.message)
       rescue ArgumentError => e
-        @gviz.add_error(:id, e.message)        
+        @gviz.add_error(:internal_error, e.message)        
       rescue RightAws::AwsError => e
-        @gviz.add_error(:id, e.message)
+        @gviz.add_error(:internal_error, e.message, 
+                        "The backend failed to answer the query")
       end
     end
     
