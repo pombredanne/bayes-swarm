@@ -153,17 +153,19 @@ class GvizBaseController < ApplicationController
     end.to_set
     
     res = []
-    other_key = [ "Other" , Array.new(datasource[0].length-1).fill(0)].flatten
-    datasource.each do |dataitem|
-      if keep_keys.include?(dataitem[0])
-        res << dataitem
-      else
-        dataitem[1, dataitem.length-1].each_with_index do |datapoint, i|
-          other_key[i+1] += datapoint
+    if datasource.length > 0
+      other_key = [ "Other" , Array.new(datasource[0].length-1).fill(0)].flatten
+      datasource.each do |dataitem|
+        if keep_keys.include?(dataitem[0])
+          res << dataitem
+        else
+          dataitem[1, dataitem.length-1].each_with_index do |datapoint, i|
+            other_key[i+1] += datapoint
+          end
         end
       end
+      res << other_key
     end
-    res << other_key
     res    
   end
   
