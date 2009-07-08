@@ -5,6 +5,12 @@ quasar.form = {};
 quasar.model = {};
 quasar.analysis = {};
 
+// Global variables
+// ****************
+
+// Keeps track of the analysis currently shown in the page
+var currentLayout = [];
+
 // Global functions
 // ****************
 
@@ -339,7 +345,6 @@ quasar.action.MediaPie = function(models) {
 quasar.analysis.DataTable = function(gvizPrefix) {
   this.gvizPrefix = gvizPrefix;
 };
-quasar.analysis.DataTable.prototype.setModels = quasar.setModels;
 quasar.analysis.DataTable.prototype.callback = quasar.tableResponse;
 quasar.analysis.DataTable.prototype.url = quasar.gvizUrl;
 quasar.analysis.DataTable.prototype.visualizationTitle = function() {
@@ -380,7 +385,6 @@ quasar.analysis.TimeSeries.prototype.createFields = function() {
     {name: 'kind', instance: new quasar.form.Kind()}
   ];
 };
-quasar.analysis.TimeSeries.prototype.setModels = quasar.setModels;
 quasar.analysis.TimeSeries.prototype.callback = quasar.timelineResponse;
 quasar.analysis.TimeSeries.prototype.url = quasar.gvizUrl;
 quasar.analysis.TimeSeries.prototype.visualizationTitle = function() {
@@ -421,7 +425,6 @@ quasar.analysis.StackedChart.prototype.createFields = function() {
     {name:'kind', instance: new quasar.form.Kind()}
   ];
 };
-quasar.analysis.StackedChart.prototype.setModels = quasar.setModels;
 quasar.analysis.StackedChart.prototype.callback = quasar.barChartResponse;
 quasar.analysis.StackedChart.prototype.url = quasar.gvizUrl;
 quasar.analysis.StackedChart.prototype.visualizationTitle = function() {
@@ -464,7 +467,6 @@ quasar.analysis.PieChart.prototype.createFields = function() {
     {name: 'kind', instance: new quasar.form.Kind()}
   ];
 };
-quasar.analysis.PieChart.prototype.setModels = quasar.setModels;
 quasar.analysis.PieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.PieChart.prototype.url = quasar.gvizUrl;
 quasar.analysis.PieChart.prototype.visualizationTitle = function() {
@@ -493,7 +495,6 @@ quasar.analysis.PieChart.prototype.actions = function() {
 quasar.analysis.MediaPieChart = function() {
   this.gvizPrefix = 'gviz/pagepie';
 };
-quasar.analysis.MediaPieChart.prototype.setModels = quasar.setModels;
 quasar.analysis.MediaPieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.MediaPieChart.prototype.url = quasar.gvizUrl;
 quasar.analysis.MediaPieChart.prototype.visualizationTitle = quasar.analysis.StackedChart.prototype.visualizationTitle;
@@ -525,7 +526,6 @@ quasar.analysis.MotionChart.prototype.createFields = function() {
     {name: 'kind', instance: new quasar.form.Kind()}
   ];
 };
-quasar.analysis.MotionChart.prototype.setModels = quasar.setModels;
 quasar.analysis.MotionChart.prototype.callback = quasar.motionChartResponse;
 quasar.analysis.MotionChart.prototype.url = quasar.gvizUrl;
 quasar.analysis.MotionChart.prototype.visualizationTitle = function() {
@@ -621,17 +621,20 @@ quasar.createFormFields = function(formControlsDiv, fields) {
 };
 
 quasar.grabCsv = function(analysis, models) {
-  analysis.setModels(models);
+  analysis.models = models;
   var csvUrl = analysis.url() + '&tqx=out:csv%3BreqId:0';
   document.location.href = csvUrl;  // dirty hack to trigger the CSV download
 };
 
 quasar.createAnalysis = function(container, analysis, models) {
   analysis.models = models;
+  currentLayout.push(analysis);
+  var currentLayoutPos = currentLayout.length-1;
   
   var analysis_div = $("<div class='qs-analysis' style='display:none'/>");
   quasar.icon('close').attr('style', 'float:right').appendTo(analysis_div).click(function() {
     analysis_div.remove();
+    currentLayout[currentLayoutPos] = null;
   });
   analysis.visualizationTitle().appendTo(analysis_div);
   var graph_div = $("<div class='qs-analysis-graph'></div>").appendTo(analysis_div);
