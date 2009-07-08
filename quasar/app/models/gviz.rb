@@ -83,7 +83,16 @@ require 'csv'
 # Copyright(c) 2008 - bayes-swarm project.
 # Licensed under the GNU General Public License v2.
 #
+require 'set'
+
 class Gviz
+  
+  @@error_reasons = Set.new([
+    :not_modified, :user_not_authenticated, :unknown_data_source_id, 
+    :access_denied, :unsupported_query_operation, :invalid_query, 
+    :invalid_request, :internal_error, :not_supported, 
+    :illegal_formatting_patterns, :other
+  ])
   
   attr_reader :data, :cols, :errors
   
@@ -128,7 +137,7 @@ class Gviz
   # Creates a new instance and validates it. 
   def initialize(gviz_params)
     @params = gviz_params
-    @errors = {}
+    @errors = []
     @cols = []
     @data = []
     @version = "0.5"
@@ -157,10 +166,18 @@ class Gviz
     @errors.size == 0
   end
   
-  # Manually adds a new validation error. +key+ should be a symbol pointing
-  # to the invalid parameter or element.
-  def add_error(key, message)
-    @errors[key] = message
+  # Manually adds a new validation error. +reason+ should be a symbol detailing
+  # the cause of the errors and should be one of the +ERROR_REASONS+. 
+  # +message+ is a short descriptive message, while +detailed_message+, if 
+  # provided, can be a longer message that can include minimal html formatting
+  # (anchor tags with a single href attribute).
+  def add_error(reason, message, detailed_message=nil)
+    unless @@error_reasons.include?(reason)
+      raise ArgumentError.new("Invalid error reason: #{reason}")
+    end
+    error = {:reason => reason.to_s, :message => message}
+    error[:detailed_message] = detailed_message if detailed_message
+    @errors << error
     return self
   end
   
@@ -175,7 +192,7 @@ class Gviz
   # be raised. +params+ is an optional map to define extra column attributes. 
   # These include: +:id+, +:label+ and +:pattern+.
   def add_col(type, params=nil)
-    raise ArgumentError("Invalid column type: #{type}") if !@coltypes.include?(type)
+    raise ArgumentError.new("Invalid column type: #{type}") if !@coltypes.include?(type)
     params ||= {}
     params[:type] = type
     
@@ -200,10 +217,11 @@ class Gviz
   def validate
     @errors.clear
     if @params[:tqx]
-      add_error(:reqId, "Missing required parameter reqId") unless @params[:reqId]
+      add_error(:invalid_request, 
+                "Missing required parameter reqId") unless @params[:reqId]
       
       if @params[:version] && @params[:version] != @version
-        add_error(:version, "Unsupported version #{@params[:version]}")
+        add_error(:invalid_request, "Unsupported version #{@params[:version]}")
       end
     end
   end
@@ -234,9 +252,7 @@ class JsonGviz < Gviz
       rsp[:table] = datatable unless data.nil?      
     else
       rsp[:status] = "error"
-      rsp[:errors] = @errors.values.map do |error|
-        { :reason => "invalid_request" , :message => error }
-      end
+      rsp[:errors] = @errors
     end
     "#{@params[:responseHandler] || @responseHandler}(#{rsp.to_json})"   
   end
@@ -337,6 +353,8 @@ end
 class InvalidGviz < Gviz
   def initialize(gviz_params)
     super(gviz_params)
-    add_error(:out, "Invalid output format: #{gviz_params[:out]}. Valid ones are json,csv,html")
+    add_error(:invalid_request, 
+              "Invalid output format: #{gviz_params[:out]}. " +
+              "Valid ones are json,csv,html")
   end
 end

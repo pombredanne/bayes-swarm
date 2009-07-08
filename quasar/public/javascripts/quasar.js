@@ -29,9 +29,9 @@ quasar.gvizUrl = function() {
   return root_path + this.gvizPrefix + '?' + params.join('&');
 };
 
-quasar.timelineResponse = function(container) {
+quasar.timelineResponse = function(container, redo_function) {
   return function(response) {
-    if (!quasar.initResponseArea(response, container)) {
+    if (!quasar.initResponseArea(response, container, redo_function)) {
       return;
     }
 
@@ -42,9 +42,9 @@ quasar.timelineResponse = function(container) {
   };
 };
 
-quasar.tableResponse = function(container) {
+quasar.tableResponse = function(container, redo_function) {
   return function(response) {
-    if (!quasar.initResponseArea(response, container)) {
+    if (!quasar.initResponseArea(response, container, redo_function)) {
       return;
     }
 
@@ -54,9 +54,9 @@ quasar.tableResponse = function(container) {
   };  
 };
 
-quasar.barChartResponse = function(container) {
+quasar.barChartResponse = function(container, redo_function) {
   return function(response) {
-    if (!quasar.initResponseArea(response, container)) {
+    if (!quasar.initResponseArea(response, container, redo_function)) {
       return;
     }
 
@@ -66,9 +66,9 @@ quasar.barChartResponse = function(container) {
   };
 };
 
-quasar.pieChartResponse = function(container) {
+quasar.pieChartResponse = function(container, redo_function) {
   return function(response) {
-    if (!quasar.initResponseArea(response, container)) {
+    if (!quasar.initResponseArea(response, container, redo_function)) {
       return;
     }
 
@@ -78,9 +78,9 @@ quasar.pieChartResponse = function(container) {
   };
 };
 
-quasar.motionChartResponse = function(container) {
+quasar.motionChartResponse = function(container, redo_function) {
   return function(response) {
-    if (!quasar.initResponseArea(response, container)) {
+    if (!quasar.initResponseArea(response, container, redo_function)) {
       return;
     }
 
@@ -90,11 +90,11 @@ quasar.motionChartResponse = function(container) {
   };
 };
 
-quasar.initResponseArea = function (response, container) {
+quasar.initResponseArea = function(response, container, redo_function) {
   container.empty();
   if (response.isError()) {
     var timeout = false;
-    errorReasons = response.getReasons()
+    var errorReasons = response.getReasons()
     for (var i = 0, l = errorReasons.length; i < l; i++) {
       if (errorReasons[i] == 'timeout') {
         timeout = true;
@@ -102,9 +102,14 @@ quasar.initResponseArea = function (response, container) {
       }
     }
     if (timeout) {
-      container.append($('<span class="qs-description">This visualization is taking a long time, please wait...</span>'));
+      container.append($('<span>This visualization is taking a long time, please wait...</span>'));
     } else {
-      container.append($('<span class="qs-description" />').text('Error in query: ' + response.getMessage()));
+      var message = response.getDetailedMessage() || response.getMessage() || 'Unspecified error.';
+      container.append($('<span />').text("An error occurred: " + message));
+      
+      var retry_link = $('<span class="qs-link" />').text('Retry this analysis.');
+      retry_link.click(function() { redo_function(); });
+      container.append($('<br />')).append(retry_link);
     }
   }
   return !response.isError();
@@ -623,8 +628,6 @@ quasar.grabCsv = function(analysis, models) {
 
 quasar.createAnalysis = function(container, analysis, models) {
   analysis.models = models;
-  var query = new google.visualization.Query(analysis.url());
-  query.setTimeout(15);  
   
   var analysis_div = $("<div class='qs-analysis' style='display:none'/>");
   quasar.icon('close').attr('style', 'float:right').appendTo(analysis_div).click(function() {
@@ -646,6 +649,18 @@ quasar.createAnalysis = function(container, analysis, models) {
   container.append(analysis_div);
   analysis_div.fadeIn('fast');
 
-  query.send(analysis.callback(graph_div));
+  var query = new google.visualization.Query(analysis.url());
+  query.setTimeout(15);
+  query.send(analysis.callback(graph_div, quasar.redoFunction(graph_div, analysis)));
+};
+
+quasar.redoFunction = function(graph_div, analysis) {
+  return function() {
+    graph_div.empty();
+    $("<img src='" + root_path + "images/spin.gif' alt='Loading...' />").appendTo(graph_div);
+    var query = new google.visualization.Query(analysis.url());
+    query.setTimeout(15);    
+    query.send(analysis.callback(graph_div, quasar.redoFunction(graph_div, analysis)));    
+  };
 };
 
