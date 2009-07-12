@@ -1,0 +1,52 @@
+<% content_for :intro do %>
+  <h2>Benvenuti su Bayes-Swarm</h2>
+  <p class="intro">
+    <strong>BayesFor</strong> &egrave; una organizzazione no-profit composta da
+    un gruppo di ricercatori il cui scopo &egrave; promuovere la comprensione
+    e l'adozione delle tecniche di analisi statistica. BayesFor effettua ricerca,
+    analisi ed offre servizi di consulenza in vari campi di ricerca applicata.<br />
+    <strong>Bayes-Swarm</strong> &egrave; uno strumento dedicato che puoi
+    utilizzare per tener traccia della popolarit&agrave; di persone, eventi e
+    del mondo dei media in generale.
+  </p>  
+<% end %>
+<ul class="columns">
+  <li class="col1">
+    <h3>Analizza</h3>
+    <p>
+      Vuoi tenere traccia di trend mediatici, popolarit&agrave; di persone
+      e argomenti caldi discussi su giornali e portali web? Vuoi creare le
+      tue visualizzazioni personali e aggregare notizie e informazioni mediatici
+      in grafici significativi? Usa Bayes-Swarm per analizzare giornali, blog e 
+      portali web.
+    </p><p>
+      <%= link_to "Pi&ugrave; informazioni", :controller => 'intword', :action => 'create' %>
+    </p>   
+  </li>
+  <li class="col2">
+    <h3>Studia</h3>
+    <p>
+      Vuoi saperne di pi&ugrave; su ci&ograve; di cui si occupa BayesFor, come
+      raccogliamo i nostri dati, quali risultati abbiamo pubblicato in passato
+      e dove ci stiamo orientando per il futuro? Visita il sito dell'organizzazione,
+      il wiki ed il blog ufficiale.
+    </p><p>
+      <a href="http://www.bayesfor.eu" >Pi&ugrave; informazioni</a>
+    </p> 
+  </li>
+  <li class="col3">
+    <h3>Partecipa</h3>
+    <p>
+      Sai programmare? Ti interessano i campi dell'Information Retrieval e
+      analisi dei contenuti? Bayes-Swarm ti offre molte risorse: dataset liberi,
+      algoritmi, codice sorgente in formato libero e documentazione per
+      riutilizzare i dati di Bayes-Swarm ed iniziare a raccoglierne di nuovi.
+    </p><p>
+      <%= link_to "Pi&ugrave; informazioni", :controller => 'info', :action => 'developers' %>
+    </p> 
+  </li>
+</ul>
+<div class="clear" ></div>
+<div class="shadow">
+  <%= image_tag "image5.jpg", :class => 'qs-logo' %>
+</div>

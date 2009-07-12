@@ -61,8 +61,7 @@ class GvizBaseController < ApplicationController
       rescue ArgumentError => e
         @gviz.add_error(:internal_error, e.message)        
       rescue RightAws::AwsError => e
-        @gviz.add_error(:internal_error, e.message, 
-                        "The backend failed to answer the query")
+        @gviz.add_error(:internal_error, e.message, t(:gviz_aws_error))
       end
     end
     
@@ -154,7 +153,7 @@ class GvizBaseController < ApplicationController
     
     res = []
     if datasource.length > 0
-      other_key = [ "Other" , Array.new(datasource[0].length-1).fill(0)].flatten
+      other_key = [ t(:otherify_other) , Array.new(datasource[0].length-1).fill(0)].flatten
       datasource.each do |dataitem|
         if keep_keys.include?(dataitem[0])
           res << dataitem

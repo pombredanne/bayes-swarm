@@ -1,11 +1,10 @@
 <% content_for :title do %>
-  Create your analysis
+  <%= t(:intword_create_title) %>
 <% end %>
 <% content_for :intro do %>
-  <h2>Create your analysis</h2>
+  <h2><%= t(:intword_create_title) %></h2>
   <p class="intro">
-    Use this page to build your customized analysis, that you can then share with
-    your friends and peers.
+    <%= t(:intword_create_disclaimer) %>
   </p>
 <% end %>
 <div id="analysis_container"></div>
@@ -15,7 +14,13 @@
 <% content_for :footer do %>
   <script type="text/javascript" charset="utf-8">
     var root_path = "<%= root_path %>";
-    var sources = [{name: "All", id: 0}];
+    if (!root_path.match(/\/$/)) {
+      root_path += '/';
+    }    
+    // Dirty trick to access the images folder
+    var image_path = "<%= image_path('foo') %>".replace('foo', '');
+
+    var sources = [{name: t('source_all'), id: 0}];
     <% @sources.each do |source| -%>
       sources[sources.length] = {name: "<%= source.name %>", id: <%= source.id %> };
     <% end -%>

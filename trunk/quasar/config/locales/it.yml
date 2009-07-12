@@ -1,0 +1,18 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+it:
+  toolbar_analyze: "Analizza"
+  toolbar_developers: "Info per Sviluppatori"
+  toolbar_contacts: "Contatti"
+  toolbar_bayesfor_association: "Associazione BayesFor"
+  wordlookup_title: "Ricerca nel database di argomenti"
+  wordlookup_disclaimer: "Utilizza questa pagina per effettuare ricerche nel nostro database di argomenti."    
+  intword_create_title: "Crea la tua analisi"
+  intword_create_disclaimer: "Utilizza questa pagina per creare le tue analisi personalizzate, e condividile con amici e conoscenti."
+  intword_too_many: "Troppi argomenti. Ne puoi richiedere al massimo 10"
+  intword_at_least_one: "Devi specificare almeno un argomento"
+  intword_not_exists: "Nessuno degli argomenti che hai richiesto esiste nel nostro database"
+  gviz_aws_error: "Il nostro archivio non ha completato l'estrazione"
+  otherify_other: "Altro"
+  language_change: "Cambia lingua "

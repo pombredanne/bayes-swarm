@@ -1,16 +1,19 @@
 <% content_for :title do %>
-  Search the Word database
+  <%= t(:wordlookup_title)%>
 <% end %>
 <% content_for :intro do %>
-  <h2>Search the Word database</h2>
+  <h2><%= t(:wordlookup_title) %></h2>
   <p class="intro">
-    Use this page to search our Word database.
+    <%= t(:wordlookup_disclaimer) %>
   </p>
 <% end %>
 <div id="analysis_container"><div class='qs-form' id='qs-form'></div></div>
 <% content_for :footer do %>
   <script type="text/javascript" charset="utf-8">
     var root_path = "<%= root_path %>";  
+    if (!root_path.match(/\/$/)) {
+      root_path += '/';
+    }
 
     function createIntwordSearchUrl(models) {
       var params = $.map(models, function(model) {
