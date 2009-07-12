@@ -35,6 +35,22 @@ quasar.gvizUrl = function() {
   return root_path + this.gvizPrefix + '?' + params.join('&');
 };
 
+quasar.visualizationTitle = function() {
+  var title_div = $('<div />');
+  $('<h2 />').text(t('visualization_title', [this.models.entity.to_s(), this.models.word.to_s(), this.models.word.language])).appendTo(title_div);
+  var txt = t('visualization_title_date', [quasar.formatDate(this.models.date.from_date), quasar.formatDate(this.models.date.to_date)]);
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+  
+  var txt = '';
+  if (this.models.source) {
+    txt = t('visualization_title_source_kind', [this.models.source.to_s(), this.models.kind.to_s()]);
+  } else {
+    txt = t('visualization_title_kind', [this.models.kind.to_s()]);
+  }
+  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
+  return title_div;
+};
+
 quasar.timelineResponse = function(container, redo_function) {
   return function(response) {
     if (!quasar.initResponseArea(response, container, redo_function)) {
@@ -108,12 +124,12 @@ quasar.initResponseArea = function(response, container, redo_function) {
       }
     }
     if (timeout) {
-      container.append($('<span>This visualization is taking a long time, please wait...</span>'));
+      container.append($('<span>' + t('visualization_timeout') + '</span>'));
     } else {
-      var message = response.getDetailedMessage() || response.getMessage() || 'Unspecified error.';
-      container.append($('<span />').text("An error occurred: " + message));
+      var message = response.getDetailedMessage() || response.getMessage() || t('visualization_unspecified_error');
+      container.append($('<span />').html(t('visualization_error_occurred') + message));
       
-      var retry_link = $('<span class="qs-link" />').text('Retry this analysis.');
+      var retry_link = $('<span class="qs-link" />').text(t('visualization_retry'));
       retry_link.click(function() { redo_function(); });
       container.append($('<br />')).append(retry_link);
     }
@@ -125,32 +141,34 @@ quasar.initResponseArea = function(response, container, redo_function) {
 // ****************
 
 quasar.form.Word = function() {
-  this.language = 'English';
-  this.lang_code = 'en';
+  this.language = locale().lang_name;
+  this.lang_code = locale().lang_code;
 };
 quasar.form.Word.prototype.render = function(container) {
   var that = this;
-  $("<span>Language:</span>").appendTo(container);  
-  this.it_input = $("<input type='radio' name='language' value='it'>");
-  $("<label />").append(this.it_input).append("&nbsp;Italian").appendTo(container);
+  $("<span>" + t('language_label') + "</span>").appendTo(container);  
+  var it_checked = this.lang_code == 'it'? 'checked' : '';
+  this.it_input = $("<input type='radio' name='language' value='it' " + it_checked + ">");
+  $("<label />").append(this.it_input).append('&nbsp;' + t('language_italian')).appendTo(container);
   this.it_input.click(function (){
-    that.language = 'Italian';
+    that.language = t('language_italian');
     that.lang_code = 'it';    
     that.buildAc('it', ac_label);
   });
 
-  this.en_input = $("<input type='radio' name='language' value='en' checked>");
-  $("<label />").append(this.en_input).append("&nbsp;English").appendTo(container);  
+  var en_checked = this.lang_code == 'en'? 'checked' : '';
+  this.en_input = $("<input type='radio' name='language' value='en' " + en_checked + ">");
+  $("<label />").append(this.en_input).append('&nbsp;' + t('language_english')).appendTo(container);  
   this.en_input.click(function (){
-    that.language = 'English';
+    that.language = t('language_english');
     that.lang_code = 'en';        
     that.buildAc('en', ac_label);    
   });
   $('<br />').appendTo(container);
-  var ac_label = $("<span>Word:</span>").appendTo(container);
-  this.buildAc('en', ac_label);
+  var ac_label = $("<span>" + t('word_label') + "</span>").appendTo(container);
+  this.buildAc(this.lang_code, ac_label);
   $("<span class='qs-hint' />").
-    text("Type the topics you're interested in, using commas to separate them.").
+    text(t('word_description')).
     appendTo(container);
 };
 quasar.form.Word.prototype.buildAc = function(lang, placeHolder) {
@@ -187,7 +205,7 @@ quasar.model.Word.prototype.to_s = function() {
 
 quasar.form.Source = function() {};
 quasar.form.Source.prototype.render = function(container) {
-  $("<span>Source:</span>").appendTo(container);
+  $("<span>" + t('source_label') + "</span>").appendTo(container);
   source_select = $('<select />').appendTo(container);
   $.each(sources, function(i, source) {   // 'sources' global variable hack
     $("<option value='" + source.id + "'>" + source.name + "</option>").appendTo(source_select);
@@ -211,13 +229,23 @@ quasar.model.Source.prototype.to_s = function() {
 
 quasar.form.DateRange = function() {};
 quasar.form.DateRange.prototype.render = function(container) {
-  $("<span>From:</span>").appendTo(container);
+  $("<span>" + t('daterange_from_label') + "</span>").appendTo(container);
   this.from_date_dp = $("<input type='text' />").appendTo(container).datepicker(
-    { dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });
+    { dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
+      dayNames: t('datepicker_dayNames'), dayNamesMin: t('datepicker_dayNamesMin'),
+      dayNamesShort: t('datepicker_dayNamesShort'),
+      monthNames: t('datepicker_monthNames'), monthNamesShort: t('datepicker_monthNamesShort'),
+      firstDay: t('datepicker_firstDay')
+    });
   $("<span>&nbsp;&nbsp;</span>").appendTo(container);
-  $("<span>To:</span>").appendTo(container);
+  $("<span>" + t('daterange_to_label') + "</span>").appendTo(container);
   this.to_date_dp = $("<input type='text' />").appendTo(container).datepicker(
-    { dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true });  
+    { dateFormat: 'dd/mm/yy', changeMonth: true, changeYear: true,
+      dayNames: t('datepicker_dayNames'), dayNamesMin: t('datepicker_dayNamesMin'),
+      dayNamesShort: t('datepicker_dayNamesShort'),
+      monthNames: t('datepicker_monthNames'), monthNamesShort: t('datepicker_monthNamesShort'),
+      firstDay: t('datepicker_firstDay')
+    });  
 };
 quasar.form.DateRange.prototype.from_date = function() {
   var one_month_ago = new Date();
@@ -243,14 +271,14 @@ quasar.model.DateRange.prototype.params = function() {
 
 quasar.form.Entity = function() {};
 quasar.form.Entity.prototype.render = function(container) {
-  $("<span>Found in:</span>").appendTo(container);
+  $("<span>" + t('entity_label') + "</span>").appendTo(container);
   this.entity_select = $('<select />').appendTo(container);
-  $("<option value='count'>Overall count</option>").appendTo(this.entity_select);
-  $("<option value='headingcount'>Headings</option>").appendTo(this.entity_select);
-  $("<option value='anchorcount'>Anchors</option>").appendTo(this.entity_select);
-  $("<option value='titlecount'>Titles</option>").appendTo(this.entity_select);  
-  $("<option value='bodycount'>Body occurrences</option>").appendTo(this.entity_select);
-  $("<option value='keywordcount'>Keywords</option>").appendTo(this.entity_select);
+  $("<option value='count'>" + t('entity_type_count') + "</option>").appendTo(this.entity_select);
+  $("<option value='headingcount'>" + t('entity_type_heading') + "</option>").appendTo(this.entity_select);
+  $("<option value='anchorcount'>" + t('entity_type_anchor') + "</option>").appendTo(this.entity_select);
+  $("<option value='titlecount'>" + t('entity_type_title') + "</option>").appendTo(this.entity_select);  
+  $("<option value='bodycount'>" + t('entity_type_body') + "</option>").appendTo(this.entity_select);
+  $("<option value='keywordcount'>" + t('entity_type_keyword') + "</option>").appendTo(this.entity_select);
 };
 quasar.form.Entity.prototype.toModel = function() {
   return new quasar.model.Entity(this.entity_select.val(),
@@ -269,26 +297,26 @@ quasar.model.Entity.prototype.to_s = function() {
 
 quasar.form.Kind = function() {};
 quasar.form.Kind.prototype.render = function(container) {
-  $("<span>Kind:</span>").appendTo(container);
+  $("<span>" + t('kind_label') + "</span>").appendTo(container);
   this.rss_input = $("<input type='radio' name='kind' value='rss'>");
-  $("<label />").append(this.rss_input).append("&nbsp;RSS Feed").appendTo(container);
+  $("<label />").append(this.rss_input).append(t('kind_type_rss')).appendTo(container);
   this.url_input = $("<input type='radio' name='kind' value='url'>");
-  $("<label />").append(this.url_input).append("&nbsp;Webpage").appendTo(container);
+  $("<label />").append(this.url_input).append(t('kind_type_page')).appendTo(container);
   this.both_input = $("<input type='radio' name='kind' value='both' checked>");
-  $("<label />").append(this.both_input).append("&nbsp;Both").appendTo(container);  
+  $("<label />").append(this.both_input).append(t('kind_type_both')).appendTo(container);  
 };
 quasar.form.Kind.prototype.toModel = function() {
   var kind_val = null;
   var kind_text = null;
   if (this.rss_input.is(':checked')) {
     kind_val = 'rss';
-    kind_text = 'Rss Feed';
+    kind_text = t('kind_type_rss');
   } else if (this.url_input.is(':checked')) {
     kind_val = 'url';
-    kind_text = 'Webpage';
+    kind_text = t('kind_type_page');
   } else {
     kind_val = 'both';
-    kind_text = 'both Rss Feeds and Webpages';
+    kind_text = t('kind_type_both_long');
   }
   return new quasar.model.Kind(kind_val, kind_text);
 };
@@ -307,7 +335,7 @@ quasar.model.Kind.prototype.to_s = function() {
 // ****************
 
 quasar.action.CsvLink = function(csv_url) {
-  return $("<a href='" + csv_url + "' />").text("Export as CSV");
+  return $("<a href='" + csv_url + "' />").text(t('action_csv_export'));
 };
 quasar.action.GoogleNewsArchive = function(intword_names, lang_code, from_date, to_date) {
   var news_search_link = 'http://news.google.com/archivesearch?' + 
@@ -315,10 +343,10 @@ quasar.action.GoogleNewsArchive = function(intword_names, lang_code, from_date, 
     '&as_user_hdate=' + quasar.formatDate(to_date) +
     '&lr=lang_' + lang_code + '&hl=' + lang_code +
     '&q=' + intword_names.join('+');
-  return $("<a href='" + news_search_link + "' target='_blank' />").text("Google news search");  
+  return $("<a href='" + news_search_link + "' target='_blank' />").text(t('action_google_news'));  
 };
 quasar.action.GetDataTable = function(gvizPrefix, models) {
-  var action = $("<span class='qs-link' />").text("View Data table").click(function (){
+  var action = $("<span class='qs-link' />").text(t('action_data_table')).click(function (){
     var analysis = new quasar.analysis.DataTable(gvizPrefix);
     var container = $('#analysis_container');  // TODO: the container id shouldn't be hardcoded
     quasar.createAnalysis(container, analysis, models);
@@ -326,7 +354,7 @@ quasar.action.GetDataTable = function(gvizPrefix, models) {
   return action;
 };
 quasar.action.MediaPie = function(models) {
-  var action = $("<span class='qs-link' />").text("View Media Pie").click(function (){
+  var action = $("<span class='qs-link' />").text(t('action_media_pie')).click(function (){
     var analysis = new quasar.analysis.MediaPieChart();
     var container = $('#analysis_container');  // TODO: the container id shouldn't be hardcoded
     quasar.createAnalysis(container, analysis, models);
@@ -347,21 +375,7 @@ quasar.analysis.DataTable = function(gvizPrefix) {
 };
 quasar.analysis.DataTable.prototype.callback = quasar.tableResponse;
 quasar.analysis.DataTable.prototype.url = quasar.gvizUrl;
-quasar.analysis.DataTable.prototype.visualizationTitle = function() {
-  var title_div = $('<div />');
-  $('<h2 />').text(this.models.entity.to_s() + ' of ' + this.models.word.to_s() + '(' + this.models.word.language + ')').appendTo(title_div);
-  var txt = 'From <b>' + quasar.formatDate(this.models.date.from_date) + '</b> to <b>' + quasar.formatDate(this.models.date.to_date) + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-  
-  var txt = '';
-  if (this.models.source) {
-    txt = 'on Source <b>' + this.models.source.to_s() + '</b> limited to kind <b>' + this.models.kind.to_s() + '</b>';
-  } else {
-    txt = 'Limited to kind <b>' + this.models.kind.to_s() + '</b>';
-  }
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-  return title_div;
-};
+quasar.analysis.DataTable.prototype.visualizationTitle = quasar.visualizationTitle;
 quasar.analysis.DataTable.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/ts','/intword/show'), 'ts'),
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0')];
@@ -372,9 +386,9 @@ quasar.analysis.DataTable.prototype.actions = function() {
 
 quasar.analysis.TimeSeries = function() {
   this.gvizPrefix = 'gviz/ts';
-  this.icon = root_path + 'images/trends.png';
-  this.title = 'Trends';
-  this.description = 'Analyze time series and study how topics changed over time.';
+  this.icon = image_path + 'trends.png';
+  this.title = t('timeserie_title');
+  this.description = t('timeserie_description');
 };
 quasar.analysis.TimeSeries.prototype.createFields = function() {
   return [
@@ -387,16 +401,7 @@ quasar.analysis.TimeSeries.prototype.createFields = function() {
 };
 quasar.analysis.TimeSeries.prototype.callback = quasar.timelineResponse;
 quasar.analysis.TimeSeries.prototype.url = quasar.gvizUrl;
-quasar.analysis.TimeSeries.prototype.visualizationTitle = function() {
-  var title_div = $('<div />');
-  $('<h2 />').text(this.models.entity.to_s() + ' of ' + this.models.word.to_s() + '(' + this.models.word.language + ')').appendTo(title_div);
-  var txt = 'From <b>' + quasar.formatDate(this.models.date.from_date) + '</b> to <b>' + quasar.formatDate(this.models.date.to_date) + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-
-  var txt = 'on Source <b>' + this.models.source.to_s() + '</b> limited to kind <b>' + this.models.kind.to_s() + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-  return title_div;
-};
+quasar.analysis.TimeSeries.prototype.visualizationTitle = quasar.visualizationTitle;
 quasar.analysis.TimeSeries.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/ts','/intword/show'), 'ts'),
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
@@ -412,10 +417,9 @@ quasar.analysis.TimeSeries.prototype.actions = function() {
 
 quasar.analysis.StackedChart = function() {
   this.gvizPrefix = 'gviz/stacked';
-  this.icon = root_path + 'images/mediacoverage.png';
-  this.title = 'Media Coverage';
-  this.description = 'Take a look at how different media and news sources ' +
-                     'paid attention to the topics you are interested in. ';  
+  this.icon = image_path + 'mediacoverage.png';
+  this.title = t('stackedchart_title');
+  this.description = t('stackedchart_description');
 };
 quasar.analysis.StackedChart.prototype.createFields = function() {
   return [
@@ -427,16 +431,7 @@ quasar.analysis.StackedChart.prototype.createFields = function() {
 };
 quasar.analysis.StackedChart.prototype.callback = quasar.barChartResponse;
 quasar.analysis.StackedChart.prototype.url = quasar.gvizUrl;
-quasar.analysis.StackedChart.prototype.visualizationTitle = function() {
-  var title_div = $('<div />');
-  $('<h2 />').text(this.models.entity.to_s() + ' of ' + this.models.word.to_s() + '(' + this.models.word.language + ')').appendTo(title_div);
-  var txt = 'From <b>' + quasar.formatDate(this.models.date.from_date) + '</b> to <b>' + quasar.formatDate(this.models.date.to_date) + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-
-  var txt = 'Limited to kind <b>' + this.models.kind.to_s() + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-  return title_div; 
-};
+quasar.analysis.StackedChart.prototype.visualizationTitle = quasar.visualizationTitle;
 quasar.analysis.StackedChart.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/wordpie','/intword/show'), 'wordpie'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
@@ -453,10 +448,9 @@ quasar.analysis.StackedChart.prototype.actions = function() {
 
 quasar.analysis.PieChart = function() {
   this.gvizPrefix = 'gviz/wordpie';
-  this.icon = root_path + 'images/popularity.png';
-  this.title = 'Popularity';
-  this.description = 'See what topics are most popular comparing them against ' +
-                     'each other.';  
+  this.icon = image_path + 'popularity.png';
+  this.title = t('piechart_title');
+  this.description = t('piechart_description');
 };
 quasar.analysis.PieChart.prototype.createFields = function() {
   return [
@@ -469,16 +463,7 @@ quasar.analysis.PieChart.prototype.createFields = function() {
 };
 quasar.analysis.PieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.PieChart.prototype.url = quasar.gvizUrl;
-quasar.analysis.PieChart.prototype.visualizationTitle = function() {
-  var title_div = $('<div />');
-  $('<h2 />').text(this.models.entity.to_s() + ' of ' + this.models.word.to_s() + '(' + this.models.word.language + ')').appendTo(title_div);
-  var txt = 'From <b>' + quasar.formatDate(this.models.date.from_date) + '</b> to <b>' + quasar.formatDate(this.models.date.to_date) + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-
-  var txt = 'on Source <b>' + this.models.source.to_s() + '</b> limited to kind <b>' + this.models.kind.to_s() + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-  return title_div;  
-};
+quasar.analysis.PieChart.prototype.visualizationTitle = quasar.visualizationTitle;
 quasar.analysis.PieChart.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/wordpie','/intword/show'), 'wordpie'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
@@ -497,7 +482,7 @@ quasar.analysis.MediaPieChart = function() {
 };
 quasar.analysis.MediaPieChart.prototype.callback = quasar.pieChartResponse;
 quasar.analysis.MediaPieChart.prototype.url = quasar.gvizUrl;
-quasar.analysis.MediaPieChart.prototype.visualizationTitle = quasar.analysis.StackedChart.prototype.visualizationTitle;
+quasar.analysis.MediaPieChart.prototype.visualizationTitle = quasar.visualizationTitle;
 quasar.analysis.MediaPieChart.prototype.actions = function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/pagepie','/intword/show'), 'pagepie'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
@@ -513,10 +498,9 @@ quasar.analysis.MediaPieChart.prototype.actions = function() {
 
 quasar.analysis.MotionChart = function() {
   this.gvizPrefix = 'gviz/motion';
-  this.icon = root_path + 'images/motion.png';
-  this.title = 'News in Motion';
-  this.description = 'Watch the evolution of news topics over time and see ' +
-                     'how they spread from one media outlet to the other';  
+  this.icon = image_path + 'motion.png';
+  this.title = t('motionchart_title');
+  this.description = t('motionchart_description');
 };
 quasar.analysis.MotionChart.prototype.createFields = function() {
   return [
@@ -528,16 +512,7 @@ quasar.analysis.MotionChart.prototype.createFields = function() {
 };
 quasar.analysis.MotionChart.prototype.callback = quasar.motionChartResponse;
 quasar.analysis.MotionChart.prototype.url = quasar.gvizUrl;
-quasar.analysis.MotionChart.prototype.visualizationTitle = function() {
-  var title_div = $('<div />');
-  $('<h2 />').text(this.models.entity.to_s() + ' of ' + this.models.word.to_s() + '(' + this.models.word.language + ')').appendTo(title_div);
-  var txt = 'From <b>' + quasar.formatDate(this.models.date.from_date) + '</b> to <b>' + quasar.formatDate(this.models.date.to_date) + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-
-  var txt = 'Limited to kind <b>' + this.models.kind.to_s() + '</b>';
-  $('<div class="qs-legend" />').html(txt).appendTo(title_div);
-  return title_div;  
-};
+quasar.analysis.MotionChart.prototype.visualizationTitle = quasar.visualizationTitle;
 quasar.analysis.MotionChart.prototype.actions =  function() {
   return [ //quasar.action.Permalink(this.url().replace('/gviz/motion','/intword/show'), 'motion'), 
            quasar.action.CsvLink(this.url() + '&tqx=out:csv%3BreqId:0'),
@@ -553,8 +528,9 @@ quasar.analysis.MotionChart.prototype.actions =  function() {
 // ****************
 quasar.createMasterForm = function(form_container, analysis_container) {
   var formDiv = $("<div class='qs-form' style='display:none'></div>");
-  $("<p>Choose a graph type:</p>").appendTo(formDiv);
-   var formControlsDiv = $("<div class='qs-form-controls' >Select one of the above icons</div>");
+  $("<p>" + t('masterform_choose_graph_type') + "</p>").appendTo(formDiv);
+  var formControlsDiv = $("<div class='qs-form-controls' ></div>");
+  formControlsDiv.text(t('masterform_select_icon'));
   quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.TimeSeries());
   quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.PieChart());
   quasar.createAnalysisForm(formDiv, formControlsDiv, analysis_container, new quasar.analysis.StackedChart());
@@ -573,11 +549,11 @@ quasar.createAnalysisForm = function(formDiv, formControlsDiv, analysis_containe
     $('.qs-chart').removeClass('qs-chart-selected');
     $(this).addClass('qs-chart-selected');
     formControlsDiv.fadeOut('fast').empty();
-    formControlsDiv.append('<p><b>' + analysis.title + '</b> parameters:</p>');
+    formControlsDiv.append('<p>' + t('masterform_parameters', [analysis.title]) + '</p>');
     var fields = analysis.createFields();
     quasar.createFormFields(formControlsDiv, fields);
 
-    var submit_btn = $("<button id='qs-analysis-btn' />").text('Analyse!');
+    var submit_btn = $("<button id='qs-analysis-btn' />").text(t('masterform_analyse'));
     submit_btn.appendTo(formControlsDiv);
     submit_btn.click(function() {
       var models = {};
@@ -587,14 +563,14 @@ quasar.createAnalysisForm = function(formDiv, formControlsDiv, analysis_containe
       quasar.createAnalysis(analysis_container, analysis, models);
     });
     
-    var direct_csv_link = $("<a class='qs-link-csv' href='#'>or export directly to CSV</a>");
+    var direct_csv_link = $("<a class='qs-link-csv' href='#'></a>").text(t('masterform_direct_csv'));
     direct_csv_link.appendTo(formControlsDiv);
     direct_csv_link.click(function(evt) {
       evt.stopPropagation();
       var models = {};
       $.each(fields, function(i, field) { 
         models[field.name] = field.instance.toModel();
-      });     
+      });
       quasar.grabCsv(analysis, models);
     })
     
@@ -638,10 +614,10 @@ quasar.createAnalysis = function(container, analysis, models) {
   });
   analysis.visualizationTitle().appendTo(analysis_div);
   var graph_div = $("<div class='qs-analysis-graph'></div>").appendTo(analysis_div);
-  $("<img src='" + root_path + "images/spin.gif' alt='Loading...' />").appendTo(graph_div);
+  $("<img src='" + image_path + "spin.gif' alt='" + t('analysis_loading') + "' />").appendTo(graph_div);
   
   var actions_div = $("<div class='qs-analysis-action'></div>").appendTo(analysis_div);
-  $('<h3>Actions</h3>').appendTo(actions_div);  
+  $('<h3>' + t('analysis_actions_title') + '</h3>').appendTo(actions_div);  
   var actions_list = $("<ul />").appendTo(actions_div);
   
   $.each(analysis.actions(), function(i, action) {
@@ -660,7 +636,7 @@ quasar.createAnalysis = function(container, analysis, models) {
 quasar.redoFunction = function(graph_div, analysis) {
   return function() {
     graph_div.empty();
-    $("<img src='" + root_path + "images/spin.gif' alt='Loading...' />").appendTo(graph_div);
+    $("<img src='" + image_path + "spin.gif' alt='" + t('analysis_loading') +"' />").appendTo(graph_div);
     var query = new google.visualization.Query(analysis.url());
     query.setTimeout(15);    
     query.send(analysis.callback(graph_div, quasar.redoFunction(graph_div, analysis)));    

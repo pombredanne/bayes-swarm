@@ -11,14 +11,20 @@
     <%= stylesheet_link_tag "template", "quasar", "jquery-ui-1.7.2.custom.css" %>
     
     <script type="text/javascript" src="http://www.google.com/jsapi"></script>
+    <%= javascript_include_tag "#{I18n.locale}.js" %>
     <%= javascript_include_tag "jquery.js", "jquery-ui-1.7.2.custom.min.js", "jquery.dimensions.pack.js", "jquery.autocomplete.js", "quasar.js" %>    
     
     <title>Bayes-Swarm :: <%= yield(:title) || "Bayesian Web Spidering" %></title>
   </head>
   <body>
     <div id="layout">
-      
-      <div id="header">        
+
+      <div id="header">
+        <div class="qs-language-switch">
+          <%= t(:language_change) %>
+          <a href="<%= url_for :controller => controller.controller_name, :action => controller.action_name, :locale => 'en' %>"><%= image_tag "gb.png", :title => "English", :class => I18n.locale == 'en' ? 'qs-current-language': 'qs-other-language'  %></a>
+          <a href="<%= url_for :controller => controller.controller_name, :action => controller.action_name, :locale => 'it' %>"><%= image_tag "it.png", :title => "Italiano", :class => I18n.locale == 'it' ? 'qs-current-language': 'qs-other-language' %></a>
+        </div>        
         <%= image_tag "bayes_logo_small.png", :style => "float:left" %>
         <h1 id="logo"><%= link_to "Bayes-Swarm", root_path %></h1>
       </div>
@@ -28,16 +34,15 @@
             <%= link_to "Home", root_path %>
           </li>
           <li <%= controller.controller_name == 'intword' && controller.action_name == 'create' ? "id=\"active\"" : ""%>>
-            <%= link_to "Analyze", :controller => 'intword', :action => 'create' %>
+            <%= link_to t(:toolbar_analyze), :controller => 'intword', :action => 'create' %>
           <li>
           <li <%= controller.controller_name == 'info' && controller.action_name == 'developers' ? "id=\"active\"" : "" %>>
-            <%= link_to "For Developers", :controller => 'info', :action => 'developers' %>
+            <%= link_to t(:toolbar_developers), :controller => 'info', :action => 'developers' %>
           </li>
           <li <%= controller.controller_name == 'info' && controller.action_name == 'contacts' ? "id=\"active\"" : "" %>>
-            <%= link_to "Contacts", :controller => 'info', :action => 'contacts' %>
+            <%= link_to t(:toolbar_contacts), :controller => 'info', :action => 'contacts' %>
           </li>          
-          <li><a href="http://www.bayes-swarm.com">Old Website</a></li>          
-          <li><a href="http://www.bayesfor.eu">BayesFor Association</a></li>
+          <li><a href="http://www.bayesfor.eu"><%= t(:toolbar_bayesfor_association) %></a></li>
 				</ul>
       </div> 
       
@@ -53,11 +58,7 @@
             <div class="clear"></div>
           
             </div>
-        </div>
-        <!-- end/ Obsah stránek-->
-        
-  
-      
+        </div>      
       </div>
       
       <div id="footer" class="shadow">

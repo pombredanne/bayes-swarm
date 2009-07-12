@@ -10,13 +10,13 @@ class Intword < ActiveRecord::Base
           params[:id].split(','), 
           :include => [:language]).reject { |iw| iw.language.name != params[:language] }
       if !iws || iws.size == 0
-        raise ArgumentError.new('None of the keywords you specified exist in our database')
+        raise ArgumentError.new(I18n.t(:intword_not_exists))
       end
       if iws.size > 10
-        raise ArgumentError.new('Too many keywords. You can request 10 at most')
+        raise ArgumentError.new(I18n.t(:intword_too_many))
       end
     else
-      raise ArgumentError.new('You must specify at least one keyword')
+      raise ArgumentError.new(I18n.t(:intword_at_least_one))
     end
     iws
   end  

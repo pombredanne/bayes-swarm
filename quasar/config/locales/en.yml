@@ -2,4 +2,17 @@
 # See http://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
 
 en:
-  hello: "Hello world"
+  toolbar_analyze: "Analyze"
+  toolbar_developers: "For Developers"
+  toolbar_contacts: "Contacts"
+  toolbar_bayesfor_association: "BayesFor Association"
+  wordlookup_title: "Search the Word database"
+  wordlookup_disclaimer: "Use this page to search our Word database."
+  intword_create_title: "Create your analysis"
+  intword_create_disclaimer: "Use this page to build your customized analysis, that you can then share with your friends and peers."
+  intword_too_many: "Too many keywords. You can request 10 at most"
+  intword_at_least_one: "You must specify at least one keyword"
+  intword_not_exists: "None of the keywords you specified exist in our database"
+  gviz_aws_error: "The backend failed to answer the query"
+  otherify_other: "Other"
+  language_change: "Change language "  
