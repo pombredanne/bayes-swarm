@@ -23,7 +23,8 @@ The sources are organized in two packages :
 See the [Architecture] document to understand the role played by these two components.
 
 = Where can I get the dataset =
-The files ( a dump of the mysql database and a tar.gz version of the pagestore ) can be downloaded from [http://www.battlehorse.net/swarm_sample/ this website]
+
+*Important*: The free dataset is no longer available since the shutdown of the [http://www.bayes-swarm.com Bayes-Swarm] project.
 
 = How to install it on my machine =
 
