@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 # Licensed under the GNU General Public License v2.
@@ -87,7 +87,7 @@ class MMSearchForm(gtk.Frame):
         #self.comboboxentry_db.pack_start(cell, True)
         #self.comboboxentry_db.add_attribute(cell, 'text', MODEL_DB_IS_LOCAL)
         self.model_db.append(['/home/matteo/Development/pagestore/renzi_xap_20090101_sources', 0, True, FLAG_DB_NOT_CHECKED])
-        self.model_db.append(['/home/matteo/Development/pagestore/us2008_xap', 0, True, FLAG_DB_NOT_CHECKED])
+        self.model_db.append(['/Users/matteozandi/Dropbox/xap_db', 0, True, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['10.0.2.2:3333', 0, False, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['localhost:3333', 0, False, FLAG_DB_NOT_CHECKED])
         self.comboboxentry_db.set_active(0)
@@ -233,10 +233,9 @@ class MMSearchForm(gtk.Frame):
         except xapian.NetworkError, e:
             logging.error('Error while opening %s (%s)' % (entered_db, e))
             return False
-        #except:
-        #    logging.error('Error while opening %s' % entered_db)
-        #    self.image_connected.set_from_stock(gtk.STOCK_DISCONNECT, gtk.ICON_SIZE_MENU)
-        #    return False
+        except e:
+            logging.error('Unknown error (%s)' % e)
+            return False
         else:
             logging.info('Db %s is valid' % entered_db)
             return True
@@ -281,7 +280,7 @@ class MMSearchForm(gtk.Frame):
                     iter_filtered_model = model.get_iter((index,))
                     iter_full_model = model.convert_iter_to_child_iter(iter_filtered_model)
                     self.model_db.set_value(iter_full_model, MODEL_DB_VALIDITY, FLAG_DB_IS_VALID)
-                self.search_options['sources_list'] = self.get_sources_list(self.search_options['selected_db'])
+                #self.search_options['sources_list'] = self.get_sources_list(self.search_options['selected_db'])
                 self.set_all_controls_sensitive_except(True, combobox)
                 self.set_image_connected(True)
             else:

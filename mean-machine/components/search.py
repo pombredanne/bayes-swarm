@@ -17,7 +17,7 @@ logging = logging.getLogger('components.search')
 
 import gtk
 from core import MMComponent, MMEsetFilter, stopwords
-from .ui.search import MMResultSearch
+from ui.search import MMResultSearch
 
 class MMSearchComponent(MMComponent):
     is_mm_component = True
@@ -50,9 +50,9 @@ together with the cloud of most frequent terms"""
             gtk.main_iteration()
         for y, m in enumerate(mset):
             if y < search_options['n_mset']:
-                rset.add_document(m[xapian.MSET_DID])
-            name = m[xapian.MSET_DOCUMENT].get_data()
-            docs.append([m[xapian.MSET_PERCENT], name, m, ''])
+                rset.add_document(m.docid)
+            name = m.document.get_data()
+            docs.append([m.percent, name, m, ''])
 
         # Obtain the "Expansion set" for the search: the n most relevant terms that
         # match the filter

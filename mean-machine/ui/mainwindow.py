@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 # Licensed under the GNU General Public License v2.
@@ -66,7 +66,7 @@ class MMMainFrame(gtk.VBox):
                     query_sources = xapian.Query(xapian.Query.OP_OR, query_sources, query_source_id)
             query = xapian.Query(xapian.Query.OP_AND, query, query_sources)
 
-        logging.debug("Setting query: %s" % query.get_description())
+        #logging.debug("Setting query: %s" % query.get_description())
 
         enquire = xapian.Enquire(db)
         enquire.set_query(query)

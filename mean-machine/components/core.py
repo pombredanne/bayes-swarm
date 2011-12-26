@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # -*- coding: UTF-8 -*-
 
 # Licensed under the GNU General Public License v2.
@@ -19,7 +19,7 @@ logging = logging.getLogger('components.core')
 
 def get_components():
     """Load the list of components."""
-    logging.debug('Scanning for components')
+    logging.info('Scanning for components')
     components_dir = os.path.join(os.path.dirname(__file__))
     names = [ os.path.basename(path)[:-3] for path in os.listdir(components_dir)
               if path.endswith(".py") ]
@@ -30,7 +30,7 @@ def get_components():
         try:
             mm_component = __import__("components.%s" % name)
         except ImportError, ie:
-            logging.warning('Could not load %s component, a library is missing (%s)' % (name, ie.args[0]))
+            logging.warning('Could not load %s (%s)' % (name, ie.args[0]))
         else:
             component_module = getattr(mm_component, name)
 
@@ -38,6 +38,7 @@ def get_components():
                 obj = getattr(component_module, attr)
                 if hasattr(obj, "is_mm_component"):
                     components[obj.name] = obj
+                    logging.info('%s component loaded' % name)
 
     return components
 
