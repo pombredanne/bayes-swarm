@@ -211,7 +211,7 @@ class MMSearchForm(gtk.Frame):
         mset = enquire.get_mset(0, 100, 0)
         list = []
         for m in mset:
-            list.append([m[xapian.MSET_DOCUMENT].get_value(4), m[xapian.MSET_DOCUMENT].get_value(5)])
+            list.append([m.document.get_value(4), m.document.get_value(5)])
         return list
         #return [['1', 'quotidiani'], ['2', 'aggregatori'], ['3', 'pagine personali']]
         
@@ -280,7 +280,7 @@ class MMSearchForm(gtk.Frame):
                     iter_filtered_model = model.get_iter((index,))
                     iter_full_model = model.convert_iter_to_child_iter(iter_filtered_model)
                     self.model_db.set_value(iter_full_model, MODEL_DB_VALIDITY, FLAG_DB_IS_VALID)
-                #self.search_options['sources_list'] = self.get_sources_list(self.search_options['selected_db'])
+                self.search_options['sources_list'] = self.get_sources_list(self.search_options['selected_db'])
                 self.set_all_controls_sensitive_except(True, combobox)
                 self.set_image_connected(True)
             else:
