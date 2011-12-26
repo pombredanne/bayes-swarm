@@ -67,3 +67,39 @@ Install python, pygtk (and all that is needed for it to run), gtkhtml2 and igrap
   * [http://pypi.python.org/packages/2.5/p/python-igraph/python-igraph-0.5.1.win32-py2.5.exe igraph]
 
 Download and uncompress the sample db, run it!
+
+== OSX ==
+The easiest way to install all the dependencies seems to be using macports, which itself requires xcode and other stuff:
+
+- X11 should be already installed if have a recent system, otherwise check http://guide.macports.org/#installing.x11)
+
+- Install Xcode tools http://guide.macports.org/#installing.xcode
+
+- Install MacPorts http://guide.macports.org/#installing.macports
+
+- Make sure the paths are configured in your shell profile http://guide.macports.org/#installing.shell
+{{{
+export PATH=/opt/local/bin:/opt/local/sbin:$PATH
+}}}
+List the available pythons to select from:
+{{{
+port select --list python
+}}}
+
+to choose a specific port (eg python27):
+{{{
+port select python python27
+}}}
+
+- install python, xapian, python-gtkhtml2, python-igraph
+{{{
+sudo port install xapian-bindings
+sudo port install py27-gtkhtml2 py27-gtk
+sudo port install py27-igraph
+}}}
+
+select xapian python bindings
+
+{{{
+sudo port -v install xapian-bindings +python27
+}}}
