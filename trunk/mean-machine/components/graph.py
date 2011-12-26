@@ -1,4 +1,5 @@
-#!/usr/bin/xapian
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
 
 # calculate distance between the provided term and the most frequent
 # ones among those documents which are more relevant for term
@@ -12,7 +13,7 @@ logging = logging.getLogger('components.graph')
 
 import gtk
 from core import MMComponent, MMEsetFilter, stopwords
-from .ui.graph import MMResultGraph
+from ui.graph import MMResultGraph
 
 class MMSearchComponent(MMComponent):
     is_mm_component = True

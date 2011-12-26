@@ -12,7 +12,7 @@ logging = logging.getLogger('components.graph')
 
 import gtk
 from core import MMComponent, MMEsetFilter, stopwords
-from .ui.graph import MMResultGraph
+from ui.graph import MMResultGraph
 
 class MMSearchComponent(MMComponent):
     is_mm_component = True
