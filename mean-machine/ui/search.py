@@ -57,10 +57,6 @@ class MMResultSearch(object):
         scrolledwin2 = gtk.ScrolledWindow()
         scrolledwin2.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
-        #document = gtkhtml2.Document()
-        #self.view = gtkhtml2.View()
-        #self.view.set_size_request(-1, 150)
-        #self.view.set_document(document)
         self.cloud_label = gtk.Label()
         self.cloud_label.connect("size-allocate", self.cb_allocate)
         self.cloud_label.connect("activate-link", self.cb_activate_link)

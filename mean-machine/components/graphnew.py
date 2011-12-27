@@ -43,7 +43,7 @@ the given terms are most relevant"""
             gtk.main_iteration()
         rset = xapian.RSet()
         for y, m in enumerate(mset):
-            rset.add_document(m[xapian.MSET_DID])
+            rset.add_document(m.docid)
 
         logging.debug('Getting ESet')
         progressbar.set_fraction(0.5)
@@ -69,7 +69,7 @@ the given terms are most relevant"""
             positions_arrays = {}
             freq = 0
             for m in mset:
-                docid = m[xapian.MSET_DID]
+                docid = m.docid
                 try:
                     positions_array = set(search_options['db'].positionlist(docid, keyword.term))
                 except xapian.RangeError:
@@ -93,7 +93,7 @@ the given terms are most relevant"""
                     distance = 0
                     doc_distances = []
                     for m in mset:
-                        docid = m[xapian.MSET_DID]
+                        docid = m.docid
                         for i in positions_matrix[ki][docid]:
                             for j in positions_matrix[oi][docid]:
                                 doc_distances.append(abs(i-j))
