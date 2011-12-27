@@ -5,8 +5,5 @@ Requirements:
 
 * mean-machine.py:
   - xapian, pygtk
-  - search component: gtkhtml2
+  - search component: pango
   - graph component: igraph
-  
-* bs-xapian-graph.py:
-  - xapian, pygtk, xdot, pydot

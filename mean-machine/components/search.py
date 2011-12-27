@@ -17,11 +17,11 @@ logging = logging.getLogger('components.search')
 
 import gtk
 from core import MMComponent, MMEsetFilter, stopwords
-from ui.search import MMResultSearch
+from ui.searchnew import MMResultSearch
 
 class MMSearchComponent(MMComponent):
     is_mm_component = True
-    name = "search"
+    name = "searchnew"
     description = """Searchs for given terms and returns matching documents
 together with the cloud of most frequent terms"""
     ui = MMResultSearch
