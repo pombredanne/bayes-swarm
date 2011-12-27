@@ -7,23 +7,8 @@ __copyright__ = 'BayesFor Association'
 __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
 from math import exp
-import gtk, gobject, gtkhtml2
+import gtk, gobject, pango
 import os
-
-def mark_text_up(result_list):
-    document = gtkhtml2.Document()
-    document.clear()
-    document.open_stream("text/html")
-    document.write_stream("""<html><head>
-<style type="text/css">
-a { text-decoration: none; color: black; }
-</style>
-</head><body>""")
-    for tag, score in result_list:
-        document.write_stream('<a href="%s" style="font-size: %d%%">%s</a> ' % (tag.encode('latin-1'), score, tag.encode('latin-1')))
-    document.write_stream("</body></html>")
-    document.close_stream()
-    return document 
 
 class MMResultSearch(object):
     def __init__(self, box, searchform):
@@ -72,16 +57,19 @@ class MMResultSearch(object):
         scrolledwin2 = gtk.ScrolledWindow()
         scrolledwin2.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
 
-        document = gtkhtml2.Document()
-        self.view = gtkhtml2.View()
-        self.view.set_size_request(-1, 150)
-        self.view.set_document(document)
+        #document = gtkhtml2.Document()
+        #self.view = gtkhtml2.View()
+        #self.view.set_size_request(-1, 150)
+        #self.view.set_document(document)
+        self.cloud_label = gtk.Label()
+        self.cloud_label.connect("size-allocate", self.cb_allocate)
+        self.cloud_label.connect("activate-link", self.cb_activate_link)
         
-        scrolledwin2.add(self.view)
-        screlledwin2_inner_vbox = gtk.VBox(False, 0)
-        screlledwin2_inner_vbox.pack_start(gtk.Label("Terms cloud"), False, False, 3)
-        screlledwin2_inner_vbox.pack_start(scrolledwin2)
-        vpaned.add(screlledwin2_inner_vbox)
+        scrolledwin2.add(self.cloud_label)
+        scrolledwin2_inner_vbox = gtk.VBox(False, 0)
+        scrolledwin2_inner_vbox.pack_start(gtk.Label("Terms cloud"), False, False, 3)
+        scrolledwin2_inner_vbox.pack_start(scrolledwin2)
+        vpaned.add(scrolledwin2_inner_vbox)
 
         self.vbox = gtk.VBox(False, 0)
         self.vbox.pack_start(gtk.Label("Matched documents list"), False, False, 3)
@@ -89,23 +77,31 @@ class MMResultSearch(object):
 
         box.add(self.vbox)
 
-    def display(self, docs, tags):
+    def display(self, docs, result_list):
         self.model.clear()
         for item in docs:
             self.model.append(item)
     
-        gtkhtml2_doc = mark_text_up(tags)
-        gtkhtml2_doc.connect('link_clicked', self.on_tag_clicked)
-        self.view.set_document(gtkhtml2_doc)
+        marked_text = ''
+        for tag, score in result_list:
+            marked_text = ' '.join([marked_text, '<span size="%d"><a href="%s">%s</a></span>'
+            	% (score*100, tag, tag)])
+        self.cloud_label.set_text(marked_text)
+        self.cloud_label.set_use_markup(True)
+        self.cloud_label.set_line_wrap(True)
+        self.cloud_label.set_justify(gtk.JUSTIFY_CENTER)
+
+    def cb_allocate(self, label, allocation):
+        label.set_size_request(allocation.width - 2, -1)
+
+    def cb_activate_link(self, label, uri):
+        self.searchform.entry.set_text(self.searchform.entry.get_text().rstrip() + " " + uri)
+        return True
 
     def clear(self):
         self.model.clear()
         
-        document = gtkhtml2.Document()
-        self.view.set_document(document)
-
-    def on_tag_clicked(self, document, link):
-        self.searchform.entry.set_text(self.searchform.entry.get_text().rstrip() + " " + link)
+        self.cloud_label.set_text('')
 
 #    def on_query_tooltip(self, widget, x, y, keyboard_mode, tooltip, *args):
 #        pass
