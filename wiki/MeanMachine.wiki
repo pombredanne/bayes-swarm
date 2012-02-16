@@ -64,6 +64,7 @@ Download [http://bayes-swarm.googlecode.com/files/mean-machine-r529.zip Mean-Mac
 Install python, pygtk and igraph:
   * [http://www.python.org/ftp/python/2.7.2/python-2.7.2.msi python]
   * [http://ftp.gnome.org/pub/GNOME/binaries/win32/pygtk/2.24/pygtk-all-in-one-2.24.2.win32-py2.7.msi pygtk]
+  * [http://www.flax.co.uk/xapian/128/xapian-python-bindings%20for%20Python%202.7.0%20-1.2.8.win32.exe xapian]
   * [http://pypi.python.org/packages/2.7/p/python-igraph/python-igraph-0.5.4.win32-py2.7.msi igraph]
 Download the [http://bayes-swarm.googlecode.com/files/150italia.zip sample db]
 
