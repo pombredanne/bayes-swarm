@@ -28,14 +28,15 @@ Graphs can be exported in different formats.
 
 = What do I need to try it? =
   * [http://bayes-swarm.googlecode.com/files/mean-machine-r529.zip Mean-Machine]
-  * xapian indexed db (can be found at [http://www.battlehorse.net/swarm_sample/ this url])
+  * xapian indexed db ([http://bayes-swarm.googlecode.com/files/150italia.zip sample db])
+  * python
   * xapian library with python bindings
-  * pygtk, gtkhtml2 (search component), [http://cneurocvs.rmki.kfki.hu/igraph/ igraph] (graph component)
+  * pygtk, [http://cneurocvs.rmki.kfki.hu/igraph/ igraph] (graph component)
 
 == Ubuntu ==
-Install xapian, its python bindings, gtkhml2 and igraph (enable Ubuntu repository from igraph homepage)
+Install xapian, its python bindings and igraph (enable Ubuntu repository from igraph homepage). Pygtk is already installed
 {{{
-sudo apt-get install python-xapian python-gtkhtml2 python-igraph
+sudo apt-get install python-xapian python-igraph
 }}}
 
 Get the source code
@@ -44,14 +45,7 @@ cd ~
 svn checkout http://bayes-swarm.googlecode.com/svn/trunk/mean-machine mean-machine
 }}}
 
-Download and uncompress the sample db
-{{{
-cd ~
-mkdir xapian-pagestore
-cd xapian-pagestore
-wget http://www.battlehorse.net/swarm_sample/2008_01xap.tar.bz2
-tar xvf 2008_01xap.tar.bz2
-}}}
+Download and uncompress the [http://bayes-swarm.googlecode.com/files/150italia.zip sample db]
 
 Finally run it!
 {{{
