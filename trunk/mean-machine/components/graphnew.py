@@ -12,7 +12,7 @@ logging = logging.getLogger('components.graph')
 
 import gtk
 from core import MMComponent, MMEsetFilter, stopwords
-from ui.graph import MMResultGraph
+from ui.graphnew import MMResultGraph
 
 class MMSearchComponent(MMComponent):
     is_mm_component = True
@@ -50,19 +50,19 @@ the given terms are most relevant"""
         progressbar.set_text('50%')
         while gtk.events_pending():
             gtk.main_iteration()
-        eset = search_options['enquire'].get_eset(search_options['n_eset']+1, 
+        eset = search_options['enquire'].get_eset(search_options['n_eset'], 
                                 rset, 
                                 xapian.Enquire.INCLUDE_QUERY_TERMS, 
                                 1, 
                                 MMEsetFilter(stopwords[search_options['selected_language']],
                                     search_options['eset_white_list']))
 
-        logging.debug('Calculating distances on %i terms' % len(eset))
         progressbar.set_fraction(0.75)
         progressbar.set_text('75%')
         while gtk.events_pending():
             gtk.main_iteration()
 
+        logging.debug('Calculating distances on %i terms' % len(eset))
         positions_matrix = {}
         freq_dict = {}
         for ki, keyword in enumerate(eset):
@@ -80,7 +80,7 @@ the given terms are most relevant"""
             freq_dict[ki] = freq
 
             if progressbar is not None: 
-                fraction = progressbar.get_fraction() + 0.125/float(search_options['n_eset'])
+                fraction = 0.75 + 0.125/float(search_options['n_eset']) * ki
                 progressbar.set_fraction(fraction)
                 progressbar.set_text('%.0f%%' % (fraction*100))
                 while gtk.events_pending():
@@ -89,10 +89,11 @@ the given terms are most relevant"""
         full_distances_list = []
         for ki, keyword in enumerate(eset):
             for oi, other in enumerate(eset):
-                if ki < oi:
+                if keyword.term < other.term:
                     distance = 0
-                    doc_distances = []
+                    
                     for m in mset:
+                        doc_distances = []
                         docid = m.docid
                         for i in positions_matrix[ki][docid]:
                             for j in positions_matrix[oi][docid]:
@@ -102,33 +103,34 @@ the given terms are most relevant"""
                         # Noi teniamo solo le max(wdf_i, wdf_j) coppie che hanno
                         # distanza minima
                         tl = search_options['db'].get_document(docid).termlist()
-                        num_kept_distances = max(tl.skip_to(keyword.term).wdf, tl.skip_to(other.term).wdf)
+
+                        try:
+                            keyword_wdf = tl.skip_to(keyword.term).wdf
+                            other_wdf = tl.skip_to(other.term).wdf
+                        except:
+                            pass
+                        num_kept_distances = max(keyword_wdf, other_wdf)
                         if doc_distances != []:
                             doc_distances.sort()
                             distance += sum([1/float(i) for i in doc_distances[:num_kept_distances]])
-                            #print "%s, %s: dist=%s, kept=%i, kept_dist=%s, dist=%f" % (keyword.term, other.term, doc_distances, num_kept_distances, doc_distances[:num_kept_distances], distance)
+                            print "%s(%d), %s(%d): dist=%s, kept=%i, kept_dist=%s, doc=%d(%d), dist=%f" % (keyword.term, keyword_wdf, other.term, other_wdf, doc_distances, num_kept_distances, doc_distances[:num_kept_distances], docid, search_options['n_mset'], distance)
 
                     if distance != 0:
-                        # FIXME: divide also by Fmax = max(term.termfreq)
-                        f = lambda x: x/float(max(freq_dict.values())) #float(search_options['n_mset'])
-                        
+                        f = lambda x: x/float(num_kept_distances) / float(search_options['n_mset'])
+                        #print "%s, %s: %f" % (keyword.term, other.term, f(distance))
+
                         full_distances_list.append([keyword.term, 
                                                other.term, 
                                                f(distance), 
                                                keyword.weight,
                                                other.weight])
-                        #distances_list.append([other.term, 
-                        #                       keyword.term, 
-                        #                       f(distances),
-                        #                       other.weight,
-                        #                       keyword.weight])
                 if progressbar is not None:
-                    fraction = progressbar.get_fraction() + 0.125/float(search_options['n_eset'] * search_options['n_eset'])
+                    fraction = 0.875 + 0.125/float(search_options['n_eset']) * ki
                     progressbar.set_fraction(fraction)
                     progressbar.set_text('%.0f%%' % (fraction*100))
                     while gtk.events_pending():
                         gtk.main_iteration()
-                
+        #print full_distances_list
         return full_distances_list
         
     def display(self, distances_list, terms):

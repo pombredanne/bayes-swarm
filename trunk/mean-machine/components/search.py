@@ -63,10 +63,11 @@ together with the cloud of most frequent terms"""
             gtk.main_iteration()
         eset = search_options['enquire'].get_eset(search_options['n_eset'], 
                                 rset, 
-                                #xapian.Enquire.INCLUDE_QUERY_TERMS, 
-                                #1, 
+                                xapian.Enquire.INCLUDE_QUERY_TERMS, 
+                                1, 
                                 #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(n_mset + n_eset)))
-                                MMEsetFilter(stopwords[search_options['selected_language']], search_options['eset_white_list']))
+                                MMEsetFilter(stopwords[search_options['selected_language']], 
+                                    search_options['eset_white_list']))
         
         # Read the "Expansion set" and scan tags and their score
         tagscores = dict()

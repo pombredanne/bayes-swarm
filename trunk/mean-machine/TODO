@@ -12,23 +12,30 @@ TODO:
     result frame is not realized
   - add proper log messages
   - show error/warning messages in statusbar
+  - show matched documents for all components, allow to toggle this with a 
+    button, double click on document should open a pane of it with a renderer
+  - when openining a new component, put cursor in the search box, allow return
+    key to trigger search
 
-* graph component
+* graphnew component
+  - show min vertex size = min avg term freq and 
+      max vertex size = max avg term freq
+  - show min edge size = 0 and max edge size = 1
   - add a save graph image button (include search parameters in picture
     metada)
-  - use seed in order to stabilize graphs
   - center the searched term in the graph
   - allow to switch between distance graph and matching graph (current
     bs-xapian-graph view based on xapian weight only)
-  - show vertex connected to [at least one/all] term vertex
   
 * search component
-  - add time-machine like functionality (display original page in 
-    browser)
+  - allow to choose if query terms should be displayed or not
   
 * info component?
   - display: total n. of indexed docs, n. of docs per source, n. of
     languages, date range
+
+* stem-component
+  - show the stemmed version of a word
 
 * bs-xapian-graph.py:
   - integrate clicking functionality with nearest-plotter and remove
