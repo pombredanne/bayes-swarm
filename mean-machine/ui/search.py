@@ -6,7 +6,6 @@
 __copyright__ = 'BayesFor Association'
 __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
-from math import exp
 import gtk, gobject, pango
 import os
 

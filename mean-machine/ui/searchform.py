@@ -30,6 +30,7 @@ class MMSearchForm(gtk.Frame):
         self.set_border_width(6)
 
         self.entry = gtk.Entry()
+        #self.entry.set_activates_default(True) #FIXME: doesn't work
 
         self.start_button = gtk.Button()
         self.start_button.set_label('Search')
@@ -86,6 +87,7 @@ class MMSearchForm(gtk.Frame):
         #cell = gtk.CellRendererText()
         #self.comboboxentry_db.pack_start(cell, True)
         #self.comboboxentry_db.add_attribute(cell, 'text', MODEL_DB_IS_LOCAL)
+        self.model_db.append(['/Users/matteozandi/Development/pagestore/parisi_120201_xap', 0, True, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['/home/matteo/Development/pagestore/parisi_120201_xap', 0, True, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['/Users/matteozandi/Dropbox/xap_db', 0, True, FLAG_DB_NOT_CHECKED])
         self.model_db.append(['10.0.2.2:3333', 0, False, FLAG_DB_NOT_CHECKED])
