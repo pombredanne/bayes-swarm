@@ -90,7 +90,6 @@ class MMResultGraph():
         self.searchform = searchform
         vbox = gtk.VBox(False, 0)
         vbox.set_border_width(6)
-        
 
         def log_scale(x):
             return (exp(x)-1)/(exp(1)-1)
@@ -105,12 +104,12 @@ class MMResultGraph():
         self.adj = gtk.Adjustment(0.50, 0, 1, 0.01, 0.1, 0)
         self.slider = gtk.HScale(self.adj)
         #self.slider.connect('format-value', scale_format_value)
-        self.slider.set_digits(2)
+        self.slider.set_digits(4)
 
         self.adj2 = gtk.Adjustment(0.50, 0, 1, 0.01, 0.1, 0)
         self.slider2 = gtk.HScale(self.adj2)
         #self.slider2.connect('format-value', scale_format_value)
-        self.slider2.set_digits(2)
+        self.slider2.set_digits(4)
 
         self.adj.connect("value_changed", self.cb_threshold_changed)
         self.adj2.connect("value_changed", self.cb_threshold_changed)
@@ -174,18 +173,26 @@ class MMResultGraph():
             weights.append(w)
 
         g = igraph.Graph(edges, directed=False)
-        min_w = min(weights)
-        max_w = max(weights)    
-        #g.es['weight'] = [(i - min_w) / float(max_w - min_w) for i in weights]
+
         g.es['weight'] = weights
         g.es['realweight'] = weights
         g.vs['label'] = labels
+        g.vs['size'] = sizes
 
-        self.adj.set_upper(max(weights))
+        max_w = max(weights)
+        self.adj.set_upper(max_w)
+        self.adj.set_value(max_w/2)
+        self.adj.set_step_increment(max_w/100)
+        self.adj.set_page_increment(max_w/10)
 
-        min_size = min(sizes)
-        max_size = max(sizes)
-        g.vs['size'] = [(i - min_size) / float(max_size - min_size) for i in sizes]
+        min_s = min(sizes)
+        max_s = max(sizes)
+        interval_s = max_s-min_s
+        self.adj2.set_lower(min_s)
+        self.adj2.set_upper(max_s)
+        self.adj2.set_value(min_s+interval_s/2)
+        self.adj2.set_step_increment(interval_s/100)
+        self.adj2.set_page_increment(interval_s/10)
 
         g.vs['is_term'] = [False for l in labels] # FIXME: how do you set an attribute for all vertex?
         for term in terms:

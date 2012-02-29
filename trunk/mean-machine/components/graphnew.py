@@ -65,6 +65,7 @@ the given terms are most relevant"""
         logging.debug('Calculating distances on %i terms' % len(eset))
         positions_matrix = {}
         freq_dict = {}
+        wdf_dict = {}
         for ki, keyword in enumerate(eset):
             positions_arrays = {}
             freq = 0
@@ -76,8 +77,21 @@ the given terms are most relevant"""
                     positions_array = []
                 positions_arrays[docid] = positions_array
                 freq += len(positions_array)
+                
+                tl = search_options['db'].get_document(docid).termlist()
+                try:
+                    wdf = tl.skip_to(keyword.term).wdf
+                except:
+                    continue
+                else:
+                    if wdf_dict.has_key(ki):
+                        wdf_dict[ki] += wdf
+                    else:
+                        wdf_dict[ki] = wdf
+            
             positions_matrix[ki] = positions_arrays
             freq_dict[ki] = freq
+            wdf_dict[ki] /= float(search_options['n_mset'])
 
             if progressbar is not None: 
                 fraction = 0.75 + 0.125/float(search_options['n_eset']) * ki
@@ -113,7 +127,7 @@ the given terms are most relevant"""
                         if doc_distances != []:
                             doc_distances.sort()
                             distance += sum([1/float(i) for i in doc_distances[:num_kept_distances]])
-                            print "%s(%d), %s(%d): dist=%s, kept=%i, kept_dist=%s, doc=%d(%d), dist=%f" % (keyword.term, keyword_wdf, other.term, other_wdf, doc_distances, num_kept_distances, doc_distances[:num_kept_distances], docid, search_options['n_mset'], distance)
+                            #print "%s(%d), %s(%d): dist=%s, kept=%i, kept_dist=%s, doc=%d(%d), dist=%f" % (keyword.term, keyword_wdf, other.term, other_wdf, doc_distances, num_kept_distances, doc_distances[:num_kept_distances], docid, search_options['n_mset'], distance)
 
                     if distance != 0:
                         f = lambda x: x/float(num_kept_distances) / float(search_options['n_mset'])
@@ -122,8 +136,8 @@ the given terms are most relevant"""
                         full_distances_list.append([keyword.term, 
                                                other.term, 
                                                f(distance), 
-                                               keyword.weight,
-                                               other.weight])
+                                               wdf_dict[ki],
+                                               wdf_dict[oi]])
                 if progressbar is not None:
                     fraction = 0.875 + 0.125/float(search_options['n_eset']) * ki
                     progressbar.set_fraction(fraction)

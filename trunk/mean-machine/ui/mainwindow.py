@@ -132,9 +132,9 @@ class MainMachine(object):
         logging.info("Starting Mean-Machine")
         self.components = get_components()
 
-        w = gtk.Window()
-        w.connect('destroy', self.quit_cb)
-        w.set_size_request(700, 600)
+        self.w = gtk.Window()
+        self.w.connect('destroy', self.quit_cb)
+        self.w.set_size_request(700, 600)
 
         vbox = gtk.VBox(False, 0)
 
@@ -143,7 +143,7 @@ class MainMachine(object):
         self.merge_id = 0        
         # Add the accelerator group to the toplevel window
         accelgroup = self.uimanager.get_accel_group()
-        w.add_accel_group(accelgroup)
+        self.w.add_accel_group(accelgroup)
 
         # Create an ActionGroup
         self.actiongroup = gtk.ActionGroup('MMUIManager')
@@ -183,8 +183,8 @@ class MainMachine(object):
 #        self.notebook.connect('page-added', self.on_page_added)
         vbox.pack_start(self.notebook, True, True, 0)
 
-        w.add(vbox)
-        w.show_all()
+        self.w.add(vbox)
+        self.w.show_all()
         gtk.main()
 
     def new_tab(self, component):
@@ -192,6 +192,8 @@ class MainMachine(object):
         child.show_all()
         child.searchform.advancedbox.hide()
 
+        #self.w.set_default(child.searchform.start_button) #FIXME: doesn't work
+        
         # TODO: change tab label according to what user types in search
         tab_label = gtk.Label(component.name)
         tab_label.show()
