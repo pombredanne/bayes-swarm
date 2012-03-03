@@ -64,7 +64,6 @@ the given terms are most relevant"""
 
         logging.debug('Calculating distances on %i terms' % len(eset))
         positions_matrix = {}
-        freq_dict = {}
         wdf_dict = {}
         for ki, keyword in enumerate(eset):
             positions_arrays = {}
@@ -76,7 +75,6 @@ the given terms are most relevant"""
                 except xapian.RangeError:
                     positions_array = []
                 positions_arrays[docid] = positions_array
-                freq += len(positions_array)
                 
                 tl = search_options['db'].get_document(docid).termlist()
                 try:
@@ -90,8 +88,8 @@ the given terms are most relevant"""
                         wdf_dict[ki] = wdf
             
             positions_matrix[ki] = positions_arrays
-            freq_dict[ki] = freq
-            wdf_dict[ki] /= float(search_options['n_mset'])
+            wdf_dict[ki] /= float(len(mset))
+            #print "weight (%s): %f" % (keyword.term, wdf_dict[ki])
 
             if progressbar is not None: 
                 fraction = 0.75 + 0.125/float(search_options['n_eset']) * ki
@@ -127,10 +125,10 @@ the given terms are most relevant"""
                         if doc_distances != []:
                             doc_distances.sort()
                             distance += sum([1/float(i) for i in doc_distances[:num_kept_distances]])
-                            #print "%s(%d), %s(%d): dist=%s, kept=%i, kept_dist=%s, doc=%d(%d), dist=%f" % (keyword.term, keyword_wdf, other.term, other_wdf, doc_distances, num_kept_distances, doc_distances[:num_kept_distances], docid, search_options['n_mset'], distance)
+                            #print "%s(%d), %s(%d): dist=%s, kept=%i, kept_dist=%s, doc=%d(%d), dist=%f" % (keyword.term, keyword_wdf, other.term, other_wdf, doc_distances, num_kept_distances, doc_distances[:num_kept_distances], docid, len(mset), distance)
 
                     if distance != 0:
-                        f = lambda x: x/float(num_kept_distances) / float(search_options['n_mset'])
+                        f = lambda x: x/float(num_kept_distances) / float(len(mset))
                         #print "%s, %s: %f" % (keyword.term, other.term, f(distance))
 
                         full_distances_list.append([keyword.term, 

@@ -174,23 +174,23 @@ class MMResultGraph():
 
         g = igraph.Graph(edges, directed=False)
 
-        g.es['weight'] = weights
-        g.es['realweight'] = weights
-        g.vs['label'] = labels
-        g.vs['size'] = sizes
-
-        max_w = max(weights)
-        self.adj.set_upper(max_w)
-        self.adj.set_value(max_w/2)
-        self.adj.set_step_increment(max_w/100)
-        self.adj.set_page_increment(max_w/10)
-
         min_s = min(sizes)
         max_s = max(sizes)
         interval_s = max_s-min_s
+
+        g.es['weight'] = weights     # for graphical purposes
+        g.es['realweight'] = weights # used to show on the slider + export
+        g.vs['label'] = labels
+        g.vs['size'] = [10 + 15 * (i - min_s) / float(interval_s) for i in sizes] # normalize so that we don't get enormous balls
+        g.vs['realsize'] = sizes     # used to show on the slider + export
+
+        max_w = max(weights)
+        self.adj.set_upper(max_w)
+        self.adj.set_step_increment(max_w/100)
+        self.adj.set_page_increment(max_w/10)
+
         self.adj2.set_lower(min_s)
         self.adj2.set_upper(max_s)
-        self.adj2.set_value(min_s+interval_s/2)
         self.adj2.set_step_increment(interval_s/100)
         self.adj2.set_page_increment(interval_s/10)
 
@@ -209,16 +209,18 @@ class MMResultGraph():
 
         self.g = g
 
-        self.cb_threshold_changed(None)
+        self.adj.set_value(max_w/2)
+        self.adj2.set_value(min_s+interval_s/2)
+        #self.cb_threshold_changed(None) #not necessary since already called when setting adj and adj2 values
 
     def cb_threshold_changed(self, adj):
         # keep only edges where weight > threshold
         #g = self.g - self.g.es.select(weight_lt=log_scale(self.adj.value))
-        g = self.g - self.g.es.select(weight_lt=self.adj.value)
+        g = self.g - self.g.es.select(realweight_lt=self.adj.value)
         
         # keep only vertex where size >= threshold
         #g = g.subgraph(g.vs.select(size_ge=log_scale(self.adj2.value)))
-        g = g.subgraph(g.vs.select(size_ge=self.adj2.value))
+        g = g.subgraph(g.vs.select(realsize_ge=self.adj2.value))
         
         self.terms_list = []
         for v in g.vs:

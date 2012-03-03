@@ -177,7 +177,9 @@ class MMResultGraph():
 
         min_size = min(sizes)
         max_size = max(sizes)
-        g.vs['size'] = [(i - min_size) / float(max_size - min_size) for i in sizes]
+        g.vs['realsize'] = [(i - min_size) / float(max_size - min_size) for i in sizes]
+        g.vs['size'] = [10 + 15 * i for i in g.vs['realsize']]
+
 
         g.vs['is_term'] = [False for l in labels] # FIXME: how do you set an attribute for all vertex?
         for term in terms:
@@ -198,10 +200,10 @@ class MMResultGraph():
 
     def cb_threshold_changed(self, adj):
         # keep only edges where weight > threshold
-        g = self.g - self.g.es.select(weight_lt=log_scale(self.adj.value))
+        g = self.g - self.g.es.select(realweight_lt=log_scale(self.adj.value))
         
         # keep only vertex where size >= threshold
-        g = g.subgraph(g.vs.select(size_ge=log_scale(self.adj2.value)))
+        g = g.subgraph(g.vs.select(realsize_ge=log_scale(self.adj2.value)))
         
         self.terms_list = []
         for v in g.vs:

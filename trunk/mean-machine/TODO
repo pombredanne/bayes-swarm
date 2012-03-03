@@ -16,6 +16,7 @@ TODO:
     button, double click on document should open a pane of it with a renderer
   - when openining a new component, put cursor in the search box, allow return
     key to trigger search
+  - check if a new version is present, offer to update
 
 * graphnew component
   - show min vertex size = min avg term freq and 
