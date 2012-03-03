@@ -45,7 +45,7 @@ class IGraphDrawingArea(gtk.DrawingArea):
 
             plot = igraph.drawing.Plot(surface, (0, 0, rect.width, rect.height))
             seed_layout = self.g.layout("fr", seed = self.g.vs['fr_seed_coords'])
-            plot.add(self.g, layout=seed_layout, margin=(20,20,20,20), weights = self.g.es['weight'], vertex_size=[s * 20 + 7 for s in self.g.vs['size']]) #, fixed = self.g.vs['fixed'])
+            plot.add(self.g, layout=seed_layout, margin=(20,20,20,20), weights = self.g.es['weight'], vertex_size = self.g.vs['size']) #, fixed = self.g.vs['fixed'])
             plot.redraw()
             
             context.set_source_surface (surface)
