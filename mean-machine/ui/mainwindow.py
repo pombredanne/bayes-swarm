@@ -38,7 +38,7 @@ class MMMainFrame(gtk.VBox):
         if search_options['selected_localdb']:
             db = xapian.Database(search_options['selected_db'])
         else:
-            db_host, port = search_options['selected_localdb'].split(':')
+            db_host, port = search_options['selected_db'].split(':')
             db = xapian.remote_open(db_host, int(port))
 
         qp = xapian.QueryParser()

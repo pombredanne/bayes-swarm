@@ -28,31 +28,34 @@ together with the cloud of most frequent terms"""
     has_additional_actions = False
     
     def run(self, search_options, progressbar=None):
+        # Matching set
         logging.debug('Getting MSet')
         progressbar.set_text('0%')
         while gtk.events_pending():
             gtk.main_iteration()
         mset = search_options['enquire'].get_mset(0,
-                                search_options['n_mset'],
-                                0,
-                                None,
-                                #MMMatchDeciderAlwaysTrue(progressbar, 1/float(n_mset + n_eset)))
-                                #MMMatchDeciderAlwaysTrue())
-                                None)
+            search_options['n_mset'],
+            0,
+            None,
+            #MMMatchDeciderAlwaysTrue(progressbar, 1/float(n_mset + n_eset)))
+            #MMMatchDeciderAlwaysTrue())
+            None)
 
-        # Results
-        docs = []
-        rset = xapian.RSet()
+        # Results set
         logging.debug('Getting RSet')
         progressbar.set_fraction(0.33)
         progressbar.set_text('33%')
         while gtk.events_pending():
             gtk.main_iteration()
-        for y, m in enumerate(mset):
+
+        docs = []
+        rset = xapian.RSet()
+        for y, d in enumerate(mset):
             if y < search_options['n_mset']:
-                rset.add_document(m.docid)
-            name = m.document.get_data()
-            docs.append([m.percent, name, m, ''])
+                rset.add_document(d.docid)
+                docs.append([d.percent, d.document.get_data(), d.document.get_value(2)])
+            else:
+                logging.warning('More docs in mset than expected, something is wrong')
 
         # Obtain the "Expansion set" for the search: the n most relevant terms that
         # match the filter
@@ -62,12 +65,12 @@ together with the cloud of most frequent terms"""
         while gtk.events_pending():
             gtk.main_iteration()
         eset = search_options['enquire'].get_eset(search_options['n_eset'], 
-                                rset, 
-                                xapian.Enquire.INCLUDE_QUERY_TERMS, 
-                                1, 
-                                #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(n_mset + n_eset)))
-                                MMEsetFilter(stopwords[search_options['selected_language']], 
-                                    search_options['eset_white_list']))
+            rset, 
+            xapian.Enquire.INCLUDE_QUERY_TERMS, 
+            1, 
+            #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(n_mset + n_eset)))
+            MMEsetFilter(stopwords[search_options['selected_language']], 
+                search_options['eset_white_list']))
         
         # Read the "Expansion set" and scan tags and their score
         tagscores = dict()
