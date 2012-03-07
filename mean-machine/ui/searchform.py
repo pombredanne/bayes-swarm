@@ -11,8 +11,6 @@ from selectdialog import MMSelectDialog
 
 import xapian
 import logging
-format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(format=format)
 logging = logging.getLogger('ui.searchform')
 
 MODEL_DOC_LANG, MODEL_DOC_HASH, MODEL_DOC_DATE, MODEL_DOC_DIR, MODEL_DOC_SOURCEID, MODEL_DOC_SOURCE = range(6)

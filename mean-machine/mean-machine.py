@@ -13,4 +13,14 @@ __author__    = 'Matteo Zandi <matteo.zandi@bayesfor.eu>'
 
 from ui.mainwindow import MainMachine
 
+import logging
+format = "%(asctime)s %(levelname)s %(name)s: %(message)s"
+logging.basicConfig(filename = 'mean-machine.log',
+    level = logging.DEBUG, 
+    format = format)
+
+logging.info("*** Starting Mean-Machine ***")
+
 mm = MainMachine()
+
+logging.info("*** Quitting Mean-Machine ***")

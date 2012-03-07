@@ -14,9 +14,7 @@ from igraphdrawingarea import IGraphDrawingArea
 from selectdialog import MMSelectDialog
 
 import logging
-format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=format)
-logging = logging.getLogger('ui.graph')
+logging = logging.getLogger('ui.graphnew')
 
 def MMWritePajek(g, filename):
     '''Writes graph g to filename in pajek format
