@@ -14,8 +14,6 @@ from searchform import MMSearchForm
 import xapian
 
 import logging
-format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(format=format)
 logging = logging.getLogger('ui.mainwindow')
 
 MODEL_DOC_LANG, MODEL_DOC_HASH, MODEL_DOC_DATE, MODEL_DOC_DIR, MODEL_DOC_SOURCEID, MODEL_DOC_SOURCE = range(6)
@@ -66,7 +64,7 @@ class MMMainFrame(gtk.VBox):
                     query_sources = xapian.Query(xapian.Query.OP_OR, query_sources, query_source_id)
             query = xapian.Query(xapian.Query.OP_AND, query, query_sources)
 
-        #logging.debug("Setting query: %s" % query.get_description())
+        logging.debug("Setting query: %s" % query)
 
         enquire = xapian.Enquire(db)
         enquire.set_query(query)
@@ -129,7 +127,6 @@ class MainMachine(object):
     </ui>'''
 
     def __init__(self):
-        logging.info("Starting Mean-Machine")
         self.components = get_components()
 
         self.w = gtk.Window()
@@ -243,5 +240,4 @@ class MainMachine(object):
             self.merge_id = self.uimanager.add_ui_from_string(self.common_action_ui % ('ToggleAdvancedBox%i' % active_component.id))
 
     def quit_cb(self, b):
-        logging.info("Quitting Mean-Machine")
         gtk.main_quit()

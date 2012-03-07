@@ -14,8 +14,6 @@ from igraphdrawingarea import IGraphDrawingArea
 from selectdialog import MMSelectDialog
 
 import logging
-format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=format)
 logging = logging.getLogger('ui.graph')
 
 def log_scale(x):

@@ -11,8 +11,6 @@ import sys
 import xapian
 
 import logging
-format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-logging.basicConfig(level=logging.DEBUG, format=format)
 logging = logging.getLogger('components.search')
 
 import gtk
