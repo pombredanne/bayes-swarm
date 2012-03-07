@@ -18,8 +18,8 @@ from ui.graph import MMResultGraph
 class MMSearchComponent(MMComponent):
     is_mm_component = True
     name = "graph"
-    description = """Graphs the net obtained by a set of documents where
-the given terms are most relevant"""
+    description = """Graphs the net obtained by a set of documents where the 
+given terms are most relevant"""
     ui = MMResultGraph
 
     has_additional_actions = True
@@ -30,12 +30,12 @@ the given terms are most relevant"""
         while gtk.events_pending():
             gtk.main_iteration()
         mset = search_options['enquire'].get_mset(0,
-                                search_options['n_mset'],
-                                0,
-                                None,
-                                #MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_mset + self.n_eset + self.n_eset*self.n_eset)))
-                                #MMMatchDeciderAlwaysTrue())
-                                None)
+            search_options['n_mset'],
+            0,
+            None,
+            #MMMatchDeciderAlwaysTrue(progressbar, 1/float(self.n_mset + self.n_eset + self.n_eset*self.n_eset)))
+            #MMMatchDeciderAlwaysTrue())
+            None)
 
         logging.debug('Getting RSet')
         progressbar.set_fraction(0.25)

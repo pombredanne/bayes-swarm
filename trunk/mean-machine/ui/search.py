@@ -14,7 +14,7 @@ class MMResultSearch(object):
         '''box is where this widget is packed'''
         self.searchform = searchform
         
-        self.model = gtk.ListStore(int, str, gobject.TYPE_PYOBJECT, str)
+        self.model = gtk.ListStore(int, str, str) # gobject.TYPE_PYOBJECT
 
         scrolledwin = gtk.ScrolledWindow()
         scrolledwin.set_policy(gtk.POLICY_NEVER, gtk.POLICY_AUTOMATIC)
@@ -24,21 +24,17 @@ class MMResultSearch(object):
 
         cell_pct = gtk.CellRendererText()
         column_pct = gtk.TreeViewColumn ("Percent", cell_pct, text=0)
-        #column_pct.set_sort_column_id(0)
+        column_pct.set_sort_column_id(0)
         treeview.append_column(column_pct)
 
         cell_name = gtk.CellRendererText()
-        column_name = gtk.TreeViewColumn ("Name", cell_name, text=1)
-        #column_name.set_sort_column_id(0)
+        column_name = gtk.TreeViewColumn ("Title", cell_name, text=1)
+        column_name.set_sort_column_id(1)
         treeview.append_column(column_name)
 
-        def get_celldata_date(column, cell, model, iter):
-            doc = model[iter][2].document
-            cell.set_property('text', doc.get_value(2))
         cell_date = gtk.CellRendererText()
-        column_date = gtk.TreeViewColumn ("Date", cell_date)
-        #column_summary.set_sort_column_id(0)
-        column_date.set_cell_data_func(cell_date, get_celldata_date)
+        column_date = gtk.TreeViewColumn ("Date", cell_date, text=2)
+        column_date.set_sort_column_id(2)
         treeview.append_column(column_date)
 
         treeview.set_size_request(-1, 200)
@@ -46,8 +42,8 @@ class MMResultSearch(object):
         treeview.set_headers_clickable(True)
         treeview.set_reorderable(True)
         #treeview.set_property('has-tooltip', True)
-#        treeview.set_tooltip_column(3)
-#        treeview.connect('query-tooltip', self.on_query_tooltip)
+        #treeview.set_tooltip_column(3)
+        #treeview.connect('query-tooltip', self.on_query_tooltip)
         
         scrolledwin.add(treeview)
         vpaned = gtk.VPaned()
