@@ -118,8 +118,10 @@ class MMSearchForm(gtk.Frame):
         self.eset_entry.set_width_chars(3)
         self.eset_entry.connect('changed', self.on_eset_entry_changed)
         self.advancedbox.pack_start(self.eset_entry, False, False, 0)
-        self.filterterms_checkbutton = gtk.CheckButton("Set expansion terms white list")
+        self.filterterms_checkbutton = gtk.CheckButton("Set ESet white list")
         self.advancedbox.pack_start(self.filterterms_checkbutton, False, False, 0)
+        self.showqueryterms_checkbutton = gtk.CheckButton("Include query terms in ESet")
+        self.advancedbox.pack_start(self.showqueryterms_checkbutton, False, False, 0)
         
         # assign self.selected_language, self.selected_localdb
         self.search_options = {}
@@ -137,6 +139,7 @@ class MMSearchForm(gtk.Frame):
         self.filtered_model_db.set_visible_func(self.visible_dbs_cb)
         self.filtered_model_db.refilter()
         self.filterterms_checkbutton.connect("toggled", self.on_filterterms_checkbutton_changed)
+        self.showqueryterms_checkbutton.connect("toggled", self.on_showqueryterms_checkbutton_changed)
 
         # assign self.db, self.sources_list, self.allsources
         self.on_db_selected(self.comboboxentry_db, self.search_options['selected_localdb'])
@@ -144,6 +147,7 @@ class MMSearchForm(gtk.Frame):
         self.on_mset_entry_changed(self.mset_entry)
         self.on_eset_entry_changed(self.eset_entry)
         self.on_filterterms_checkbutton_changed(self.filterterms_checkbutton)
+        self.on_showqueryterms_checkbutton_changed(self.showqueryterms_checkbutton)
         
         vbox.pack_start(self.upperbox, False, False, 0)
         vbox.pack_start(self.advancedbox, False, False, 0)
@@ -430,10 +434,18 @@ class MMSearchForm(gtk.Frame):
             elif response == gtk.RESPONSE_CANCEL:
                 widget.set_active(0)
             dialog.destroy()
-        
+
         # double check and set as empty list if necessary
         if not widget.get_active():
             self.search_options['eset_white_list'] = []
+
+    def on_showqueryterms_checkbutton_changed(self, widget):
+        if widget.get_active():
+            logging.debug('Include query terms in ESet')
+            self.search_options['eset_showqueryterms'] = 1
+        else:
+            logging.debug('Exclude query terms in ESet')
+            self.search_options['eset_showqueryterms'] = 0
 
     def toggle_show_advancedbox(self, action):
         if action.get_active()==False:
