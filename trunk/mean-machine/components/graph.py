@@ -50,11 +50,11 @@ given terms are most relevant"""
         while gtk.events_pending():
             gtk.main_iteration()
         eset = search_options['enquire'].get_eset(search_options['n_eset']+1, 
-                                rset, 
-                                xapian.Enquire.INCLUDE_QUERY_TERMS, 
-                                1, 
-                                MMEsetFilter(stopwords[search_options['selected_language']],
-                                    search_options['eset_white_list']))
+            rset, 
+            search_options['eset_showqueryterms'], # 0 = exclude query terms in eset; 1 = include query terms in eset
+            1, 
+            MMEsetFilter(stopwords[search_options['selected_language']],
+                search_options['eset_white_list']))
 
         logging.debug('Calculating distances on %i terms' % len(eset))
         progressbar.set_fraction(0.75)

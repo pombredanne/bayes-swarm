@@ -64,7 +64,7 @@ together with the cloud of most frequent terms"""
             gtk.main_iteration()
         eset = search_options['enquire'].get_eset(search_options['n_eset'], 
             rset, 
-            xapian.Enquire.INCLUDE_QUERY_TERMS, 
+            search_options['eset_showqueryterms'], # 0 = exclude query terms in eset; 1 = include query terms in eset
             1, 
             #MMRsetFilter(stopwords[lang], [], progressbar, 1/float(n_mset + n_eset)))
             MMEsetFilter(stopwords[search_options['selected_language']], 
